@@ -1,4 +1,4 @@
-const articles=[{title:"The Beginning: The Missing First Chapter of Existence",summary:"How does not knowing the beginning limit our understanding, and why must we return to the roots of a story to judge others fairly?",category:"Philosophy & Reflections",url:"/articles/en/albedaya/",date:"2026-11-14"}];
+const articles=[{title:"Silence",summary:"A literary reflection on the words we choose not to speak, and the hidden reasons behind silence.",category:"Philosophy & Reflections",url:"/articles/en/silence/",date:"2026-11-16"},{title:"The Beginning: The Missing First Chapter of Existence",summary:"How does not knowing the beginning limit our understanding, and why must we return to the roots of a story to judge others fairly?",category:"Philosophy & Reflections",url:"/articles/en/albedaya/",date:"2026-11-14"}];
 const perPage=6;let page=1,filter="All",query="";
 const cards=document.getElementById("cards"),filters=document.getElementById("filters"),pager=document.getElementById("pager"),status=document.getElementById("status");
 const categories=["All",...new Set(articles.map(x=>x.category))];
