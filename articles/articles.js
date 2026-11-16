@@ -1,5 +1,5 @@
 /* To add an article: publish its HTML at /articles/slug/index.html, then append an entry below. */
-const articles=[{title:"البداية... الفصل الغائب من حكاية الوجود",summary:"كيف يقيّد جهلنا بالبدايات قدرتنا على الفهم، ولماذا نحتاج إلى العودة للجذور كي نكون أكثر عدلاً في أحكامنا؟",category:"فلسفة وتأملات",url:"/articles/albedaya/",date:"2026-11-14"}];
+const articles=[{title:"الصمت",summary:"تأمل أدبي في أسباب الصمت، بين القوة والضعف والحماية والألم.",category:"فلسفة وتأملات",url:"/articles/silence/",date:"2026-11-16"},{title:"البداية... الفصل الغائب من حكاية الوجود",summary:"كيف يقيّد جهلنا بالبدايات قدرتنا على الفهم، ولماذا نحتاج إلى العودة للجذور كي نكون أكثر عدلاً في أحكامنا؟",category:"فلسفة وتأملات",url:"/articles/albedaya/",date:"2026-11-14"}];
 const perPage=6;let page=1,filter="الكل",query="";
 const cards=document.getElementById("cards"),filters=document.getElementById("filters"),pager=document.getElementById("pager"),status=document.getElementById("status");
 const categories=["الكل",...new Set(articles.map(x=>x.category))];
