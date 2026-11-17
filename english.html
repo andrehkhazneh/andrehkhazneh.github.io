@@ -54,8 +54,9 @@
  .site-header .nav .nav-icon{width:20px;height:20px}
 }
 
-/* Always-visible mobile navigation: no menu tap required */
-@media(max-width:650px){
+/* Keep the navigation visible at the top without covering page sections. */
+@media(max-width:960px){
+ .site-header{position:static}
  .site-header .top{height:auto;min-height:70px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0;padding-top:16px}
  .site-header .wordmark{margin-bottom:16px}
  .site-header .menu-toggle{display:none!important}
@@ -64,32 +65,42 @@
  .site-header .nav>a.lang{grid-column:1/-1;justify-self:stretch;min-height:40px;margin:0;background:transparent;border:0}
 }
 
-.literary-credits{border-top:1px solid #d8d0c5}
-.literary-list{margin:0 0 30px;padding-inline-start:1.2em}
-.literary-list h3{margin:0 0 3px;font-size:18px}
-.literary-list .body-copy{font-size:16px;margin-bottom:18px}
-.literary-credits .text-link{display:inline-block}
+@media(min-width:651px) and (max-width:960px){
+ .site-header .nav,.site-header .nav.is-open{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(min-width:961px){
+ html{scroll-padding-top:105px}
+}
+.literary-credits,.press-interviews{border-top:1px solid #d8d0c5}
+.literary-credits h3{margin:0 0 12px;font-size:18px}
+.literary-list{margin:0;padding-inline-start:1.2em;line-height:2.15;color:#655b5f}
+.press-interviews .text-link{display:inline-block}
 </style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "ProfilePage", "@id": "https://andrehkhazneh.github.io/english.html#profile", "url": "https://andrehkhazneh.github.io/english.html", "name": "Andreh Khazneh | أندريه خزنه — Writer & Lyricist, AKZAMAN Founder", "inLanguage": "en", "mainEntity": {"@id": "https://andrehkhazneh.github.io/#andreh"}}, {"@type": "Person", "@id": "https://andrehkhazneh.github.io/#andreh", "name": "Andreh Khazneh", "alternateName": ["أندريه خزنه", "أندريه خزنة", "Andre Khazneh", "Andreh Khazna"], "url": "https://andrehkhazneh.github.io/", "description": "Andreh Khazneh (أندريه خزنه) is a writer and lyricist, and founder of AKZAMAN. Discover his writing, the Habayeb album and official channels.", "jobTitle": "Writer and lyricist", "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic", "https://musicbrainz.org/artist/4b672a3e-71c2-4bcf-97a5-5d59f5bd7ad5"], "founderOf": {"@id": "https://andrehkhazneh.github.io/#akzaman"}}, {"@type": "Organization", "@id": "https://andrehkhazneh.github.io/#akzaman", "name": "AKZAMAN", "alternateName": "أغاني كل زمان", "founder": {"@id": "https://andrehkhazneh.github.io/#andreh"}, "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic"]}]}</script></head>
 <body><a class="skip" href="#main">Skip to content</a>
-<div class="site-header"><div class="wrap"><header class="top"><a class="wordmark" href="/english.html" aria-label="Andreh Khazneh">AK<span style="color:#a77a55">.</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menu</span></button><nav id="site-nav" class="nav" aria-label="Main navigation"><a class="nav-about" href="#about"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg><span>About</span></a><a href="/articles/en/"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-2.6-1.7-5.5-1.9-9-1.2V19c3.5-.7 6.4-.5 9 1.2 2.6-1.7 5.5-1.9 9-1.2V4.8c-3.5-.7-6.4-.5-9 1.2Z"/><path d="M12 5v15.2M6 8h3M15 8h3M6 11h3M15 11h3"/></svg><span>Articles &amp; Writings</span></a><a href="#music"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="17" cy="16" rx="3" ry="2"/></svg><span>AKZAMAN</span></a><a href="#connect"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span>Connect</span></a><a class="lang" href="/" lang="ar" hreflang="ar"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h13M9 3v3m5 0c-.4 5-3.5 9-9 12"/><path d="M5 10c1 3 4 5 7 7M13 21l4-10 4 10m-6.5-3h5"/></svg><span>العربية</span></a></nav></header></div></div><div class="wrap">
+<div class="site-header"><div class="wrap"><header class="top"><a class="wordmark" href="/english.html" aria-label="Andreh Khazneh">AK<span style="color:#a77a55">.</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Toggle navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>Menu</span></button><nav id="site-nav" class="nav" aria-label="Main navigation"><a class="nav-about" href="#about"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg><span>About</span></a><a href="/articles/en/"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-2.6-1.7-5.5-1.9-9-1.2V19c3.5-.7 6.4-.5 9 1.2 2.6-1.7 5.5-1.9 9-1.2V4.8c-3.5-.7-6.4-.5-9 1.2Z"/><path d="M12 5v15.2M6 8h3M15 8h3M6 11h3M15 11h3"/></svg><span>Articles &amp; Writings</span></a><a href="#literary-contributions"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-2.6-1.7-5.5-1.9-9-1.2V19c3.5-.7 6.4-.5 9 1.2 2.6-1.7 5.5-1.9 9-1.2V4.8c-3.5-.7-6.4-.5-9 1.2Z"/><path d="M12 5v15.2M6 8h3M15 8h3M6 11h3M15 11h3"/></svg><span>Literary contributions</span></a><a href="#press-interviews"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg><span>Press interviews</span></a><a href="#music"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="17" cy="16" rx="3" ry="2"/></svg><span>AKZAMAN</span></a><a href="#connect"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span>Connect</span></a><a class="lang" href="/" lang="ar" hreflang="ar"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h13M9 3v3m5 0c-.4 5-3.5 9-9 12"/><path d="M5 10c1 3 4 5 7 7M13 21l4-10 4 10m-6.5-3h5"/></svg><span>العربية</span></a></nav></header></div></div><div class="wrap">
 <main id="main"><section class="hero" aria-labelledby="name"><div><p class="eyebrow">WRITER &amp; LYRICIST · AKZAMAN FOUNDER</p><h1 id="name">Andreh<br>Khazneh</h1><span class="latin-name" lang="ar">أندريه خزنه</span><p class="intro">I write reflections and song lyrics,<br>sharing my feelings and stories through words.</p><div class="cta"><a class="button" href="https://www.youtube.com/@AKZAMANMusic" target="_blank" rel="noopener noreferrer">Listen on YouTube <span aria-hidden="true">↗</span></a><a class="text-link" href="#about">Get to know me</a></div></div><div class="art" role="img" aria-label="Illustration of a vinyl record labelled AKZAMAN" dir="ltr"><div class="record"><div class="record-label"><b>AKZAMAN</b><span lang="ar" dir="rtl">أغاني كل زمان</span></div></div><div class="art-caption"><span>WORDS. REFLECTIONS. STORIES.</span><span>AKZAMAN</span></div></div></section>
 <div class="strip" aria-label="Creative practice"><span>Words that stay</span><i class="dot" aria-hidden="true"></i><span>Reflections that tell stories</span><i class="dot" aria-hidden="true"></i><span>Stories brought to life</span></div>
-<section id="about" class="about" aria-labelledby="about-title"><div><div class="section-num">01 / ABOUT</div><h2 class="section-title" id="about-title">About Andreh Khazneh</h2></div><div><p class="body-copy">I’m Andreh Khazneh. I was born in Latakia, Syria, on <time datetime="1988-07-05">July 5, 1988</time>. I write stories, reflections, essays, and song lyrics. I also draw and make crafts.</p><p class="body-copy">I’ve conducted interviews and founded two online magazines, including <bdi lang="ar">لحظات</bdi> (Lahazat). I also founded AKZAMAN, a music and visual storytelling project featuring my lyrics, including the album Habayeb.</p><p class="body-copy"><a class="text-link" href="#literary-contributions">Literary contributions and interviews</a></p><p class="english-note" lang="ar" dir="rtl">أندريه خزنه، كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN «أغاني كل زمان»، مشروع للموسيقى العربية والحكايات المرئية.</p><aside class="name-variants" aria-label="Other spellings of the name"><span class="name-variants-title">Other spellings of the name</span><p>The name may also be written as <bdi lang="ar">أندريه خزنة</bdi>, Andre Khazneh or Andreh Khazna. The preferred spelling is <bdi lang="ar">أندريه خزنه</bdi> — Andreh Khazneh.</p></aside></div></section></main></div>
+<section id="about" class="about" aria-labelledby="about-title"><div><div class="section-num">01 / ABOUT</div><h2 class="section-title" id="about-title">About Andreh Khazneh</h2></div><div><p class="body-copy">I’m Andreh Khazneh. I write stories, reflections, essays, and song lyrics.</p><p class="body-copy">I founded AKZAMAN, a music and visual storytelling project featuring my lyrics, including the album Habayeb.</p><p class="english-note" lang="ar" dir="rtl">أندريه خزنه، كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN «أغاني كل زمان»، مشروع للموسيقى العربية والحكايات المرئية.</p><aside class="name-variants" aria-label="Other spellings of the name"><span class="name-variants-title">Other spellings of the name</span><p>The name may also be written as <bdi lang="ar">أندريه خزنة</bdi>, Andre Khazneh or Andreh Khazna. The preferred spelling is <bdi lang="ar">أندريه خزنه</bdi> — Andreh Khazneh.</p></aside></div></section></main></div>
 <section class="writing-feature" style="padding:75px 0;border-top:1px solid #d8d0c5"><div class="wrap"><div class="section-num">02 / WRITINGS</div><h2 class="section-title">Essays &amp; Reflections</h2><p class="body-copy">Explore Andreh Khazneh's Arabic essays on life, time, and human experience.</p><a class="button" href="/articles/">Read the articles <span aria-hidden="true">↗</span></a></div></section>
 <section id="literary-contributions" class="literary-credits" aria-labelledby="literary-contributions-title">
   <div class="wrap about">
+    <h2 class="section-title" id="literary-contributions-title">Literary contributions</h2>
     <div>
-      <h2 class="section-title" id="literary-contributions-title">Literary contributions</h2>
-    </div>
-    <div>
+      <h3>Books Andreh Khazneh contributed to</h3>
       <ul class="literary-list">
-        <li><h3><bdi lang="ar">رسل الأرض – العطاء</bdi></h3><p class="body-copy">I contributed <bdi lang="ar">«حرية الروح»</bdi>, pp. 138–142.</p></li>
-        <li><h3><bdi lang="ar">ساعة الرمل</bdi></h3><p class="body-copy">I contributed <bdi lang="ar">«الفضول ينتاب الفضول»</bdi>.</p></li>
-        <li><h3><bdi lang="ar">دعوة حب</bdi></h3><p class="body-copy">Ghiras magazine announced the selection of my piece <bdi lang="ar">«قصة القمر والكسوف»</bdi> on <time datetime="2019-10-30">October 30, 2019</time>. The cover credits <bdi lang="ar">دار زهدي للنشر</bdi> as the publisher.</p></li>
-        <li><h3><bdi lang="ar">عبق الياسمين</bdi></h3><p class="body-copy">I was listed among the contributors accepted by <bdi lang="ar">فريق فكر الياسمين</bdi> in a list shared on <time datetime="2020-01-16">January 16, 2020</time>.</p></li>
-        <li><h3><bdi lang="ar">اكتبني نصًّا لا يُنسى</bdi></h3><p class="body-copy">I received a certificate of appreciation for taking part in this collaborative literary project.</p></li>
+        <li><bdi lang="ar">رسل الأرض</bdi></li>
+        <li><bdi lang="ar">اكتبتي نصا لا ينسى</bdi></li>
+        <li><bdi lang="ar">عبق الياسمين</bdi></li>
+        <li><bdi lang="ar">ساعة رمل</bdi></li>
+        <li><bdi lang="ar">دعوة حب</bdi></li>
       </ul>
-      <h3>Interviews in the press</h3>
+    </div>
+  </div>
+</section>
+<section id="press-interviews" class="press-interviews" aria-labelledby="press-interviews-title">
+  <div class="wrap about">
+    <h2 class="section-title" id="press-interviews-title">Press interviews</h2>
+    <div>
       <p class="body-copy">Doha Mahdi interviewed me for Everest Literary Magazine about how I began writing and my experience of living abroad. The magazine included my piece <bdi lang="ar">«سيمفونية الوهم»</bdi> in the interview.</p>
       <a class="text-link" href="https://everestmagazines.com/archives/72391" hreflang="ar">Read the Everest Literary Magazine interview in Arabic <span aria-hidden="true">↗</span></a>
     </div>
