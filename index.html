@@ -72,9 +72,22 @@
  html{scroll-padding-top:105px}
 }
 .literary-credits,.press-interviews{border-top:1px solid #d8d0c5}
-.literary-credits h3{margin:0 0 12px;font-size:18px}
-.literary-list{margin:0;padding-inline-start:1.2em;line-height:2.15;color:#655b5f}
+.literary-inner{max-width:740px;padding-block:60px}
+.literary-heading{margin-bottom:25px}
+.literary-heading::before{content:"";display:block;width:27px;height:3px;border-radius:2px;background:#a77a55;margin-bottom:10px}
+.literary-heading .body-copy{font-size:15px;margin:2px 0 0}
+.literary-list{display:grid;gap:8px;list-style:none;margin:0;padding:0}
+.literary-list>li{min-width:0;border:1px solid #ded4c7;border-radius:7px;background:#fffdf9;padding:8px 13px;color:#2f282d;font-size:17px;line-height:1.65}
+.literary-list>.literary-feature{border-color:#a77a55;padding:13px}
+.literary-feature h3{margin:0 0 3px;font-size:19px;line-height:1.6}
+.literary-feature .body-copy{font-size:15px;line-height:1.85;margin:0 0 12px}
+.certificate-link,.certificate-image{display:block}
+.certificate-image{width:100%;height:auto;border:1px solid #ded4c7}
 .press-interviews .text-link{display:inline-block}
+@media(max-width:650px){
+ .literary-inner{padding-block:36px}
+ .literary-heading{margin-bottom:18px}
+}
 </style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "ProfilePage", "@id": "https://andrehkhazneh.github.io/#profile", "url": "https://andrehkhazneh.github.io/", "name": "أندريه خزنه | Andreh Khazneh — كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN", "inLanguage": "ar", "mainEntity": {"@id": "https://andrehkhazneh.github.io/#andreh"}}, {"@type": "Person", "@id": "https://andrehkhazneh.github.io/#andreh", "name": "Andreh Khazneh", "alternateName": ["أندريه خزنه", "أندريه خزنة", "Andre Khazneh", "Andreh Khazna"], "url": "https://andrehkhazneh.github.io/", "description": "أندريه خزنه (Andreh Khazneh)، كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN — أغاني كل زمان. تعرّف على كتاباته ومشروعه وألبوم حبايب وتابع أعماله وروابطه الرسمية.", "jobTitle": "كاتب خواطر وكلمات أغاني", "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic", "https://musicbrainz.org/artist/4b672a3e-71c2-4bcf-97a5-5d59f5bd7ad5", "https://isni.org/isni/0000000531875878"], "founderOf": {"@id": "https://andrehkhazneh.github.io/#akzaman"}, "identifier": {"@type": "PropertyValue", "propertyID": "ISNI", "value": "0000000531875878", "url": "https://isni.org/isni/0000000531875878"}}, {"@type": "Organization", "@id": "https://andrehkhazneh.github.io/#akzaman", "name": "AKZAMAN", "alternateName": "أغاني كل زمان", "founder": {"@id": "https://andrehkhazneh.github.io/#andreh"}, "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic"]}]}</script></head>
 <body><a class="skip" href="#main">انتقل إلى المحتوى</a>
 <div class="site-header"><div class="wrap"><header class="top"><a class="wordmark" href="/" aria-label="Andreh Khazneh">AK<span style="color:#a77a55">.</span></a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="فتح قائمة التنقل"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>القائمة</span></button><nav id="site-nav" class="nav" aria-label="القائمة الرئيسية"><a class="nav-about" href="#about"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 21v-2a7.5 7.5 0 0 1 15 0v2"/></svg><span>عنّي</span></a><a href="/articles/"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-2.6-1.7-5.5-1.9-9-1.2V19c3.5-.7 6.4-.5 9 1.2 2.6-1.7 5.5-1.9 9-1.2V4.8c-3.5-.7-6.4-.5-9 1.2Z"/><path d="M12 5v15.2M6 8h3M15 8h3M6 11h3M15 11h3"/></svg><span>مقالات وكتابات</span></a><a href="#literary-contributions"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-2.6-1.7-5.5-1.9-9-1.2V19c3.5-.7 6.4-.5 9 1.2 2.6-1.7 5.5-1.9 9-1.2V4.8c-3.5-.7-6.4-.5-9 1.2Z"/><path d="M12 5v15.2M6 8h3M15 8h3M6 11h3M15 11h3"/></svg><span>المشاركات الأدبية</span></a><a href="#press-interviews"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></svg><span>حوارات صحفية</span></a><a href="#music"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><ellipse cx="6" cy="18" rx="3" ry="2"/><ellipse cx="17" cy="16" rx="3" ry="2"/></svg><span>AKZAMAN</span></a><a href="#connect"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span>تابعني</span></a><a class="lang" href="/english.html" lang="en" hreflang="en"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h13M9 3v3m5 0c-.4 5-3.5 9-9 12"/><path d="M5 10c1 3 4 5 7 7M13 21l4-10 4 10m-6.5-3h5"/></svg><span>English</span></a></nav></header></div></div><div class="wrap">
@@ -83,18 +96,24 @@
 <section id="about" class="about" aria-labelledby="about-title"><div><div class="section-num">01 / عنّي</div><h2 class="section-title" id="about-title">عن أندريه خزنه</h2></div><div><p class="body-copy">أنا أندريه خزنه، أكتب القصص والخواطر والمقالات وكلمات الأغاني.</p><p class="body-copy">أسستُ مشروع AKZAMAN «أغاني كل زمان»، الذي أقدّم من خلاله كلماتي في أعمال غنائية ومرئية، منها ألبوم «حبايب».</p><p class="english-note" lang="en" dir="ltr">Andreh Khazneh is a writer and lyricist, and founder of AKZAMAN, an Arabic music and visual storytelling project.</p><aside class="name-variants" aria-label="تهجئات أخرى للاسم"><span class="name-variants-title">تهجئات أخرى للاسم</span><p>قد يُكتب الاسم أيضاً بالتهجئات التالية: أندريه خزنة، <bdi lang="en">Andre Khazneh</bdi>، <bdi lang="en">Andreh Khazna</bdi>. والكتابة المعتمدة هي أندريه خزنه — <bdi lang="en">Andreh Khazneh</bdi>.</p></aside></div></section></main></div>
 <section class="writing-feature" id="writings" style="padding:75px 0;border-top:1px solid #d8d0c5"><div class="wrap" style="display:grid;grid-template-columns:minmax(160px,.65fr) minmax(0,1.35fr);gap:30px;align-items:start"><div><div class="section-num">02 / مقالات وكتابات</div><h2 class="section-title">ما وراء الكلمات.</h2></div><div><p class="body-copy">مقالات وتأملات عن الحياة والإنسان والزمن، من منظور الكاتب أندريه خزنه.</p><p style="font-size:18px;line-height:1.8;margin:0 0 22px">البداية... الفصل الغائب من حكاية الوجود</p><a class="button" href="/articles/">تصفّح المقالات <span aria-hidden="true">←</span></a></div></div></section>
 <section id="literary-contributions" class="literary-credits" aria-labelledby="literary-contributions-title">
-  <div class="wrap about">
-    <h2 class="section-title" id="literary-contributions-title">المشاركات الأدبية</h2>
-    <div>
-      <h3>كتب شارك فيها أندريه خزنه</h3>
-      <ul class="literary-list">
-        <li>رسل الأرض</li>
-        <li>اكتبني نصًّا لا يُنسى</li>
-        <li>عبق الياسمين</li>
-        <li>ساعة رمل</li>
-        <li>دعوة حب</li>
-      </ul>
+  <div class="wrap literary-inner">
+    <div class="literary-heading">
+      <h2 class="section-title" id="literary-contributions-title">المشاركات الأدبية</h2>
+      <p class="body-copy">كتب شارك فيها أندريه خزنه</p>
     </div>
+    <ul class="literary-list" role="list">
+      <li>رسل الأرض</li>
+      <li class="literary-feature">
+        <h3>اكتبني نصًّا لا يُنسى</h3>
+        <p class="body-copy">شارك أندريه خزنه في المشروع الأدبي الجماعي «اكتبني نصًّا لا يُنسى»، وحصل على شهادة تقدير عن مشاركته.</p>
+        <a class="certificate-link" href="/assets/participation-certificate.webp">
+          <img class="certificate-image" src="/assets/participation-certificate.webp" alt="شهادة تقدير لأندريه خزنه عن مشاركته في مشروع اكتبني نصًّا لا يُنسى" width="1493" height="1054" loading="lazy" decoding="async">
+        </a>
+      </li>
+      <li>عبق الياسمين</li>
+      <li>ساعة رمل</li>
+      <li>دعوة حب</li>
+    </ul>
   </div>
 </section>
 <section id="press-interviews" class="press-interviews" aria-labelledby="press-interviews-title">
