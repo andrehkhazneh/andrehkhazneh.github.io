@@ -1,0 +1,41 @@
+#music .album-credits {
+  margin-block-start: 1.6rem;
+  padding: 1rem clamp(0.85rem, 2.5vw, 1.35rem);
+  border: 1px solid #b5967975;
+  border-radius: 14px;
+  background: #23192566;
+  color: #fff4e5;
+}
+
+#music .album-credits h4 {
+  margin: 0 0 0.75rem;
+  color: #f6ddb8;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+#music .album-credits dl {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+}
+
+#music .album-credits dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem 0.65rem;
+}
+
+#music .album-credits dt {
+  font-weight: 700;
+}
+
+#music .album-credits dd {
+  margin: 0;
+}
+
+#music .album-credits a {
+  color: #f6ddb8;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
