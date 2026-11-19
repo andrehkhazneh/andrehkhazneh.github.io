@@ -515,6 +515,37 @@ html body .site-header .nav>a:not(.lang):not(.nav-gallery):active{
  box-shadow:inset 0 3px 7px #80674a55,0 1px 0 #b99d7c,0 3px 6px #503b2b33!important;
 }
 }
+
+/* Sculpted glossy 3D masthead and menu toggle, matching navigation tiles */
+@media(max-width:760px){
+html body .site-header .top .menu-toggle,
+html body .site-header .top .menu-button,
+html body .site-header .top button[aria-expanded]{
+ position:relative!important;overflow:hidden!important;isolation:isolate;
+ border:2px solid #cba983!important;border-radius:13px!important;
+ background:linear-gradient(180deg,#fffaf0 0%,#f2dfc7 43%,#e3c5a3 73%,#d3b08b 100%)!important;
+ box-shadow:inset 0 2px 3px #fff9ed,inset 0 -4px 5px #99745255,0 5px 0 #a88461,0 9px 15px #4d332b33!important;
+ transition:transform .16s ease,box-shadow .16s ease!important;
+}
+html body .site-header .top .menu-toggle::before,
+html body .site-header .top .menu-button::before,
+html body .site-header .top button[aria-expanded]::before{
+ content:"";position:absolute;top:5px;left:8%;right:8%;height:35%;pointer-events:none;
+ border-radius:80% 80% 45% 45%;background:linear-gradient(180deg,#ffffffd9,#ffffff00);
+}
+html body .site-header .top .menu-toggle:active,
+html body .site-header .top .menu-button:active,
+html body .site-header .top button[aria-expanded]:active{transform:translateY(4px)!important;box-shadow:inset 0 3px 7px #5c402a55,0 1px 0 #a88461!important}
+html body .site-header .top .wordmark .masthead-monogram,
+html body .site-header .top .wordmark .brand-mark,
+html body .site-header .top .wordmark bdi.masthead-monogram{
+ border:1px solid #7e6276!important;
+ background:linear-gradient(180deg,#796276 0%,#4e394d 42%,#382a39 75%,#291e2c 100%)!important;
+ box-shadow:inset 0 2px 3px #ffffff50,inset 0 -3px 4px #140d18aa,0 4px 0 #271d2a,0 7px 10px #291d2c44!important;
+ border-radius:10px!important;
+}
+html body .site-header .top .wordmark .masthead-name{text-shadow:0 1px 0 #ffffffb0}
+}
 </style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "ProfilePage", "@id": "https://andrehkhazneh.github.io/#profile", "url": "https://andrehkhazneh.github.io/", "name": "أندريه خزنه | Andreh Khazneh — كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN", "inLanguage": "ar", "mainEntity": {"@id": "https://andrehkhazneh.github.io/#andreh"}}, {"@type": "Person", "@id": "https://andrehkhazneh.github.io/#andreh", "name": "Andreh Khazneh", "alternateName": ["أندريه خزنه", "أندريه خزنة", "Andre Khazneh", "Andreh Khazna"], "url": "https://andrehkhazneh.github.io/", "description": "أندريه خزنه (Andreh Khazneh)، كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN — أغاني كل زمان. تعرّف على كتاباته ومشروعه وألبوم حبايب وتابع أعماله وروابطه الرسمية.", "jobTitle": "كاتب خواطر وكلمات أغاني", "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic", "https://musicbrainz.org/artist/4b672a3e-71c2-4bcf-97a5-5d59f5bd7ad5", "https://isni.org/isni/0000000531875878"], "founderOf": {"@id": "https://andrehkhazneh.github.io/#akzaman"}, "identifier": {"@type": "PropertyValue", "propertyID": "ISNI", "value": "0000000531875878", "url": "https://isni.org/isni/0000000531875878"}}, {"@type": "Organization", "@id": "https://andrehkhazneh.github.io/#akzaman", "name": "AKZAMAN", "alternateName": "أغاني كل زمان", "founder": {"@id": "https://andrehkhazneh.github.io/#andreh"}, "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic"]}]}</script>
 <link rel="stylesheet" href="/site-navigation.css?v=3">
 <link rel="stylesheet" href="/artwork-gallery.css"><script src="/artwork-gallery.js" defer></script></head>
