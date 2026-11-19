@@ -1,0 +1,58 @@
+/* AKZAMAN watermark for the bilingual homepages. */
+:is(#writings, #artwork, #music) {
+  view-timeline-name: --akzaman-section;
+}
+
+#writings {
+  --akzaman-ripple-x: 19%;
+  --akzaman-ripple-y: 74%;
+}
+
+#artwork {
+  --akzaman-ripple-x: 88%;
+  --akzaman-ripple-y: 5%;
+}
+
+#music {
+  --akzaman-ripple-x: 14%;
+  --akzaman-ripple-y: 72%;
+  --akzaman-ripple-color: #f6d4a4;
+}
+
+html[dir="ltr"] :is(#writings, #artwork, #music)::after {
+  --akzaman-ripple-origin: calc(100% - var(--akzaman-ripple-x)) var(--akzaman-ripple-y);
+}
+
+:is(#writings, #artwork, #music)::after {
+  --akzaman-ripple-origin: var(--akzaman-ripple-x) var(--akzaman-ripple-y);
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: repeating-radial-gradient(
+    circle at var(--akzaman-ripple-origin),
+    transparent 0 20px,
+    var(--akzaman-ripple-color, #85603b) 20px 21px,
+    transparent 21px 28px
+  );
+  background-size: calc(100% + 24px) 100%;
+  background-position: center;
+  mask-image: radial-gradient(ellipse at var(--akzaman-ripple-origin), #000 0%, #000 14%, transparent 58%);
+  opacity: 0.11;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: --akzaman-section) {
+    :is(#writings, #artwork, #music)::after {
+      animation: akzaman-ripple-drift linear both;
+      animation-timeline: --akzaman-section;
+    }
+  }
+}
+
+@keyframes akzaman-ripple-drift {
+  from { background-position: left center; }
+  to { background-position: right center; }
+}
