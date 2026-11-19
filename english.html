@@ -338,6 +338,28 @@ body.gallery-open{overflow:hidden}
 @media(max-width:650px){.gallery-experience{padding:0}.gallery-room{border-radius:0;min-height:100dvh;display:flex;flex-direction:column}.gallery-room-top{padding:13px}.gallery-stage{height:58dvh;min-height:340px;flex:1}.gallery-frame{width:52%;height:58%;padding:7px}.gallery-frame[data-offset="-1"]{transform:translate(17%,-50%) rotateY(42deg) scale(.72);gap:5px}.gallery-prev,.gallery-next{padding:11px 9px;font-size:12px}.gallery-caption strong{font-size:14px}.gallery-close span{display:none}.gallery-hint{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.gallery-frame{transition:none}}
 
+
+/* Tactile raised navigation tiles, with gentle depth and press feedback */
+@media(max-width:760px){
+html body .site-header .nav>a:not(.lang){
+ position:relative;transform:translateY(0);border-radius:9px!important;
+ box-shadow:0 4px 0 #d2c3b0,0 8px 14px rgba(65,46,36,.12),inset 0 1px 0 rgba(255,255,255,.95)!important;
+ transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease;
+}
+html body .site-header .nav>a.nav-gallery{
+ box-shadow:0 4px 0 #866044,0 9px 17px rgba(65,46,36,.19),inset 0 1px 0 rgba(255,255,255,.3)!important;
+}
+html body .site-header .nav>a.lang{
+ border-radius:9px!important;
+ box-shadow:0 4px 0 #382332,0 9px 17px rgba(52,30,44,.2),inset 0 1px 0 rgba(255,255,255,.17)!important;
+ transition:transform .16s ease,box-shadow .16s ease;
+}
+html body .site-header .nav>a:active{
+ transform:translateY(3px)!important;
+ box-shadow:0 1px 0 rgba(70,50,40,.35),0 2px 5px rgba(65,46,36,.1),inset 0 1px 3px rgba(0,0,0,.1)!important;
+}
+}
+@media(prefers-reduced-motion:reduce){html body .site-header .nav>a{transition:none!important}}
 </style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "ProfilePage", "@id": "https://andrehkhazneh.github.io/english.html#profile", "url": "https://andrehkhazneh.github.io/english.html", "name": "Andreh Khazneh | أندريه خزنه — Writer & Lyricist, AKZAMAN Founder", "inLanguage": "en", "mainEntity": {"@id": "https://andrehkhazneh.github.io/#andreh"}}, {"@type": "Person", "@id": "https://andrehkhazneh.github.io/#andreh", "name": "Andreh Khazneh", "alternateName": ["أندريه خزنه", "أندريه خزنة", "Andre Khazneh", "Andreh Khazna"], "url": "https://andrehkhazneh.github.io/", "description": "Andreh Khazneh (أندريه خزنه) is a writer and lyricist, and founder of AKZAMAN. Discover his writing, the Habayeb album and official channels.", "jobTitle": "Writer and lyricist", "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic", "https://musicbrainz.org/artist/4b672a3e-71c2-4bcf-97a5-5d59f5bd7ad5"], "founderOf": {"@id": "https://andrehkhazneh.github.io/#akzaman"}}, {"@type": "Organization", "@id": "https://andrehkhazneh.github.io/#akzaman", "name": "AKZAMAN", "alternateName": "أغاني كل زمان", "founder": {"@id": "https://andrehkhazneh.github.io/#andreh"}, "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic"]}]}</script>
 <link rel="stylesheet" href="/site-navigation.css">
 <link rel="stylesheet" href="/artwork-gallery.css"><script src="/artwork-gallery.js" defer></script></head>
