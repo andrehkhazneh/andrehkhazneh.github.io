@@ -216,7 +216,7 @@ body{background:var(--ak-paper);color:var(--ak-ink)}
 .about{padding:110px 0}
 .section-num{font-size:12px;letter-spacing:2px;color:#94704d}
 .section-title{font-size:clamp(32px,3.4vw,47px);line-height:1.42}
-.about .section-title:after,.writing-feature .section-title:after,.connect .section-title:after{content:"";display:block;width:65px;height:2px;background:linear-gradient(90deg,#b88c53,#e4d3b9);margin:22px 0 0}
+.writing-feature .section-title:after,.connect .section-title:after{content:"";display:block;width:65px;height:2px;background:linear-gradient(90deg,#b88c53,#e4d3b9);margin:22px 0 0}
 .body-copy{line-height:2.1}
 .education{max-width:1030px;margin:30px auto 105px;padding:60px clamp(20px,5vw,70px);background:linear-gradient(135deg,#fffaf0,#eee0ca);border:1px solid #cbb08b;box-shadow:0 25px 55px rgba(62,40,28,.09)}
 .education-list{gap:22px}
@@ -308,7 +308,7 @@ html body .site-header .nav>a.nav-gallery:hover,html body .site-header .nav>a.na
 .gallery-room-top h2{font-size:clamp(20px,3vw,29px);font-weight:400;margin:4px 0}
 .gallery-close,.gallery-prev,.gallery-next{border:1px solid #b89c78;border-radius:6px;background:#4a3647;color:#fff3df;cursor:pointer;padding:10px 15px;font:600 14px LocalArabic,Tahoma,sans-serif}
 .gallery-close:hover,.gallery-prev:hover,.gallery-next:hover{background:#71546a}
-.gallery-stage{height:clamp(350px,58vh,630px);position:relative;overflow:hidden;perspective:850px;background:radial-gradient(ellipse at 50% 30%,#b3a28c,#66564f 65%,#30262c);isolation:isolate}
+.gallery-stage{height:clamp(350px,66dvh,720px);position:relative;overflow:hidden;perspective:850px;background:radial-gradient(ellipse at 50% 30%,#b3a28c,#66564f 65%,#30262c);isolation:isolate}
 .gallery-back-wall{position:absolute;inset:0 17% 29%;background:linear-gradient(100deg,#b2a28f,#e1d1b9 48%,#a89984);box-shadow:inset 0 0 70px #30261e77}
 .gallery-wall{position:absolute;top:-12%;height:130%;width:36%;background:linear-gradient(90deg,#65534c,#c8b7a0);z-index:1}
 .gallery-wall-left{left:-12%;transform:skewY(16deg);clip-path:polygon(0 0,100% 17%,100% 80%,0 100%)}
@@ -322,11 +322,10 @@ html body .site-header .nav>a.nav-gallery:hover,html body .site-header .nav>a.na
 .gallery-frame[data-offset="-2"]{transform:translate(80%,-50%) rotateY(55deg) scale(.55);opacity:.25;filter:brightness(.65)}
 .gallery-frame[data-offset="-1"]{transform:translate(17%,-50%) rotateY(42deg) scale(.72);opacity:.8;filter:brightness(.83)}
 .gallery-frames .gallery-frame[data-offset="0"]{visibility:hidden;pointer-events:none}
-.gallery-front{position:absolute;inset:0 0 8%;z-index:4;pointer-events:none}
-.gallery-front .gallery-frame{position:absolute;inset:6% 0;width:min(54%,720px);height:auto;margin-inline:auto;padding:7px;transform:none;transition:none}
-.gallery-front .gallery-frame a{padding:4px}
-.gallery-front .gallery-frame img{image-rendering:auto}
-@media(max-width:650px){.gallery-front .gallery-frame{inset-block:7.5%;width:min(72%,400px);padding:5px}}
+.gallery-front{position:absolute;inset:3% 12% 5%;z-index:4;display:grid;place-items:center;container-type:size;pointer-events:none}
+.gallery-front .gallery-frame{position:relative;inset:auto;width:min(100cqw,calc(100cqh * var(--artwork-ratio,1.25)));height:auto;aspect-ratio:var(--artwork-ratio,1.25);padding:5px;transform:none;transition:none}
+.gallery-front .gallery-frame a{padding:2px}
+@media(max-width:650px){.gallery-front{inset-inline:7%}}
 .gallery-frame[data-offset="1"]{transform:translate(-117%,-50%) rotateY(-42deg) scale(.72);opacity:.8;filter:brightness(.83)}
 .gallery-frame[data-offset="2"]{transform:translate(-180%,-50%) rotateY(-55deg) scale(.55);opacity:.25;filter:brightness(.65)}
 .gallery-frame[data-offset="hidden"]{opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,-50%) scale(.2)}
@@ -574,8 +573,12 @@ html,body{max-width:100%;overflow-x:clip}
 
 /* English page: unified raised section heading plaques */
 #about .section-title,#writings .section-title,#literary-contributions .section-title,#artwork .section-title{display:table!important;max-width:100%;width:max-content;box-sizing:border-box;margin:18px 0 24px!important;padding:17px 24px!important;border:2px solid #c49a6e!important;border-radius:19px!important;background:linear-gradient(155deg,#62465b 0%,#382735 60%,#291c2a 100%)!important;color:#f7d7a5!important;font-size:clamp(25px,5.6vw,43px)!important;line-height:1.25!important;font-weight:750!important;text-shadow:0 2px 1px #130b12,0 4px 5px #0008!important;box-shadow:0 7px 0 #bb8e60,0 12px 19px #39232055,inset 0 2px 3px #ffffff50!important}
-#literary-contributions .literary-heading::before,#literary-contributions .literary-heading::after,#artwork .artwork-inner>h2::before,#artwork .artwork-inner>h2::after{content:none!important;display:none!important}
+#literary-contributions .literary-heading::before,#literary-contributions .literary-heading::after,#artwork .artwork-heading>h2::before,#artwork .artwork-heading>h2::after{content:none!important;display:none!important}
 #literary-contributions .literary-heading,#artwork .artwork-inner{background-image:none!important}
+#artwork .artwork-heading{text-align:center}
+#artwork .artwork-heading .section-title{margin-inline:auto!important}
+.site-header.site-masthead .nav>a.lang[hreflang="ar"]{justify-content:center!important}
+.site-header.site-masthead .nav>a.lang[hreflang="ar"] .nav-icon{position:absolute;inset-inline-start:12px;color:#ffe5ba}
 #about .section-num,#writings .section-num{font-size:clamp(16px,3.4vw,21px)!important;font-weight:700;letter-spacing:.09em}
 .hero .cta .button,.hero .cta .hero-about-button{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:62px;box-sizing:border-box;padding:14px 20px!important;border:2px solid #a987aa!important;border-radius:17px!important;background:linear-gradient(180deg,#755b71 0%,#51384f 42%,#30202f 100%)!important;color:#fff6ee!important;font-weight:750!important;text-align:center;box-shadow:0 7px 0 #281a2b,0 12px 17px #26152770,inset 0 3px 3px #ffffff55,inset 0 -2px 4px #160d19!important;text-decoration:none!important;transition:transform .18s,box-shadow .18s}
 .hero .cta .button:hover,.hero .cta .hero-about-button:hover{transform:translateY(-3px)}
@@ -669,10 +672,13 @@ html,body{max-width:100%;overflow-x:clip}
 </section>
 <section id="artwork" class="artwork" aria-labelledby="artwork-title">
   <div class="wrap artwork-inner">
-    <h2 class="section-title" id="artwork-title">Artwork</h2>
-    <p class="artwork-byline">Artwork by Andreh Khazneh</p>
-    <p class="gallery-intro">Select an artwork to see it at a larger size.</p>
-    <button class="gallery-enter" type="button" id="gallery-enter" aria-haspopup="dialog" aria-controls="gallery-experience">Explore the 3D Gallery ↗</button><div class="artwork-gallery">
+    <div class="artwork-heading">
+      <h2 class="section-title" id="artwork-title">Artwork</h2>
+      <p class="artwork-byline">Artwork by Andreh Khazneh</p>
+      <p class="gallery-intro">Select an artwork to see it at a larger size.</p>
+      <button class="gallery-enter" type="button" id="gallery-enter" aria-haspopup="dialog" aria-controls="gallery-experience">Explore the 3D Gallery ↗</button>
+    </div>
+    <div class="artwork-gallery">
     <figure class="artwork-card">
       <a class="artwork-image-link" href="/assets/geometric-string-art.webp">
         <img src="/assets/geometric-string-art.webp" alt="Geometric string artwork with orange, yellow, and green threads on a black background" width="1402" height="1122" loading="lazy" decoding="async">
@@ -870,12 +876,17 @@ html,body{max-width:100%;overflow-x:clip}
  const trigger=document.getElementById("gallery-enter"),modal=document.getElementById("gallery-experience");
  if(!trigger||!modal)return;
  const stage=modal.querySelector(".gallery-stage"),container=modal.querySelector(".gallery-frames");
- const frontLink=modal.querySelector(".gallery-front a"),frontImage=frontLink.querySelector("img");
- const items=Array.from(document.querySelectorAll(".artwork-gallery .artwork-card")).map(card=>({
-  src:card.querySelector(".artwork-image-link")?.getAttribute("href"),
-  alt:card.querySelector("img")?.getAttribute("alt")||"",
-  title:card.querySelector(".artwork-card-title")?.textContent.trim()||"Artwork"
- })).filter(x=>x.src);
+ const frontFrame=modal.querySelector(".gallery-front .gallery-frame");
+ const frontLink=frontFrame.querySelector("a"),frontImage=frontLink.querySelector("img");
+ const items=Array.from(document.querySelectorAll(".artwork-gallery .artwork-card")).map(card=>{
+  const image=card.querySelector("img");
+  return {
+   src:card.querySelector(".artwork-image-link")?.getAttribute("href"),
+   alt:image?.alt||"",
+   ratio:Number(image?.getAttribute("width"))/Number(image?.getAttribute("height"))||1.25,
+   title:card.querySelector(".artwork-card-title")?.textContent.trim()||"Artwork"
+  };
+ }).filter(item=>item.src);
  let index=0,startX=null,lastFocus=null;
  items.forEach((item,i)=>{
   const frame=document.createElement("div");frame.className="gallery-frame";frame.dataset.index=i;
@@ -885,6 +896,7 @@ html,body{max-width:100%;overflow-x:clip}
  });
  function render(){
   const active=items[index];
+  frontFrame.style.setProperty("--artwork-ratio",active.ratio);
   frontLink.href=active.src;
   frontLink.setAttribute("aria-label","View original image: "+active.title);
   frontImage.alt=active.alt;
