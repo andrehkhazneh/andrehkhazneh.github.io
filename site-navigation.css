@@ -292,3 +292,90 @@
     padding-block-start: clamp(2rem, 4vw, 3.5rem);
   }
 }
+
+/* Match the homepage's mobile navigation styling across inner pages */
+/* Glossy dimensional navigation: luminous curved glass caps and sculpted edges */
+@media(max-width:760px){
+html body .site-header .nav>a{
+ position:relative!important;isolation:isolate;overflow:hidden!important;
+ border-radius:17px!important;transform:translateY(0);
+ background-image:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.46) 39%,rgba(207,191,168,.12) 58%,rgba(175,153,127,.2) 100%)!important;
+ border:2px solid #e6d7c2!important;
+ box-shadow:inset 0 2px 2px rgba(255,255,255,.95),inset 0 -3px 5px rgba(113,86,60,.16),0 5px 0 #c5ae92,0 9px 15px rgba(66,44,28,.23)!important;
+ transition:transform .16s ease,box-shadow .16s ease!important;
+}
+html body .site-header .nav>a::before{
+ content:"";position:absolute;z-index:-1;pointer-events:none;
+ top:5px;left:7%;right:7%;height:38%;border-radius:100% 100% 48% 48% / 90% 90% 38% 38%;
+ background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.37) 75%,transparent);
+}
+html body .site-header .nav>a.nav-gallery{
+ background-color:#b38a65!important;
+ background-image:linear-gradient(180deg,#d6b494 0%,#bd936f 42%,#ac7e59 60%,#9c6e4e 100%)!important;
+ border-color:#d5b38d!important;
+ box-shadow:inset 0 2px 3px #f5d7b380,inset 0 -4px 6px #59382066,0 5px 0 #785036,0 10px 16px #50332355!important;
+}
+html body .site-header .nav>a.lang{
+ background-color:#63374d!important;
+ background-image:linear-gradient(180deg,#98657d 0%,#76465e 40%,#63374d 61%,#4d293e 100%)!important;
+ border-color:#a77a91!important;
+ box-shadow:inset 0 2px 3px #f5c9df70,inset 0 -4px 6px #25132188,0 5px 0 #392030,0 10px 17px #38203066!important;
+}
+html body .site-header .nav>a:active{
+ transform:translateY(4px)!important;
+ box-shadow:inset 0 3px 7px #2e1c1c36,0 1px 0 #9d846e,0 3px 6px #35251d33!important;
+}
+}
+@media(prefers-reduced-motion:reduce){html body .site-header .nav>a{transition:none!important}}
+
+/* Make all ordinary menu tiles visibly glossy too, not only featured links */
+@media(max-width:760px){
+html body .site-header .nav>a:not(.lang):not(.nav-gallery){
+ background-color:#f4e8d7!important;
+ background-image:linear-gradient(180deg,#ffffff 0%,#fffdf8 27%,#f4e8d7 52%,#e4cfb4 78%,#d7bea0 100%)!important;
+ border:2px solid #e3cfb3!important;
+ box-shadow:inset 0 3px 3px #ffffff,inset 0 -4px 6px #a9896455,0 5px 0 #b99d7c,0 10px 17px #503b2b44!important;
+}
+html body .site-header .nav>a:not(.lang):not(.nav-gallery)::before{
+ z-index:0!important;top:5px!important;left:6%!important;right:6%!important;height:37%!important;
+ border-radius:70% 70% 45% 45% / 95% 95% 40% 40%!important;
+ background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.72) 63%,rgba(255,255,255,0))!important;
+}
+html body .site-header .nav>a:not(.lang):not(.nav-gallery)>*{position:relative;z-index:1}
+html body .site-header .nav>a:not(.lang):not(.nav-gallery):active{
+ transform:translateY(4px)!important;
+ box-shadow:inset 0 3px 7px #80674a55,0 1px 0 #b99d7c,0 3px 6px #503b2b33!important;
+}
+}
+
+/* Sculpted glossy 3D masthead and menu toggle, matching navigation tiles */
+@media(max-width:760px){
+html body .site-header .top .menu-toggle,
+html body .site-header .top .menu-button,
+html body .site-header .top button[aria-expanded]{
+ position:relative!important;overflow:hidden!important;isolation:isolate;
+ border:2px solid #cba983!important;border-radius:13px!important;
+ background:linear-gradient(180deg,#fffaf0 0%,#f2dfc7 43%,#e3c5a3 73%,#d3b08b 100%)!important;
+ box-shadow:inset 0 2px 3px #fff9ed,inset 0 -4px 5px #99745255,0 5px 0 #a88461,0 9px 15px #4d332b33!important;
+ transition:transform .16s ease,box-shadow .16s ease!important;
+}
+html body .site-header .top .menu-toggle::before,
+html body .site-header .top .menu-button::before,
+html body .site-header .top button[aria-expanded]::before{
+ content:"";position:absolute;top:5px;left:8%;right:8%;height:35%;pointer-events:none;
+ border-radius:80% 80% 45% 45%;background:linear-gradient(180deg,#ffffffd9,#ffffff00);
+}
+html body .site-header .top .menu-toggle:active,
+html body .site-header .top .menu-button:active,
+html body .site-header .top button[aria-expanded]:active{transform:translateY(4px)!important;box-shadow:inset 0 3px 7px #5c402a55,0 1px 0 #a88461!important}
+html body .site-header .top .wordmark .masthead-monogram,
+html body .site-header .top .wordmark .brand-mark,
+html body .site-header .top .wordmark bdi.masthead-monogram{
+ border:1px solid #7e6276!important;
+ background:linear-gradient(180deg,#796276 0%,#4e394d 42%,#382a39 75%,#291e2c 100%)!important;
+ box-shadow:inset 0 2px 3px #ffffff50,inset 0 -3px 4px #140d18aa,0 4px 0 #271d2a,0 7px 10px #291d2c44!important;
+ border-radius:10px!important;
+}
+html body .site-header .top .wordmark .masthead-name{text-shadow:0 1px 0 #ffffffb0}
+}
+
