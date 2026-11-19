@@ -772,7 +772,7 @@ html body .site-header .nav>a.nav-gallery:hover,html body .site-header .nav>a.na
    : document.querySelector('.menu-toggle[aria-controls="site-nav"]');
   focusTarget?.focus();
  }
- function openGallery(){lastFocus=document.activeElement;modal.hidden=false;document.body.classList.add("gallery-open");render();modal.querySelector(".gallery-close").focus()} trigger.addEventListener("click",openGallery);document.querySelectorAll('[data-open-gallery="true"]').forEach(link=>link.addEventListener("click",e=>{e.preventDefault();openGallery()}));
+ function openGallery(){lastFocus=document.activeElement;modal.hidden=false;document.body.classList.add("gallery-open");render();modal.querySelector(".gallery-close").focus()} trigger.addEventListener("click",openGallery);if(new URLSearchParams(window.location.search).get("openGallery")==="1"){openGallery();history.replaceState(null,"",window.location.pathname+"#artwork")}document.querySelectorAll('[data-open-gallery="true"]').forEach(link=>link.addEventListener("click",e=>{e.preventDefault();openGallery()}));
  modal.querySelector(".gallery-close").addEventListener("click",close);
  if(new URLSearchParams(location.search).get("gallery")==="3d"){
   openGallery();
