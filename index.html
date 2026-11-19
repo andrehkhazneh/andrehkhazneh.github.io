@@ -636,8 +636,11 @@ section.project#music .button:active{transform:translateY(5px);box-shadow:inset 
 /* Dimensional official-links showcase */
 #connect.connect{position:relative;isolation:isolate;margin:42px auto 70px;padding:clamp(25px,5vw,56px)!important;border:2px solid #c5ab8b;border-radius:28px;background:linear-gradient(145deg,#fffdf6 0%,#f3e8d7 58%,#e7d4bc 100%);box-shadow:inset 0 3px 3px #fff,inset 0 -7px 10px #b59b7b44,0 9px 0 #b99b7d,0 22px 35px #4933282c}
 #connect .connect-heading{position:relative;z-index:1}
-#connect .connect-heading .section-num{font-size:clamp(18px,2.4vw,23px);font-weight:750;color:#8b6546;text-shadow:0 1px #fff}
-#connect .connect-heading .section-title{text-shadow:0 2px 1px #fff,0 5px 9px #9c826b35}
+#connect .connect-heading{display:block}
+#connect .connect-heading > p{margin:0;text-align:center}
+#connect .contact-heading-plaque{flex-direction:column;gap:6px}
+#connect .contact-heading-plaque .section-num{margin:0;color:inherit;font-size:clamp(16px,2.4vw,23px);font-weight:700}
+#connect .contact-heading-plaque .section-title{margin:0;color:inherit;font-size:inherit;font-weight:inherit;line-height:1.35;text-shadow:inherit}
 #connect .links{border:0;display:grid;gap:17px}
 #connect .social{position:relative;overflow:hidden;display:flex;align-items:center;padding:clamp(19px,3vw,28px)!important;border:1px solid #ddc6aa!important;border-radius:17px;background:linear-gradient(180deg,#fffefa 0%,#fff9ee 34%,#ead4b8 100%)!important;box-shadow:inset 0 2px 2px #fff,inset 0 -3px 4px #bd9d7c44,0 6px 0 #b99673,0 12px 19px #58402c30!important;transition:transform .2s,box-shadow .2s}
 #connect .social::before{content:"";position:absolute;top:4px;left:7%;right:7%;height:32%;border-radius:50%;background:linear-gradient(180deg,#ffffffb5,#ffffff00);pointer-events:none}
@@ -746,7 +749,8 @@ html,body{max-width:100%;overflow-x:clip}
 <style>
 /* November 2026: Arabic section and mobile polish */
 #press-interviews{border-top:0!important}
-#press-interviews .section-title{display:flex!important;align-items:center;justify-content:center;min-height:130px;width:100%;margin:0 0 30px!important;padding:24px 18px!important;border:2px solid #c99f64!important;border-radius:20px!important;background:linear-gradient(155deg,#62485c 0%,#392837 46%,#241923 100%)!important;color:#f7dba8!important;font-size:clamp(28px,6vw,46px)!important;font-weight:800!important;text-align:center!important;text-shadow:0 2px 0 #170d15,0 4px 7px #0009!important;box-shadow:0 7px 0 #b38a5c,0 12px 0 #886343,0 20px 24px #39251e50,inset 0 2px 2px #ffffff55!important}
+#press-interviews .section-title,
+#connect .contact-heading-plaque{display:flex!important;align-items:center;justify-content:center;min-height:130px;width:100%;margin:0 0 30px!important;padding:24px 18px!important;border:2px solid #c99f64!important;border-radius:20px!important;background:linear-gradient(155deg,#62485c 0%,#392837 46%,#241923 100%)!important;color:#f7dba8!important;font-size:clamp(28px,6vw,46px)!important;font-weight:800!important;text-align:center!important;text-shadow:0 2px 0 #170d15,0 4px 7px #0009!important;box-shadow:0 7px 0 #b38a5c,0 12px 0 #886343,0 20px 24px #39251e50,inset 0 2px 2px #ffffff55!important}
 #press-interviews .section-title::before,#press-interviews .section-title::after,#artwork .artwork-heading::before,#artwork .artwork-heading::after{content:none!important;display:none!important}
 #artwork .artwork-inner::before,#artwork .artwork-inner>.section-title::before{content:none!important;display:none!important}
 .album-listen-3d{font-size:clamp(17px,3.8vw,22px)!important;line-height:1.5!important;text-align:center!important;white-space:normal!important;justify-content:center!important;gap:10px!important}
@@ -767,7 +771,7 @@ html,body{max-width:100%;overflow-x:clip}
 #about>div:first-child .section-num{color:#e9cda6!important}
 #about .section-title{color:#f7dba8!important;font-weight:800!important;font-size:clamp(27px,5vw,40px)!important;text-shadow:0 2px 0 #170d15}
 #about>div:nth-child(2){padding:28px;border:1px solid #d9c3a7;border-radius:22px;background:linear-gradient(145deg,#fffdf8,#f5e7d2);box-shadow:0 6px 0 #d3ae8a,0 16px 25px #4d2e2818}
-@media(max-width:700px){#connect .links{grid-template-columns:1fr;gap:14px}#connect .social{min-height:95px}#about{display:block!important;padding-block:52px!important}#about>div:first-child{margin-bottom:25px;text-align:center}#about>div:nth-child(2){padding:24px 20px}#press-interviews .section-title{min-height:115px}#music .album-listen-3d{max-width:calc(100% - 20px)!important}}
+@media(max-width:700px){#connect .links{grid-template-columns:1fr;gap:14px}#connect .social{min-height:95px}#about{display:block!important;padding-block:52px!important}#about>div:first-child{margin-bottom:25px;text-align:center}#about>div:nth-child(2){padding:24px 20px}#press-interviews .section-title,#connect .contact-heading-plaque{min-height:115px}#music .album-listen-3d{max-width:calc(100% - 20px)!important}}
 </style><style>/* November 19 mobile alignment refinements */
 #writing .writing-all,.writing-all{display:flex!important;align-items:center!important;justify-content:center!important;text-align:center!important;width:max-content!important;max-width:calc(100% - 24px)!important;margin:30px auto 0!important;gap:12px!important}
 #press-interviews .interviews-inner>.section-title::before,#press-interviews .interviews-inner>.section-title::after,#press-interviews-title::before,#press-interviews-title::after{content:none!important;display:none!important}
@@ -1028,11 +1032,11 @@ html,body{max-width:100%;overflow-x:clip}
 </section>
 </div></div></section>
 <section class="spiral-philosophy" id="spiral" aria-labelledby="spiral-title"><div class="wrap spiral-grid"><div class="spiral-visual spiral-3d" aria-label="الدوامة الذهبية ثلاثية الأبعاد، رمز الزمن في هوية AKZAMAN"><div class="spiral-scene" aria-hidden="true"><div class="spiral-object"><img class="spiral-depth spiral-depth-back" src="/assets/akzaman-spiral.svg?v=3" alt="" width="390" height="390" loading="lazy"><img class="spiral-depth spiral-depth-mid" src="/assets/akzaman-spiral.svg?v=3" alt="" width="390" height="390" loading="lazy"><img class="spiral-face" src="/assets/akzaman-spiral.svg?v=3" alt="" width="390" height="390" loading="lazy"></div></div></div><div class="spiral-copy"><div class="section-num">04 / هوية AKZAMAN</div><h2 id="spiral-title">فلسفة الرمز</h2><p>ترمز الدوامة في هوية AKZAMAN إلى الزمن بوصفه حركةً مستمرة لا تتوقف، وإلى الدوائر التي تلتف وتمتد بلا نهاية، تمامًا كالأغاني الصادقة التي تعبر السنوات وتبقى حيّة في الذاكرة والوجدان.</p><p>كما تعبّر الدوامة عن فكرة جوهرية في المشروع: أغنيات تُكتب في الحاضر، لكنها تحمل روح الماضي، وتصل بين ما كان وما هو كائن وما قد يأتي. فالزمن، وإن قسّمه الإنسان بالروزنامة والتقويم، يبقى أوسع من الحساب؛ لأن الماضي قد يظلّ حيًا فينا، والحاضر قد يستعيده، والمستقبل قد يلوّح لنا من بعيد.</p><p>ومن هذا المعنى، تصبح الدوامة رمزًا للأغنية التي لا تنتهي بانتهاء لحظتها، بل تواصل دورانها في القلوب، وتعيش لسنين طويلة، عابرةً الأزمنة ومتصلةً بتجارب الإنسان وذكرياته.</p></div></div></section>
-<div class="wrap"><section id="connect" class="connect" aria-labelledby="connect-title"><div class="connect-heading"><div><div class="section-num">05 / الروابط الرسمية</div><h2 class="section-title" id="connect-title">خلّينا على تواصل.</h2></div><p>الأغاني والحكايات، من مكان واحد.</p></div><div class="links">
+<div class="wrap"><section id="connect" class="connect" aria-labelledby="connect-title"><div class="connect-heading"><div class="contact-heading-plaque"><div class="section-num">05 / الروابط الرسمية</div><h2 class="section-title" id="connect-title">خلّينا على تواصل.</h2></div><p>الأغاني والحكايات، من مكان واحد.</p></div><div class="links">
 <a class="social" href="mailto:akzaman.music@gmail.com">
   <div>
     <span class="social-brand"><svg class="social-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><span class="social-name">البريد الإلكتروني</span></span>
-    <span class="handle" dir="rtl">للمقابلات الصحفية والاستفسارات والتعاون الفني<br><bdi dir="ltr">akzaman.music@gmail.com</bdi></span>
+    <span class="handle" dir="ltr">akzaman.music@gmail.com</span>
   </div>
   <span class="arrow" aria-hidden="true">↗</span>
 </a>
