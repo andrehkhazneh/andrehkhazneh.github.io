@@ -3,7 +3,7 @@
   padding: 1rem clamp(0.85rem, 2.5vw, 1.35rem);
   border: 1px solid #b5967975;
   border-radius: 14px;
-  background: #23192566;
+  background: #231925d9;
   color: #fff4e5;
 }
 
@@ -34,8 +34,13 @@
   margin: 0;
 }
 
-#music .album-credits a {
-  color: #f6ddb8;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+html[lang="ar"] #music .album-credits {
+  font-family: Tahoma, "Noto Sans Arabic", Arial, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  text-shadow: none;
+}
+
+html[lang="ar"] #music .album-credits dt {
+  color: #fff8ec;
 }
