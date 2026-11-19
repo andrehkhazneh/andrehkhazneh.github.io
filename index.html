@@ -654,6 +654,17 @@ html,body{max-width:100%;overflow-x:clip}
 #connect .social>div{flex:1 1 auto;overflow-wrap:anywhere}
 #connect .social-name,#connect .handle{overflow-wrap:anywhere;word-break:normal}
 @media(max-width:600px){#connect.connect{margin-inline:12px}#connect .social{gap:8px}#connect .social .arrow{width:34px;height:34px}}
+
+/* Sculpted 3D hero record and display pedestal */
+.hero .art{overflow:visible;perspective:1100px;transform-style:preserve-3d;background:linear-gradient(145deg,#fffdf6 0%,#e8decb 52%,#bfa88d 100%);border:1px solid #d5bea1;box-shadow:inset 0 5px 8px #ffffffbb,inset -14px -17px 25px #8f795b44,0 10px 0 #bda78d,0 24px 35px #47312438}
+.hero .art:before{border-radius:inherit;background:radial-gradient(ellipse at 25% 12%,#ffffffc9,transparent 55%);pointer-events:none}
+.hero .art .record{width:min(355px,82%);height:auto;aspect-ratio:1;flex-shrink:0;transform:rotateX(13deg) rotateY(-17deg) rotateZ(-18deg) translateZ(34px);transform-style:preserve-3d;border:7px solid #211c22;box-shadow:inset 0 0 0 3px #766b70,inset 0 0 22px #050405,7px 8px 0 #171318,13px 17px 0 #29212a,24px 34px 32px #1e151a77;transition:transform .45s ease,box-shadow .45s ease}
+.hero .art .record:after{content:"";position:absolute;inset:4%;border-radius:50%;border:1px solid #ffffff1b;box-shadow:inset 0 0 20px #ffffff16;pointer-events:none}
+.hero .art .record-label{box-shadow:inset 0 3px 6px #f4c8a466,0 0 0 4px #1a141b,0 3px 7px #0008}
+.hero .art:hover .record{transform:rotateX(8deg) rotateY(-8deg) rotateZ(-12deg) translateZ(45px)}
+.hero .art-caption{z-index:2}
+@media(max-width:600px){.hero .art .record{width:min(78%,355px)}.hero .art{overflow:hidden}}
+@media(prefers-reduced-motion:reduce){.hero .art .record{transition:none}}
 </style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "ProfilePage", "@id": "https://andrehkhazneh.github.io/#profile", "url": "https://andrehkhazneh.github.io/", "name": "أندريه خزنه | Andreh Khazneh — كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN", "inLanguage": "ar", "mainEntity": {"@id": "https://andrehkhazneh.github.io/#andreh"}}, {"@type": "Person", "@id": "https://andrehkhazneh.github.io/#andreh", "name": "Andreh Khazneh", "alternateName": ["أندريه خزنه", "أندريه خزنة", "Andre Khazneh", "Andreh Khazna"], "url": "https://andrehkhazneh.github.io/", "description": "أندريه خزنه (Andreh Khazneh)، كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN — أغاني كل زمان. تعرّف على كتاباته ومشروعه وألبوم حبايب وتابع أعماله وروابطه الرسمية.", "jobTitle": "كاتب خواطر وكلمات أغاني", "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic", "https://musicbrainz.org/artist/4b672a3e-71c2-4bcf-97a5-5d59f5bd7ad5", "https://isni.org/isni/0000000531875878"], "founderOf": {"@id": "https://andrehkhazneh.github.io/#akzaman"}, "identifier": {"@type": "PropertyValue", "propertyID": "ISNI", "value": "0000000531875878", "url": "https://isni.org/isni/0000000531875878"}}, {"@type": "Organization", "@id": "https://andrehkhazneh.github.io/#akzaman", "name": "AKZAMAN", "alternateName": "أغاني كل زمان", "founder": {"@id": "https://andrehkhazneh.github.io/#andreh"}, "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic"]}]}</script>
 <link rel="stylesheet" href="/site-navigation.css?v=3">
 <link rel="stylesheet" href="/artwork-gallery.css"><script src="/artwork-gallery.js" defer></script></head>
