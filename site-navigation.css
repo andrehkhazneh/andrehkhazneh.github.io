@@ -379,3 +379,15 @@ html body .site-header .top .wordmark bdi.masthead-monogram{
 html body .site-header .top .wordmark .masthead-name{text-shadow:0 1px 0 #ffffffb0}
 }
 
+
+/* Dimensional navigation in desktop viewport, including Chrome Request desktop site */
+@media(min-width:1024px){
+ html body .site-header .nav>a{position:relative!important;isolation:isolate;overflow:hidden!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:10px!important;min-height:48px!important;padding:10px 12px!important;margin-bottom:8px!important;border:2px solid #dfc9ac!important;border-radius:13px!important;color:#392c3a!important;background:linear-gradient(180deg,#fff 0%,#fffaf1 30%,#eedbc1 70%,#dcc2a2 100%)!important;box-shadow:inset 0 2px 2px #fff,inset 0 -3px 5px #9e7f5a55,0 5px 0 #b99a75,0 9px 14px #48302033!important;text-decoration:none!important;transition:transform .18s,box-shadow .18s!important}
+ html body .site-header .nav>a::before{content:"";position:absolute;pointer-events:none;top:4px;left:8%;right:8%;height:38%;border-radius:70% 70% 40% 40%;background:linear-gradient(#ffffffdb,#ffffff00)}
+ html body .site-header .nav>a>*{position:relative;z-index:1}
+ html body .site-header .nav>a.nav-gallery{background:linear-gradient(180deg,#d5b18f,#bd936e 55%,#a97855)!important;border-color:#cba17d!important;color:white!important;box-shadow:inset 0 2px #f4d6b980,0 5px 0 #815b3f,0 9px 14px #48302055!important}
+ html body .site-header .nav>a.lang{background:linear-gradient(180deg,#986b83,#75465f 55%,#4d293e)!important;border-color:#9d7188!important;color:white!important;box-shadow:inset 0 2px #f4d6e180,0 5px 0 #392030,0 9px 14px #38203055!important}
+ html body .site-header .nav>a:active{transform:translateY(4px)!important;box-shadow:inset 0 2px 6px #30202055,0 1px 0 #9c8064!important}
+ html body .site-header .menu-toggle{border:2px solid #cba983!important;border-radius:12px!important;background:linear-gradient(#fffaf0,#ead1b3 65%,#d3b08b)!important;box-shadow:inset 0 2px #fff,0 4px 0 #a88461,0 8px 13px #4d332b33!important}
+ html body .site-header .masthead-monogram{background:linear-gradient(#796276,#4e394d 55%,#291e2c)!important;box-shadow:inset 0 2px #ffffff50,0 4px 0 #271d2a,0 7px 10px #291d2c44!important;border-radius:10px!important}
+}
