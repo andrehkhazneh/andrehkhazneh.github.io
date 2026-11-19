@@ -128,3 +128,24 @@
     grid-column: 1 / -1;
   }
 }
+
+@media (max-width: 1023.98px) {
+  .site-header .nav > .nav-gallery {
+    grid-column: 1 / -1;
+  }
+}
+
+.site-header .nav > a.lang[hreflang="en"] {
+  background: #5d3547;
+  border: 1px solid #5d3547;
+  color: #fff9ee;
+}
+
+.site-header .nav > a.lang[hreflang="en"]:is(:hover, :focus-visible) {
+  background: #452536;
+  border-color: #452536;
+}
+
+.site-header .nav > a.lang[hreflang="en"] .nav-icon {
+  color: inherit;
+}
