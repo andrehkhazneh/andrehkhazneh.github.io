@@ -19,6 +19,11 @@ function draw(){filters.replaceChildren();categories.forEach(c=>{const b=el("but
     .sort((a, b) => b.date.localeCompare(a.date));
   const pages=Math.max(1,Math.ceil(match.length/perPage));page=Math.min(page,pages);cards.replaceChildren();match.slice((page - 1) * perPage, page * perPage).forEach(article => {
     const card = el("article", "card");
+    const heading = el("h2");
+    const title = el("a", "", article.title);
+    title.href = article.url;
+    heading.append(title);
+    card.append(el("div", "meta", article.category), heading, el("p", "", article.summary));
     if (article.cover) {
       const image = el("img", "card-cover");
       image.src = article.cover.src;
@@ -29,13 +34,9 @@ function draw(){filters.replaceChildren();categories.forEach(c=>{const b=el("but
       image.decoding = "async";
       card.append(image);
     }
-    const heading = el("h2");
-    const title = el("a", "", article.title);
-    title.href = article.url;
-    heading.append(title);
     const link = el("a", "link", "قراءة المقال ←");
     link.href = article.url;
-    card.append(el("div", "meta", article.category), heading, el("p", "", article.summary), link);
+    card.append(link);
     cards.append(card);
   });
   if (!match.length) {
