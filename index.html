@@ -216,7 +216,12 @@ section[id],div[id="press-interviews"]{scroll-margin-top:115px}
 .gallery-frame img{display:block;width:100%;height:100%;object-fit:contain}
 .gallery-frame[data-offset="-2"]{transform:translate(80%,-50%) rotateY(55deg) scale(.55);opacity:.25;filter:brightness(.65)}
 .gallery-frame[data-offset="-1"]{transform:translate(17%,-50%) rotateY(42deg) scale(.72);opacity:.8;filter:brightness(.83)}
-.gallery-frame[data-offset="0"]{transform:translate(-50%,-50%) translateZ(120px) rotateY(0deg) scale(1);opacity:1;filter:none;z-index:5}
+.gallery-frames .gallery-frame[data-offset="0"]{visibility:hidden;pointer-events:none}
+.gallery-front{position:absolute;inset:0 0 8%;z-index:4;display:grid;place-items:center;pointer-events:none}
+.gallery-front .gallery-frame{position:relative;inset:auto;width:min(54%,720px);height:88%;padding:7px;transform:none;transition:none}
+.gallery-front .gallery-frame a{padding:4px}
+.gallery-front .gallery-frame img{image-rendering:auto}
+@media(max-width:650px){.gallery-front .gallery-frame{width:min(72%,400px);height:85%;padding:5px}}
 .gallery-frame[data-offset="1"]{transform:translate(-117%,-50%) rotateY(-42deg) scale(.72);opacity:.8;filter:brightness(.83)}
 .gallery-frame[data-offset="2"]{transform:translate(-180%,-50%) rotateY(-55deg) scale(.55);opacity:.25;filter:brightness(.65)}
 .gallery-frame[data-offset="hidden"]{opacity:0;visibility:hidden;pointer-events:none;transform:translate(-50%,-50%) scale(.2)}
@@ -660,7 +665,14 @@ body{background:var(--ak-paper);color:var(--ak-ink)}
     <div class="gallery-room-top"><div><span class="gallery-room-kicker">ANDREH KHAZNEH · ART GALLERY</span><h2 id="gallery-room-title">صالة الأعمال الفنية</h2></div><button class="gallery-close" type="button" aria-label="إغلاق المعرض">✕ <span>إغلاق</span></button></div>
     <div class="gallery-stage" tabindex="0" aria-label="لوحات فنية ثلاثية الأبعاد، استخدم السهمين للتنقل">
       <div class="gallery-ceiling"></div><div class="gallery-wall gallery-wall-left"></div><div class="gallery-wall gallery-wall-right"></div><div class="gallery-back-wall"></div><div class="gallery-floor"></div>
-      <div class="gallery-frames" aria-live="off"></div>
+      <div class="gallery-frames" aria-hidden="true"></div>
+      <div class="gallery-front">
+        <div class="gallery-frame">
+          <a target="_blank" rel="noopener noreferrer">
+            <img alt="" loading="eager" fetchpriority="high" decoding="async">
+          </a>
+        </div>
+      </div>
     </div>
     <div class="gallery-room-bottom"><button class="gallery-prev" type="button" aria-label="اللوحة السابقة">❯ <span>السابقة</span></button><div class="gallery-caption" aria-live="polite"><strong></strong><small></small></div><button class="gallery-next" type="button" aria-label="اللوحة التالية"><span>التالية</span> ❮</button></div>
     <p class="gallery-hint">اسحب يميناً أو يساراً للتنقل بين اللوحات، أو استخدم الأزرار. اضغط على اللوحة لعرض الصورة الأصلية.</p>
@@ -686,26 +698,38 @@ body{background:var(--ak-paper);color:var(--ak-ink)}
  const trigger=document.getElementById("gallery-enter"),modal=document.getElementById("gallery-experience");
  if(!trigger||!modal)return;
  const stage=modal.querySelector(".gallery-stage"),container=modal.querySelector(".gallery-frames");
+ const frontLink=modal.querySelector(".gallery-front a"),frontImage=frontLink.querySelector("img");
  const items=Array.from(document.querySelectorAll(".artwork-gallery .artwork-card")).map(card=>({
-  src:card.querySelector("img")?.getAttribute("src"),
+  src:card.querySelector(".artwork-image-link")?.getAttribute("href"),
   alt:card.querySelector("img")?.getAttribute("alt")||"",
   title:card.querySelector(".artwork-card-title")?.textContent.trim()||"لوحة فنية"
  })).filter(x=>x.src);
  let index=0,startX=null,lastFocus=null;
  items.forEach((item,i)=>{
   const frame=document.createElement("div");frame.className="gallery-frame";frame.dataset.index=i;
-  const link=document.createElement("a");link.href=item.src;link.target="_blank";link.rel="noopener noreferrer";link.setAttribute("aria-label","عرض الصورة الأصلية: "+item.title);
-  const img=document.createElement("img");img.dataset.src=item.src;img.alt=item.alt;img.loading="lazy";img.decoding="async";
+  const link=document.createElement("a");link.href=item.src;link.target="_blank";link.rel="noopener noreferrer";link.tabIndex=-1;
+  const img=document.createElement("img");img.alt="";img.fetchPriority="low";img.decoding="async";
   link.appendChild(img);frame.appendChild(link);container.appendChild(frame);
  });
  function render(){
+  const active=items[index];
+  frontLink.href=active.src;
+  frontLink.setAttribute("aria-label","عرض الصورة الأصلية: "+active.title);
+  frontImage.alt=active.alt;
+  frontImage.src=active.src;
+
   Array.from(container.children).forEach((frame,i)=>{
-   let d=index-i;if(d>items.length/2)d-=items.length;if(d< -items.length/2)d+=items.length;
-   frame.dataset.offset=Math.abs(d)>2?"hidden":String(d);if(Math.abs(d)<=1){const img=frame.querySelector("img");if(!img.getAttribute("src"))img.src=img.dataset.src;}
-   frame.setAttribute("aria-hidden",d===0?"false":"true");
-   frame.querySelector("a").tabIndex=d===0?0:-1;
+   let d=index-i;
+   if(d>items.length/2)d-=items.length;
+   if(d< -items.length/2)d+=items.length;
+   const nearby=Math.abs(d)<=2;
+   frame.dataset.offset=nearby?String(d):"hidden";
+   if(nearby&&d!==0){
+    const image=frame.querySelector("img");
+    if(!image.hasAttribute("src"))image.src=items[i].src;
+   }
   });
-  modal.querySelector(".gallery-caption strong").textContent=items[index].title;
+  modal.querySelector(".gallery-caption strong").textContent=active.title;
   modal.querySelector(".gallery-caption small").textContent=(index+1)+" / "+items.length;
  }
  function shift(n){index=(index+n+items.length)%items.length;render()}
