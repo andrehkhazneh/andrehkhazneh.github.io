@@ -1,0 +1,130 @@
+/* The navigation follows the document direction on both homepages. */
+@media (min-width: 1024px) {
+  body {
+    --site-sidebar-width: clamp(11.25rem, 16vw, 14rem);
+    padding-inline-start: var(--site-sidebar-width);
+  }
+
+  .site-header {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: var(--site-sidebar-width);
+    overflow-y: auto;
+    background: #f6eddf;
+    border: 0;
+    border-inline-end: 1px solid #d6bea0;
+    box-shadow: none;
+  }
+
+  .site-header .wrap {
+    width: 100%;
+    padding: 1.25rem 0.75rem;
+  }
+
+  .site-header .top {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    height: auto;
+    gap: 1rem;
+  }
+
+  .site-header .wordmark {
+    display: block;
+    text-align: center;
+    min-height: 3.25rem;
+    padding-block-end: 0.75rem;
+    border-block-end: 1px solid #dfccb0;
+  }
+
+  .site-header .nav {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.3rem;
+    font-size: 0.875rem;
+  }
+
+  .site-header .nav > a:not(.lang),
+  .site-header .nav > a.lang {
+    justify-content: flex-start;
+    min-height: 2.625rem;
+    padding: 0.5rem 0.625rem;
+    gap: 0.625rem;
+    white-space: normal;
+    line-height: 1.45;
+  }
+
+  .site-header .nav > a.lang {
+    margin-block-start: 0.5rem;
+    color: #392c3a;
+    background: #fffaf1;
+    border-color: #d6bea0;
+  }
+
+  .site-header .nav .nav-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    color: #8d633d;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .site-header .top {
+    height: auto;
+    min-height: 4.25rem;
+    padding-block-start: 0;
+  }
+
+  .site-header .wordmark {
+    margin-block-end: 0;
+  }
+
+  .site-header .menu-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+  }
+
+  .site-header .nav {
+    display: none !important;
+    position: absolute;
+    inset: auto;
+    inset-block-start: 100%;
+    inset-inline: 0;
+    z-index: 1;
+    width: 100%;
+    max-height: min(65vh, 28rem);
+    overflow-y: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: #f6eddf;
+    border: 1px solid #d6bea0;
+    border-radius: 0 0 0.5rem 0.5rem;
+    box-shadow: 0 12px 20px #392c3a22;
+    font-size: 0.875rem;
+  }
+
+  .site-header .nav.is-open {
+    display: grid !important;
+  }
+
+  .site-header .nav > a:not(.lang),
+  .site-header .nav > a.lang {
+    min-height: 2.75rem;
+    margin: 0;
+    padding: 0.5rem;
+    white-space: normal;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .site-header .nav > a.lang {
+    grid-column: 1 / -1;
+  }
+}
