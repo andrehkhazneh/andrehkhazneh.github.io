@@ -461,6 +461,40 @@ html body .site-header .nav>a:active{
 }
 }
 @media(prefers-reduced-motion:reduce){html body .site-header .nav>a{transition:none!important}}
+
+/* Glossy dimensional navigation: luminous curved glass caps and sculpted edges */
+@media(max-width:760px){
+html body .site-header .nav>a{
+ position:relative!important;isolation:isolate;overflow:hidden!important;
+ border-radius:17px!important;transform:translateY(0);
+ background-image:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.46) 39%,rgba(207,191,168,.12) 58%,rgba(175,153,127,.2) 100%)!important;
+ border:2px solid #e6d7c2!important;
+ box-shadow:inset 0 2px 2px rgba(255,255,255,.95),inset 0 -3px 5px rgba(113,86,60,.16),0 5px 0 #c5ae92,0 9px 15px rgba(66,44,28,.23)!important;
+ transition:transform .16s ease,box-shadow .16s ease!important;
+}
+html body .site-header .nav>a::before{
+ content:"";position:absolute;z-index:-1;pointer-events:none;
+ top:5px;left:7%;right:7%;height:38%;border-radius:100% 100% 48% 48% / 90% 90% 38% 38%;
+ background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.37) 75%,transparent);
+}
+html body .site-header .nav>a.nav-gallery{
+ background-color:#b38a65!important;
+ background-image:linear-gradient(180deg,#d6b494 0%,#bd936f 42%,#ac7e59 60%,#9c6e4e 100%)!important;
+ border-color:#d5b38d!important;
+ box-shadow:inset 0 2px 3px #f5d7b380,inset 0 -4px 6px #59382066,0 5px 0 #785036,0 10px 16px #50332355!important;
+}
+html body .site-header .nav>a.lang{
+ background-color:#63374d!important;
+ background-image:linear-gradient(180deg,#98657d 0%,#76465e 40%,#63374d 61%,#4d293e 100%)!important;
+ border-color:#a77a91!important;
+ box-shadow:inset 0 2px 3px #f5c9df70,inset 0 -4px 6px #25132188,0 5px 0 #392030,0 10px 17px #38203066!important;
+}
+html body .site-header .nav>a:active{
+ transform:translateY(4px)!important;
+ box-shadow:inset 0 3px 7px #2e1c1c36,0 1px 0 #9d846e,0 3px 6px #35251d33!important;
+}
+}
+@media(prefers-reduced-motion:reduce){html body .site-header .nav>a{transition:none!important}}
 </style><script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "ProfilePage", "@id": "https://andrehkhazneh.github.io/#profile", "url": "https://andrehkhazneh.github.io/", "name": "أندريه خزنه | Andreh Khazneh — كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN", "inLanguage": "ar", "mainEntity": {"@id": "https://andrehkhazneh.github.io/#andreh"}}, {"@type": "Person", "@id": "https://andrehkhazneh.github.io/#andreh", "name": "Andreh Khazneh", "alternateName": ["أندريه خزنه", "أندريه خزنة", "Andre Khazneh", "Andreh Khazna"], "url": "https://andrehkhazneh.github.io/", "description": "أندريه خزنه (Andreh Khazneh)، كاتب خواطر وكلمات أغاني ومؤسس AKZAMAN — أغاني كل زمان. تعرّف على كتاباته ومشروعه وألبوم حبايب وتابع أعماله وروابطه الرسمية.", "jobTitle": "كاتب خواطر وكلمات أغاني", "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic", "https://musicbrainz.org/artist/4b672a3e-71c2-4bcf-97a5-5d59f5bd7ad5", "https://isni.org/isni/0000000531875878"], "founderOf": {"@id": "https://andrehkhazneh.github.io/#akzaman"}, "identifier": {"@type": "PropertyValue", "propertyID": "ISNI", "value": "0000000531875878", "url": "https://isni.org/isni/0000000531875878"}}, {"@type": "Organization", "@id": "https://andrehkhazneh.github.io/#akzaman", "name": "AKZAMAN", "alternateName": "أغاني كل زمان", "founder": {"@id": "https://andrehkhazneh.github.io/#andreh"}, "sameAs": ["https://www.youtube.com/@AKZAMANMusic", "https://www.facebook.com/AKZAMANMusic"]}]}</script>
 <link rel="stylesheet" href="/site-navigation.css?v=3">
 <link rel="stylesheet" href="/artwork-gallery.css"><script src="/artwork-gallery.js" defer></script></head>
