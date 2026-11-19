@@ -295,7 +295,7 @@
 
 /* Match the homepage's mobile navigation styling across inner pages */
 /* Glossy dimensional navigation: luminous curved glass caps and sculpted edges */
-@media(max-width:760px){
+@media(max-width:1023.98px){
 html body .site-header .nav>a{
  position:relative!important;isolation:isolate;overflow:hidden!important;
  border-radius:17px!important;transform:translateY(0);
@@ -329,7 +329,7 @@ html body .site-header .nav>a:active{
 @media(prefers-reduced-motion:reduce){html body .site-header .nav>a{transition:none!important}}
 
 /* Make all ordinary menu tiles visibly glossy too, not only featured links */
-@media(max-width:760px){
+@media(max-width:1023.98px){
 html body .site-header .nav>a:not(.lang):not(.nav-gallery){
  background-color:#f4e8d7!important;
  background-image:linear-gradient(180deg,#ffffff 0%,#fffdf8 27%,#f4e8d7 52%,#e4cfb4 78%,#d7bea0 100%)!important;
@@ -349,7 +349,7 @@ html body .site-header .nav>a:not(.lang):not(.nav-gallery):active{
 }
 
 /* Sculpted glossy 3D masthead and menu toggle, matching navigation tiles */
-@media(max-width:760px){
+@media(max-width:1023.98px){
 html body .site-header .top .menu-toggle,
 html body .site-header .top .menu-button,
 html body .site-header .top button[aria-expanded]{
