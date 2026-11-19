@@ -127,6 +127,18 @@ main{max-width:1120px;margin:auto}main>.hero{background:linear-gradient(135deg,#
     border-color: #d8c3a7;
   }
 }
+</style><style>
+/* Shared dimensional editorial treatment for the article archive */
+.article-archive{background:radial-gradient(ellipse at 50% 4%,#fffaf0 0%,#f5f1e9 48%,#eee4d5 100%)}
+.article-archive main>.hero{position:relative;isolation:isolate;background:linear-gradient(145deg,#fff9ee 0%,#f1e4d0 58%,#e9d9c1 100%);border:1px solid #d5b994;border-radius:18px;box-shadow:0 4px 0 #d8c3a7,0 18px 35px #49312824,inset 0 2px 1px #ffffffb8;transform:translateZ(0)}
+.article-archive main>.hero:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;background:radial-gradient(ellipse at 85% 0%,#ffffffa3,transparent 55%)}
+.article-archive .cards{perspective:1100px}
+.article-archive .cards .card{position:relative;transform:translateY(0) rotateX(0);transform-style:preserve-3d;border-radius:14px;border:1px solid #dcc4a4;border-inline-start:5px solid #ae8150;box-shadow:0 5px 0 #d8c5ab,0 15px 28px #48302920,inset 0 1px #ffffffb5;transition:transform .25s ease,box-shadow .25s ease}
+.article-archive .cards .card:hover,.article-archive .cards .card:focus-within{transform:translateY(-5px) rotateX(1deg);box-shadow:0 9px 0 #d8c5ab,0 23px 36px #4830292b,inset 0 1px #ffffffb5}
+.article-archive .search,.article-archive .filters button,.article-archive .pager button,.article-archive .medium-profile{border-radius:10px;box-shadow:0 3px 0 #d6c2a7,0 8px 15px #48302916;transition:transform .2s ease,box-shadow .2s ease}
+.article-archive .filters button:hover,.article-archive .pager button:not(:disabled):hover,.article-archive .medium-profile:hover{transform:translateY(-2px);box-shadow:0 5px 0 #d6c2a7,0 12px 20px #48302925}
+.article-archive .filters button:active,.article-archive .pager button:not(:disabled):active{transform:translateY(2px);box-shadow:0 1px 0 #d6c2a7}
+@media(prefers-reduced-motion:reduce){.article-archive .cards .card,.article-archive .filters button,.article-archive .pager button,.article-archive .medium-profile{transition:none!important;transform:none!important}}
 </style></head><body class="article-archive"><div class="site-header site-masthead"><div class="wrap"><header class="top">
 <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>القائمة</span></button>
 <a class="wordmark masthead-brand" href="/"><bdi class="masthead-monogram" aria-hidden="true">AK<span>.</span></bdi><span class="masthead-name">أندريه خزنه</span></a>
