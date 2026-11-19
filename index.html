@@ -679,48 +679,7 @@ body{background:var(--ak-paper);color:var(--ak-ink)}
     <div class="gallery-room-bottom"><button class="gallery-prev" type="button" aria-label="اللوحة السابقة">❯ <span>السابقة</span></button><div class="gallery-caption" aria-live="polite"><strong></strong><small></small></div><button class="gallery-next" type="button" aria-label="اللوحة التالية"><span>التالية</span> ❮</button></div>
     <p class="gallery-hint">اسحب يميناً أو يساراً للتنقل بين اللوحات، أو استخدم الأزرار. اضغط على اللوحة لعرض الصورة الأصلية.</p>
   </div>
-</div><script>
-(() => {
-  const button = document.querySelector('.site-masthead .menu-toggle');
-  const nav = document.getElementById('site-nav');
-  const root = document.documentElement;
-  const desktop = window.matchMedia('(min-width: 1024px)');
-
-  function syncButton() {
-    const expanded = desktop.matches
-      ? !root.classList.contains('sidebar-collapsed')
-      : nav.classList.contains('is-open');
-    button.setAttribute('aria-expanded', String(expanded));
-  }
-
-  function closeMobileMenu() {
-    nav.classList.remove('is-open');
-    syncButton();
-  }
-
-  button.addEventListener('click', () => {
-    if (desktop.matches) {
-      root.classList.toggle('sidebar-collapsed');
-    } else {
-      nav.classList.toggle('is-open');
-    }
-    syncButton();
-  });
-  nav.addEventListener('click', event => {
-    if (!desktop.matches && event.target.closest('a')) closeMobileMenu();
-  });
-  document.addEventListener('keydown', event => {
-    if (desktop.matches || event.key !== 'Escape' || !nav.classList.contains('is-open')) return;
-    closeMobileMenu();
-    button.focus();
-  });
-  document.addEventListener('click', event => {
-    if (!desktop.matches && !event.target.closest('.site-masthead')) closeMobileMenu();
-  });
-  desktop.addEventListener('change', closeMobileMenu);
-  syncButton();
-})();
-</script><script>
+</div><script src="/site-masthead.js" defer></script><script>
 (function(){
  const area=document.querySelector(".spiral-3d"),scene=area?.querySelector(".spiral-scene");
  if(!area||!scene||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
@@ -774,6 +733,10 @@ body{background:var(--ak-paper);color:var(--ak-ink)}
  }
  function openGallery(){lastFocus=document.activeElement;modal.hidden=false;document.body.classList.add("gallery-open");render();modal.querySelector(".gallery-close").focus()} trigger.addEventListener("click",openGallery);document.querySelectorAll('[data-open-gallery="true"]').forEach(link=>link.addEventListener("click",e=>{e.preventDefault();openGallery()}));
  modal.querySelector(".gallery-close").addEventListener("click",close);
+ if(new URLSearchParams(location.search).get("gallery")==="3d"){
+  openGallery();
+  lastFocus=trigger;
+ }
  modal.querySelector(".gallery-prev").addEventListener("click",()=>shift(-1));
  modal.querySelector(".gallery-next").addEventListener("click",()=>shift(1));
  modal.addEventListener("keydown",e=>{if(e.key==="Escape"){close();return}if(e.key==="ArrowLeft"){e.preventDefault();shift(1)}if(e.key==="ArrowRight"){e.preventDefault();shift(-1)}if(e.key==="Tab"){const focusable=Array.from(modal.querySelectorAll("button,a")).filter(el=>el.tabIndex>=0);if(!focusable.length)return;const first=focusable[0],last=focusable[focusable.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});

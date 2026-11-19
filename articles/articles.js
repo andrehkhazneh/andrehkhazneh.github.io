@@ -1,5 +1,5 @@
 /* To add an article: publish its HTML at /articles/slug/index.html, then append an entry below. */
-const articles=[{title:"الصمت",summary:"تأمل أدبي في أسباب الصمت، بين القوة والضعف والحماية والألم.",category:"فلسفة وتأملات",url:"/articles/silence/",date:"2026-11-16"},{title:"البداية... الفصل الغائب من حكاية الوجود",summary:"كيف يقيّد جهلنا بالبدايات قدرتنا على الفهم، ولماذا نحتاج إلى العودة للجذور كي نكون أكثر عدلاً في أحكامنا؟",category:"فلسفة وتأملات",url:"/articles/albedaya/",date:"2026-11-14"}];
+const articles=[{title:"الصمت",summary:"تأمل أدبي في أسباب الصمت، بين القوة والضعف والحماية والألم.",category:"فلسفة وتأملات",url:"/articles/silence/",cover:{src:"/assets/article-silence-preview.webp",alt:"شخص صامت يمتد ظله على هيئة خطوط متشابكة وفقاعات كلام فارغة"},date:"2026-11-16"},{title:"البداية... الفصل الغائب من حكاية الوجود",summary:"كيف يقيّد جهلنا بالبدايات قدرتنا على الفهم، ولماذا نحتاج إلى العودة للجذور كي نكون أكثر عدلاً في أحكامنا؟",category:"فلسفة وتأملات",url:"/articles/albedaya/",cover:{src:"/assets/article-albedaya-preview.webp",alt:"شخص تحجبه جزئياً صفحة ناقصة أمام شمس محجوبة"},date:"2026-11-14"}];
 const perPage=6;let page=1,filter="الكل",query="";
 const cards=document.getElementById("cards"),filters=document.getElementById("filters"),pager=document.getElementById("pager"),status=document.getElementById("status");
 const categories=["الكل",...new Set(articles.map(x=>x.category))];
@@ -17,7 +17,27 @@ function draw(){filters.replaceChildren();categories.forEach(c=>{const b=el("but
     .filter(article => (filter === "الكل" || article.category === filter)
       && normalizeSearch([article.title, article.summary, article.category].join(" ")).includes(query))
     .sort((a, b) => b.date.localeCompare(a.date));
-  const pages=Math.max(1,Math.ceil(match.length/perPage));page=Math.min(page,pages);cards.replaceChildren();match.slice((page-1)*perPage,page*perPage).forEach(a=>{const card=el("article","card");card.append(el("div","meta",a.category));const h=el("h2");const title=el("a","",a.title);title.href=a.url;h.append(title);card.append(h,el("p","",a.summary));const link=el("a","link","قراءة المقال ←");link.href=a.url;card.append(link);cards.append(card)});
+  const pages=Math.max(1,Math.ceil(match.length/perPage));page=Math.min(page,pages);cards.replaceChildren();match.slice((page - 1) * perPage, page * perPage).forEach(article => {
+    const card = el("article", "card");
+    if (article.cover) {
+      const image = el("img", "card-cover");
+      image.src = article.cover.src;
+      image.alt = article.cover.alt;
+      image.width = 768;
+      image.height = 512;
+      image.loading = "lazy";
+      image.decoding = "async";
+      card.append(image);
+    }
+    const heading = el("h2");
+    const title = el("a", "", article.title);
+    title.href = article.url;
+    heading.append(title);
+    const link = el("a", "link", "قراءة المقال ←");
+    link.href = article.url;
+    card.append(el("div", "meta", article.category), heading, el("p", "", article.summary), link);
+    cards.append(card);
+  });
   if (!match.length) {
     status.textContent = "لا توجد مقالات مطابقة.";
   } else {
