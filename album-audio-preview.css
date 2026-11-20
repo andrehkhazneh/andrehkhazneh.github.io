@@ -25,9 +25,13 @@
 }
 #music .album-audio-preview a { text-decoration: underline; }
 
+#music .album-audio-preview {
+  container: habayeb-preview / inline-size;
+}
+
 #music .album-audio-preview .preview-content {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr));
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: .85rem 1rem;
 }
@@ -38,4 +42,10 @@
   font-size: 1rem;
   line-height: 1.9;
   text-align: start;
+}
+
+@container habayeb-preview (min-width: 23rem) {
+  #music .album-audio-preview .preview-content {
+    grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  }
 }
