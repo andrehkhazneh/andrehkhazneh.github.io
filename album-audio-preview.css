@@ -24,3 +24,18 @@
   color-scheme: light;
 }
 #music .album-audio-preview a { text-decoration: underline; }
+
+#music .album-audio-preview .preview-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13.5rem), 1fr));
+  align-items: start;
+  gap: .85rem 1rem;
+}
+
+#music .album-audio-preview .preview-lyrics {
+  margin: 0;
+  color: #fff4e5;
+  font-size: 1rem;
+  line-height: 1.9;
+  text-align: start;
+}
