@@ -6,14 +6,42 @@
 .game-nav{display:flex;gap:10px;margin:16px 0}
 .game-nav button{flex:1}
 .game-nav [aria-pressed="true"]{background:#d6eccb;border-color:#7fb77e}
-.cat-scene{display:grid;place-items:center;min-height:166px;background:linear-gradient(#fff1d4,#f7e3c8);border-radius:18px}
-.cat-portrait{font-size:78px;line-height:1}
-.cat-portrait.react{animation:cat-hop .45s ease}
-@keyframes cat-hop{50%{transform:translateY(-14px) rotate(-6deg)}}
+ .cat-scene{background:linear-gradient(#fff3da 0 73%,#f6d9b4 73%);border-radius:18px;overflow:hidden}
+.cat-scene svg{width:100%;height:auto;display:block;max-height:260px}
+.cat-walk{animation:cat-walk 8s infinite}
+.cat-facing{transform-box:fill-box;transform-origin:center;animation:cat-turn 8s step-end infinite}
+.cat-leg{transform-box:fill-box;transform-origin:center top;animation:cat-stride .48s ease-in-out infinite alternate}
+.cat-leg:nth-child(even){animation-direction:alternate-reverse}
+.cat-tail{transform-box:fill-box;transform-origin:right bottom;animation:cat-tail 1.15s ease-in-out infinite alternate}
+.cat-head,.cat-tool{transform-box:fill-box;transform-origin:center}
+.cat-tool{display:none}
+.cat-scene[data-action] .cat-facing,.cat-scene[data-action] .cat-leg{animation:none}
+.cat-scene[data-action="Feed"] .cat-walk{animation:cat-approach .6s ease-out both}
+.cat-scene[data-action="Feed"] .cat-head{animation:cat-eat .48s .6s ease-in-out 6 alternate}
+.cat-scene[data-action="Feed"] .cat-bowl{display:block}
+.cat-scene[data-action="Play"] .cat-walk{animation:cat-pounce 1.15s ease-in-out 3}
+.cat-scene[data-action="Play"] .cat-play-tool{display:block;animation:cat-tease 1.15s ease-in-out 3}
+.cat-scene[data-action="Play"][data-toy="yarn"] .cat-feather,
+.cat-scene[data-action="Play"][data-toy="feather"] .cat-yarn{display:none}
+.cat-scene[data-action="Brush"] .cat-walk{animation:none}
+.cat-scene[data-action="Brush"] .cat-brush{display:block;animation:cat-brush 1.05s ease-in-out 4}
+@keyframes cat-walk{0%,100%{transform:translateX(-64px)}50%{transform:translateX(64px)}}
+@keyframes cat-turn{0%{transform:scaleX(1)}50%{transform:scaleX(-1)}}
+@keyframes cat-stride{from{transform:rotate(-13deg)}to{transform:rotate(13deg)}}
+@keyframes cat-tail{from{transform:rotate(-5deg)}to{transform:rotate(10deg)}}
+@keyframes cat-approach{to{transform:translateX(28px)}}
+@keyframes cat-eat{to{transform:translate(4px,11px) rotate(13deg)}}
+@keyframes cat-pounce{0%,100%{transform:translateX(0)}40%{transform:translate(32px,-22px)}66%{transform:translateX(45px)}}
+@keyframes cat-tease{0%,100%{transform:translate(0,0) rotate(-9deg)}54%{transform:translate(19px,-14px) rotate(12deg)}}
+@keyframes cat-brush{0%{transform:translate(25px,-7px) rotate(9deg);opacity:0}22%{opacity:1}82%{opacity:1}100%{transform:translate(-46px,3px) rotate(-13deg);opacity:0}}
 .cat-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0}
 .cat-stats .bar{margin-top:6px}.cat-stats .fill{max-width:100%}
 #catToy{margin-top:8px}
-@media(prefers-reduced-motion:reduce){.cat-portrait.react{animation:none}}
+@media(prefers-reduced-motion:reduce){
+  .cat-scene svg *{animation:none!important}
+  .cat-scene[data-action="Feed"] .cat-walk{transform:translateX(28px)}
+  .cat-scene[data-action="Feed"] .cat-head{transform:translateY(10px)}
+}
 </style></head><body><main>
 <header><a class="btn" href="/#games">← الموقع</a><span class="tag" id="preview">نسخة تجريبية — لا تغيّر اللعبة الأصلية</span><button id="lang">English</button></header>
 <div class="audio-controls"><div class="sound-control"><label for="sfxToggle" id="sfxLabel">🔊 المؤثرات</label><button id="sfxToggle" class="switch" role="switch" aria-checked="true" type="button"><span></span><b>ON</b></button><input id="sfxVolume" type="range" min="0" max="100" value="85" aria-label="Effects volume"></div><div class="sound-control"><label for="musicToggle" id="musicLabel">🎹 موسيقى الجاز</label><button id="musicToggle" class="switch" role="switch" aria-checked="false" type="button"><span></span><b>OFF</b></button><input id="musicVolume" type="range" min="0" max="100" value="85" aria-label="Music volume"></div></div><h1 id="title">🌿 مشتل الياسمينة</h1><p class="sub" id="subtitle">ازرع، اعتنِ، بِع، وكبّر مشتلك!</p>
@@ -33,7 +61,74 @@
 </section>
 <section id="catArea" class="panel" aria-labelledby="catTitle" hidden>
 <h2 id="catTitle">قطة المشتل</h2>
-<div class="cat-scene"><span id="catPortrait" class="cat-portrait" aria-hidden="true">🐱</span></div>
+<div class="cat-scene" id="catScene">
+<svg viewBox="0 0 360 180" aria-hidden="true">
+  <defs>
+    <linearGradient id="catFur" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#fac36f"/><stop offset="1" stop-color="#e68b38"/>
+    </linearGradient>
+    <linearGradient id="catBowlShade" x2="0" y2="1">
+      <stop stop-color="#f78379"/><stop offset="1" stop-color="#c34a4d"/>
+    </linearGradient>
+  </defs>
+  <path d="M0 132h360" stroke="#e2b98e" stroke-width="2"/>
+  <ellipse cx="180" cy="155" rx="120" ry="14" fill="#e5ba93"/>
+  <ellipse cx="180" cy="153" rx="113" ry="11" fill="#f1cfab" stroke="#f8debe" stroke-width="2"/>
+  <g transform="translate(113 58)">
+    <g class="cat-walk">
+      <ellipse cx="68" cy="83" rx="67" ry="8" fill="#94634a" opacity=".15"/>
+      <g class="cat-facing" stroke="#9a4d28" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path class="cat-tail" d="M37 54C20 59 5 52 4 38c-1-8 1-15 6-19 4-3 8 1 6 5-4 8-3 17 4 21 5 3 12 2 18-1z" fill="#e99b51"/>
+        <g>
+          <path class="cat-leg" d="M46 59l1 19q0 6 11 6h6q5-3 0-6l-5-2 3-17z" fill="#da8544"/>
+          <path class="cat-leg" d="M92 58l2 21q1 5 8 5h10q4-3 0-6l-8-2 4-17z" fill="#da8544"/>
+        </g>
+        <path d="M28 49c6-20 28-27 55-24 14 1 22 6 27 14 10 16 0 28-15 32-17 4-48 5-59-3-7-5-10-11-8-19z" fill="url(#catFur)"/>
+        <path d="M47 38q4 8 0 14m13-19q5 8 1 15m13-16q5 7 1 13" fill="none" stroke="#bc682f" stroke-width="3"/>
+        <g>
+          <path class="cat-leg" d="M33 57q-3 10 2 17l-2 5q-1 6 12 6h7q6-3 1-6l-7-2 4-12" fill="#ec9e50"/>
+          <path class="cat-leg" d="M82 58l1 22q1 6 9 6h9q6-3 1-7l-6-2 2-16" fill="#f5b463"/>
+        </g>
+        <g class="cat-head">
+          <path d="M88 34 87 13q0-4 4-2l16 10q7-2 13 0l12-10q4-3 4 2l-1 23q5 7 4 14c-1 13-11 20-25 20-16 0-28-6-29-18q-1-10 3-18z" fill="url(#catFur)"/>
+          <path d="M92 27v-9l10 7m22 1 8-8-1 11" fill="#ed9e85" stroke="none"/>
+          <path d="M107 26l2 7m6-8 1 7m5-6 1 6" stroke="#bc682f" fill="none"/>
+          <path d="M100 55q5-8 12-3 6-5 13 1 6 10-9 13-14 2-16-11z" fill="#ffe0ac" stroke="none"/>
+          <ellipse cx="104" cy="45" rx="2" ry="3" fill="#472818" stroke="none"/>
+          <ellipse cx="124" cy="44" rx="2" ry="3" fill="#472818" stroke="none"/>
+          <path d="M111 51q4-3 8 0l-4 4z" fill="#c87070" stroke-width="1.2"/>
+          <path d="M115 55q-2 5-6 3m6-3q2 5 6 3m-21-5-11-2m12 7-11 2m37-8 10-2m-9 7 10 2" fill="none" stroke-width="1.2"/>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="cat-tool cat-bowl">
+    <ellipse cx="280" cy="147" rx="23" ry="4" fill="#94634a" opacity=".22"/>
+    <path d="M258 131h43l-6 14q-15 6-31 0z" fill="url(#catBowlShade)" stroke="#a84340" stroke-width="2"/>
+    <ellipse cx="279.5" cy="131" rx="21.5" ry="5.5" fill="#f3a694" stroke="#a84340" stroke-width="2"/>
+    <path d="M265 131q5-9 10-5 5-8 10 0 5-3 9 5-14 5-29 0z" fill="#99592d"/>
+    <circle cx="277" cy="127" r="1.6" fill="#e1a35b"/><circle cx="286" cy="129" r="1.7" fill="#e1a35b"/>
+  </g>
+  <g class="cat-tool cat-play-tool">
+    <g class="cat-yarn" fill="none" stroke="#a54e6e" stroke-width="2">
+      <path d="M288 135q12 9 19 4"/>
+      <circle cx="277" cy="130" r="12" fill="#f291b0"/>
+      <path d="M267 124q12 2 19 13m-13-18q7 2 14 11m-21 0 14 11"/>
+    </g>
+    <g class="cat-feather" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M289 139l39-42" stroke="#90603e" stroke-width="3"/>
+      <path d="M289 139q-9-5-7-15" fill="none" stroke="#90603e" stroke-width="1.6"/>
+      <path d="M282 124q-17 3-15-17 14 1 15 17z" fill="#b874d5" stroke="#784594" stroke-width="1.7"/>
+      <path d="M283 126l-12-15m7 9-8-1m6-3 1-5" stroke="#f6e0ff" stroke-width="1.2"/>
+    </g>
+  </g>
+  <g class="cat-tool cat-brush" transform="rotate(-14 173 92)" stroke-linecap="round">
+    <path d="M180 90h22q6 0 6 4t-6 4h-22" fill="#c17d55" stroke="#8d5538" stroke-width="2"/>
+    <rect x="151" y="86" width="34" height="13" rx="6" fill="#ed9c78" stroke="#8d5538" stroke-width="2"/>
+    <path d="M156 99v6m5-6v7m5-7v7m5-7v7m5-7v7m5-7v5" stroke="#5e5143" stroke-width="2"/>
+  </g>
+</svg>
+</div>
 <div class="cat-stats">
 <div><span id="catFullnessLabel">الشبع</span> <b id="catFullness"></b><div class="bar" aria-hidden="true"><div id="catFullnessBar" class="fill"></div></div></div>
 <div><span id="catMoodLabel">المزاج</span> <b id="catMood"></b><div class="bar" aria-hidden="true"><div id="catMoodBar" class="fill"></div></div></div>
@@ -85,7 +180,7 @@ document.getElementById('musicToggle').onclick=function(){setMusic(!audioSetting
 function freshCat(){return {fullness:60,mood:55,toy:false}}
 var key='yasmine-nursery-preview-v1';var state={money:50,sales:0,kind:'jasmine',progress:0,quality:100,care:0,active:true,lang:'ar',cat:freshCat()};try{var old=JSON.parse(localStorage.getItem(key));if(old&&typeof old.money==='number')state=Object.assign(state,old)}catch(e){}
 var $=function(id){return document.getElementById(id)},last={water:0,feed:0,sun:0},ev=null,evTimer=0,evTimeout=0;
-var activeArea='nursery', catMessage=null, catLast={}, catSeconds=0;
+var activeArea='nursery', catMessage=null, catLast={}, catSeconds=0, catAnimationTimer;
 var catTxt={
   ar:{
     nav:'التنقّل داخل اللعبة',nursery:'🌱 المشتل',ready:'🌼 النبتة جاهزة للبيع',cat:'🐱 القطة',
@@ -148,11 +243,11 @@ function visitCat(action){
     cat.mood=Math.min(100,cat.mood+12);
     catMessage='brushed';
   }
-  var portrait=$('catPortrait');
-  portrait.textContent=action==='Play'?'😸':'😺';
-  portrait.classList.remove('react');
-  void portrait.offsetWidth;
-  portrait.classList.add('react');
+  var scene=$('catScene');
+  clearTimeout(catAnimationTimer);
+  scene.dataset.toy=cat.toy?'feather':'yarn';
+  scene.dataset.action=action;
+  catAnimationTimer=setTimeout(function(){delete scene.dataset.action},4300);
   render();
 }
 $('nurseryTab').onclick=function(){activeArea='nursery';renderCat()};
@@ -183,7 +278,7 @@ function care(k){if(!state.active||state.progress>=100||Date.now()-last[k]<5000)
 function sell(){if(!state.active||state.progress<100)return;var amount=Math.round(crops[state.kind].price*(.5+state.quality/200));state.money+=amount;state.sales++;state.active=false;state.progress=0;msg(tr('sold')+'💰 '+amount);sound('sell');render()}
 function eventSpawn(){if(!state.active||state.progress>=100||ev)return;ev=Math.random()<.5?'pest':'bee';$('event').hidden=false;$('event').textContent=ev==='pest'?'🐛':'🐝';msg(tr(ev));evTimeout=setTimeout(function(){if(!ev)return;if(ev==='pest'){state.quality=Math.max(30,state.quality-12);msg(tr('pestMiss'))}else msg(tr('beeMiss'));ev=null;$('event').hidden=true;render()},6500)}
 $('event').onclick=function(){if(!ev)return;clearTimeout(evTimeout);if(ev==='pest'){state.quality=Math.min(100,state.quality+2);msg(tr('pestDone'))}else{state.quality=Math.min(100,state.quality+5);state.progress=Math.min(100,state.progress+2);msg(tr('beeDone'))}sound(ev==='pest'?'pest':'bee');ev=null;$('event').hidden=true;render()};
-['water','feed','sun'].forEach(function(k){$(k).onclick=function(){care(k)}});$('sell').onclick=sell;$('lang').onclick=function(){state.lang=state.lang==='ar'?'en':'ar';render()};$('reset').onclick=function(){if(confirm(tr('resetAsk'))){state={money:50,sales:0,kind:'jasmine',progress:0,quality:100,care:0,active:true,lang:state.lang,cat:freshCat()};catLast={};catMessage=null;catSeconds=0;msg('');render()}};
+['water','feed','sun'].forEach(function(k){$(k).onclick=function(){care(k)}});$('sell').onclick=sell;$('lang').onclick=function(){state.lang=state.lang==='ar'?'en':'ar';render()};$('reset').onclick=function(){if(confirm(tr('resetAsk'))){state={money:50,sales:0,kind:'jasmine',progress:0,quality:100,care:0,active:true,lang:state.lang,cat:freshCat()};catLast={};catMessage=null;catSeconds=0;clearTimeout(catAnimationTimer);delete $('catScene').dataset.action;msg('');render()}};
 var lastTick=Date.now(),wasReady=state.active&&state.progress>=100;setInterval(function(){var now=Date.now(),delta=Math.min(2,(now-lastTick)/1000);lastTick=now;if(document.hidden)return;tickCat(delta);if(state.active&&state.progress<100){state.progress=Math.min(100,state.progress+100*delta/crops[state.kind].time);if(state.progress>=100&&!wasReady){sound('bloom');wasReady=true}render()}else render();if(!state.active||state.progress<100)wasReady=false},1000);setInterval(function(){if(!document.hidden&&activeArea==='nursery'&&Math.random()<.75)eventSpawn()},16000);render();msg(state.lang==='ar'?'بلّش اعتني بالياسمينة!':'Start caring for your jasmine!');
 if(audioSettings.music)setMusic(true);
 })();
