@@ -146,3 +146,13 @@ body.night-ui #catArea #nanaPanel .staff-dialogue{background:#50485e!important;c
 #nanaCatWater>span:first-child{font-size:30px}
 body.night-ui #nanaCatWater{background:#34495c;color:#eff8ff}
 #catScene #catBed{left:1%!important;bottom:1%!important;width:44%!important;height:57%!important;z-index:0!important}
+
+#nanaCareScene{position:absolute;right:4%;bottom:12%;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;z-index:3;pointer-events:none;filter:drop-shadow(0 3px 2px #0002)}
+#nanaCareScene[hidden]{display:none!important}
+#nanaCareScene .nana-care-face{font-size:clamp(28px,8vw,46px);line-height:1}
+#nanaCareScene .nana-care-bowl{font-size:clamp(22px,6vw,34px);line-height:1}
+#nanaCareScene.feeding .nana-care-bowl{animation:nanaOfferFood .8s ease-in-out 4 alternate}
+#nanaCareScene.watering .nana-care-bowl{animation:nanaFillWater 1s ease-in-out 3 alternate}
+@keyframes nanaOfferFood{to{transform:translate(-35px,-6px) rotate(-12deg)}}
+@keyframes nanaFillWater{to{transform:rotate(-16deg) translateY(-7px)}}
+@media(prefers-reduced-motion:reduce){#nanaCareScene .nana-care-bowl{animation:none!important}}
