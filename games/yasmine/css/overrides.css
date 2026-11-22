@@ -193,3 +193,6 @@ body.night-ui #nanaCatWater{background:#34495c;color:#eff8ff}
 @media(prefers-reduced-motion:reduce){#catScene #nanaCareScene.feeding .nana-hand-bowl{animation:none!important}}
 
 #catScene:has(#nanaCareScene.feeding)>svg .cat-bowl{opacity:0!important}
+
+/* Mishmish care and independent mission timers */
+.mission-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mission-row button{flex:1;min-width:210px}.mission-timer{font-variant-numeric:tabular-nums;font-weight:800;background:#eee;border-radius:9px;padding:9px;color:#454545}.mission-row button:disabled{background:#aaa!important;color:#fff!important;opacity:.8}#catScene[data-action='drink']>svg{animation:mishmishSip .45s ease-in-out 4} @keyframes mishmishSip{50%{transform:translateY(7px) rotate(2deg)}}
