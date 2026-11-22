@@ -109,3 +109,11 @@ body.night-ui #workersYasminCard{background:linear-gradient(135deg,#34475a,#2b3c
 #spyMimi.spy-peek{animation:spyPeek 1.6s ease-in-out infinite!important}
 @media(max-width:360px){#spyMimi.spy-in,#spyMimi.spy-in.spy-peek{left:60%!important}#spyCover{width:116px!important}}
 @media(prefers-reduced-motion:reduce){#spyMimi.spy-peek{animation:none!important}#spyMimi{transition:none!important}}
+
+/* Cat bed is a small background furnishing, never a screen-covering foreground object. */
+#catScene #catBed{inset:auto!important;left:0!important;bottom:0!important;width:52%!important;height:66%!important;z-index:0!important;opacity:.88!important;overflow:visible!important}
+#catScene #catBed svg{width:100%!important;height:100%!important;object-fit:contain}
+#catScene>svg{position:relative;z-index:2;visibility:visible!important;opacity:1!important}
+#catScene>svg .cat-walk{visibility:visible!important}
+#catScene #catBed .mimi-sleeping-cat{display:none!important}
+#catScene #catSleep{display:none!important}
