@@ -191,3 +191,5 @@ body.night-ui #nanaCatWater{background:#34495c;color:#eff8ff}
 #catScene #nanaCareScene.feeding ~ svg .cat-bowl{opacity:0}
 @media(max-width:360px){#catScene #nanaCareScene{right:1%!important;width:22%!important;height:85%!important}#catScene #catBed{left:1%!important;width:34%!important;height:43%!important}}
 @media(prefers-reduced-motion:reduce){#catScene #nanaCareScene.feeding .nana-hand-bowl{animation:none!important}}
+
+#catScene:has(#nanaCareScene.feeding)>svg .cat-bowl{opacity:0!important}
