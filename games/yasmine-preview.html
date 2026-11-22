@@ -66,6 +66,10 @@
 #gameRulesSheet p{font-size:17px;line-height:1.8;margin:5px 0}
 #gameRulesSheet details{border-bottom:1px solid #c9d8c3;padding:10px 0}
 #gameRulesSheet summary{font-size:19px;font-weight:800;cursor:pointer}
+/* Keep guide text readable when the garden switches to night mode. */
+#gameRulesDialog #gameRulesSheet{background:#fcfff3!important;color:#24452e!important;opacity:1!important;-webkit-text-fill-color:#24452e!important}
+#gameRulesDialog #gameRulesSheet :is(h2,h3,p,summary,strong,details){color:#24452e!important;opacity:1!important;-webkit-text-fill-color:#24452e!important;text-shadow:none!important}
+#gameRulesDialog #gameRulesClose{background:#e9f3dd!important;color:#24452e!important;-webkit-text-fill-color:#24452e!important;opacity:1!important}
 #gameRulesClose{float:left;background:#e9f3dd;color:#24452e;border:1px solid #8eaa86;border-radius:13px;padding:8px 16px;font-weight:800;cursor:pointer}
 </style></head><body><main>
 <header><a class="btn" id="siteBack" href="/#games">← الموقع</a><button type="button" id="gameRulesOpen" aria-haspopup="dialog">📖 قواعد اللعبة</button><button type="button" id="topEditNames" aria-expanded="false" aria-controls="settingsPanel">⚙️ الإعدادات</button><button id="lang">English</button></header>
