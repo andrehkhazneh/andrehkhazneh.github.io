@@ -9,5 +9,17 @@
    cat.mood=Math.max(0,cat.mood-cycles);
    return seconds-cycles*15;
  }
- root.YasmineCatCore=Object.freeze({freshCat:freshCat,tickNeeds:tickNeeds});
+ function animateAction(scene,action,toy){
+   scene.dataset.toy=toy?'feather':'yarn';
+   scene.dataset.action=action;
+   return 4300;
+ }
+ function clearAction(scene){delete scene.dataset.action}
+ function canHunt(cat,config){
+   return cat.fullness>config.catMinFullness&&cat.mood>config.catMinMood;
+ }
+ function huntCooldownRemaining(now,lastHunt,cooldownMs){
+   return Math.max(0,cooldownMs-(now-lastHunt));
+ }
+ root.YasmineCatCore=Object.freeze({freshCat:freshCat,tickNeeds:tickNeeds,animateAction:animateAction,clearAction:clearAction,canHunt:canHunt,huntCooldownRemaining:huntCooldownRemaining});
 })(window);
