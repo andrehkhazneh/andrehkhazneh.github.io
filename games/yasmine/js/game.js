@@ -176,29 +176,35 @@ function tickCat(delta){
   rescueStarvingCat();
 }
 
-// Free Jasmine mini-games: coins use the same game state and save routine.
+// Five distinct Jasmine mini-games; reward is granted exactly once per completed round.
 (function(){
-var start=document.getElementById('miniGameStart'),board=document.getElementById('miniGameBoard'),info=document.getElementById('miniGameInstruction'),progress=document.getElementById('miniGameProgress');
+const start=document.getElementById('miniGameStart'),board=document.getElementById('miniGameBoard'),info=document.getElementById('miniGameInstruction'),progress=document.getElementById('miniGameProgress');
 if(!start||!board)return;
-var round=0,done=0,goal=5,kind=0,locked=false;
-var tasks=[
- {title:'🍂 لمّ الورق',instruction:'اضغط على خمس ورقات يابسة لتجمعها بالسلة.',items:['🍂','🌷','🍂','🪴','🍂','🌱','🍂','🌻','🍂'],target:'🍂',count:5},
- {title:'🪴 رتّب الأصص',instruction:'اضغط على الأصص الخمسة وانقلها لمكانها.',items:['🪴','🌷','🪴','🌱','🪴','🌻','🪴','🍄','🪴'],target:'🪴',count:5},
- {title:'🌱 اجمع البذور',instruction:'اجمع خمس بذور قبل ما تطير مع الهوا!',items:['🌱','🌼','🌱','🍂','🌱','🌷','🌱','🪴','🌱'],target:'🌱',count:5}
-];
-function begin(){
- kind=round++%tasks.length;done=0;locked=false;var task=tasks[kind];goal=task.count;
- info.textContent=task.title+' — '+task.instruction;progress.textContent='0 / '+goal;board.hidden=false;board.replaceChildren();
- task.items.forEach(function(item){var b=document.createElement('button');b.type='button';b.textContent=item;b.setAttribute('aria-label',item);b.addEventListener('click',function(){
- if(locked||b.disabled)return;
- if(item!==task.target){b.animate([{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'none'}],{duration:220});return}
- b.disabled=true;b.textContent='✅';done++;progress.textContent=done+' / '+goal;
- if(done>=goal){locked=true;state.money+=5;save();render();info.textContent='🎉 يسلموا هالإيدين! ربحت 5 عملات!';progress.textContent='💰 +5 عملات';start.textContent='🎮 مهمة جديدة';}
- });board.appendChild(b)});
-}
-start.addEventListener('click',begin);
+let previous=-1,finished=false,cleanup=()=>{},score=0;
+const games=[
+{name:'🍂 تنظيف المشتل',hint:'اسحب خمس ورقات يابسة إلى السلة.',setup(){
+let count=0;board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';const bin=document.createElement('div');bin.textContent='🧺 اسحب الورق لهون';bin.className='mini-bin';bin.style.gridColumn='1/-1';board.append(bin);
+for(let i=0;i<5;i++){const leaf=document.createElement('button');leaf.textContent='🍂';leaf.draggable=true;leaf.setAttribute('aria-label','ورقة يابسة');leaf.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',String(i)));leaf.onclick=()=>collect(leaf);board.append(leaf)}
+bin.addEventListener('dragover',e=>e.preventDefault());bin.addEventListener('drop',e=>{e.preventDefault();const leaves=[...board.querySelectorAll('button')];const leaf=leaves[Number(e.dataTransfer.getData('text/plain'))];if(leaf)collect(leaf)});
+function collect(leaf){if(leaf.disabled||finished)return;leaf.disabled=true;leaf.textContent='✅';count++;progress.textContent=count+' / 5';if(count===5)win()}
+}},
+{name:'🪴 ترتيب الأصص',hint:'رتّب الأصص حسب اللون: اضغط الأصيص ثم الرف المطابق.',setup(){
+let selected=null,placed=0;board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';const colors=[['🔴','أحمر'],['🟡','أصفر'],['🔵','أزرق']];const order=[0,2,1,0,2];order.forEach((color,i)=>{let pot=document.createElement('button');pot.textContent='🪴'+colors[color][0];pot.dataset.color=color;pot.onclick=()=>{selected=pot;progress.textContent='اختار الرف '+colors[color][1]};board.append(pot)});colors.forEach(([emoji,name],i)=>{let shelf=document.createElement('button');shelf.textContent=emoji+' رف '+name;shelf.onclick=()=>{if(!selected||selected.disabled||finished)return;if(Number(selected.dataset.color)!==i){progress.textContent='جرّب رف تاني';return}selected.disabled=true;selected.textContent='✅';selected=null;placed++;progress.textContent=placed+' / 5';if(placed===5)win()};board.append(shelf)})}
+},
+{name:'🌱 جمع البذور',hint:'حرّك السلة يمين ويسار والتقط خمس بذور نازلة.',setup(){
+board.style.display='block';board.style.position='relative';board.style.height='230px';board.style.overflow='hidden';let caught=0,x=50,falling=[],last=0,raf=0;const basket=document.createElement('button');basket.textContent='🧺';basket.style.cssText='position:absolute;bottom:5px;left:calc(50% - 28px);width:56px;z-index:2';board.append(basket);
+const controls=document.createElement('div');controls.style.cssText='position:absolute;bottom:5px;right:5px;display:flex;gap:8px';for(const [label,dir] of [['⬅️',-1],['➡️',1]]){let btn=document.createElement('button');btn.textContent=label;btn.onclick=()=>{x=Math.max(8,Math.min(92,x+dir*13));basket.style.left='calc('+x+'% - 28px)'};controls.append(btn)}board.append(controls);
+function frame(t){if(finished)return;if(t-last>850){last=t;let el=document.createElement('span');let px=10+Math.random()*80;el.textContent='🌱';el.style.cssText='position:absolute;top:0;left:'+px+'%;font-size:28px';board.append(el);falling.push({el,x:px,y:0})}falling=falling.filter(o=>{o.y+=2;o.el.style.top=o.y+'px';if(o.y>177&&Math.abs(o.x-x)<18){o.el.remove();caught++;progress.textContent=caught+' / 5';if(caught>=5)win();return false}if(o.y>230){o.el.remove();return false}return true});raf=requestAnimationFrame(frame)}raf=requestAnimationFrame(frame);cleanup=()=>{cancelAnimationFrame(raf);board.style.display='';board.style.height='';board.style.position='';board.style.overflow=''}}
+},
+{name:'🐛 إنقاذ النباتات',hint:'اضغط الديدان قبل ما توصل للنباتات! أنقذ خمس نباتات.',setup(){
+board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';let saved=0;for(let i=0;i<9;i++){let b=document.createElement('button');b.textContent=i<5?'🐛':'🌷';b.onclick=()=>{if(finished||b.disabled)return;if(b.textContent==='🐛'){b.textContent='🌿';b.disabled=true;saved++;progress.textContent=saved+' / 5';if(saved===5)win()}};board.append(b)}}
+},
+{name:'💧 إصلاح الري',hint:'وصّل الأنابيب من الصنبور للنبتة: اضغط كل قطعة لتدويرها.',setup(){
+board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';const targets=[0,1,2,3,0,1];let angles=[1,2,3,0,2,3];angles.forEach((angle,i)=>{let b=document.createElement('button');b.textContent=['━','┃','┏','┛'][angle];b.setAttribute('aria-label','دوّر الأنبوب');b.onclick=()=>{if(finished)return;angles[i]=(angles[i]+1)%4;b.textContent=['━','┃','┏','┛'][angles[i]];let fixed=angles.filter((a,j)=>a===targets[j]).length;progress.textContent=fixed+' / 6';if(fixed===6)win()};board.append(b)});let note=document.createElement('p');note.textContent='🚰 → 🌱';note.style.gridColumn='1/-1';board.append(note)}
+}];
+function win(){if(finished)return;finished=true;cleanup();state.money+=5;save();render();board.replaceChildren();board.hidden=true;info.textContent='🎉 برافو! خلّصت المهمة وربحت 5 عملات!';progress.textContent='💰 +5 عملات';start.textContent='🎮 مهمة جديدة'}
+start.addEventListener('click',()=>{cleanup();cleanup=()=>{};finished=false;let next=Math.floor(Math.random()*games.length);if(next===previous)next=(next+1)%games.length;previous=next;board.style.cssText='';board.hidden=false;board.replaceChildren();progress.textContent='0';start.textContent='🎮 غيّر المهمة';info.textContent=games[next].name+' — '+games[next].hint;games[next].setup()});
 })();
-
 function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}}
 var requests=[{type:'fertilizer',cost:20},{type:'catfood',cost:15},{type:'bonus',cost:30}];
 function staffWords(){return state.lang==='ar'?{nursery:'اسم المشتل',cat:'اسم القطة',hire:'وظّف ياسمين · 💰 50',hired:'موظفة دائمة',joke:'اسمع دعابة 😂',yes:'ادفع',no:'ارفض',mood:'مزاج ياسمين',hello:'أهلاً يا مدير! أنا جاهزة أراقب المشتل والقطة.',needWater:'يا مدير، النبتة عطشانة! لا تكون مفكرها صبّارة؟',needCat:'يا مدير، '+state.catName+' جاعت! بدنا نطعميها.',request:{fertilizer:'يا مدير، بدي 20 عملة أجيب سماد للنبتة!',catfood:'عطيني 15 عملة أجيب أكل لـ'+state.catName+'!',bonus:'أنا عم اشتغل من قلبي... ما في بونص 30 عملة؟'},jokes:['القطة شكلها ناوية تستلم الإدارة!','يا مدير، النباتات بدها مي مو خطابات تحفيزية!','أنا موظفة مش ساحرة، بس بونص صغير بيعمل عجايب!','قلت للقطة اشتغلي معي، قالت: أنا مديرة النوم!','السماد غلي يا مدير... حتى الوردة صارت بدها قرض!','زرعت نعنع، طلعلي طلب إجازة من الياسمينة!','القطة بتعرف تعدّ المصاري... بس كل العدّ بيخلص عند التونة!','طلبت من النبتة تكبر بسرعة، قالت: ادفعلي أوفر تايم!','أنا وياسمين النبتة نفس الاسم، بس هي بتاخد مي وأنا بدي بونص!','ليش الجزرة احمرّت؟ شافت فاتورة السماد!'],thanks:'يسلمو يا مدير! هيك الشغل الحلو.',refused:'طيب يا مدير... بس رح أتذمّر شوي! 😂',poor:'الخزنة فاضية يا مدير!'}:{nursery:'Nursery name',cat:'Cat name',hire:'Hire Jasmine · 💰 50',hired:'Permanent employee',joke:'Tell a joke 😂',yes:'Pay',no:'Decline',mood:'Jasmine mood',hello:'Hello boss! I am watching the plants and your cat.',needWater:'Boss, the plant needs water!',needCat:'Boss, '+state.catName+' is hungry!',request:{fertilizer:'Boss, I need 20 coins for fertilizer!',catfood:'Give me 15 coins to buy food for '+state.catName+'!',bonus:'I work so hard... could I get a 30-coin bonus?'},jokes:['The cat wants to become the manager!','Plants need water, not motivational speeches!','I am no magician, but a bonus works wonders!','I offered the cat a job. She said she already manages naps!','Fertilizer is so expensive even the flowers want a loan!','I planted mint, and the jasmine asked for vacation time!','The cat can count coins, but only until dinner!','I told the plant to grow faster. It asked for overtime pay!','The jasmine gets water, and I get bonus requests!','Why did the carrot blush? It saw the fertilizer bill!'],thanks:'Thanks, boss! I appreciate it.',refused:'Okay boss... but I will complain a little! 😂',poor:'Not enough coins, boss!'}}
