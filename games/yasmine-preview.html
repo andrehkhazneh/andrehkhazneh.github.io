@@ -165,7 +165,7 @@
 <script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/garden.js?v=20261122-mishmish10"></script>
-<script src="yasmine/js/game.js?v=spy-route-3185dc27"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/game.js?v=mouse-cooldown-2edd2567"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
@@ -187,7 +187,7 @@ const p=document.createElement('p');p.textContent=msg;card.append(close,title,p)
 }
 for(const [id,type] of [['catSpyReport','spy'],['catMouseReport','mouse']]){
 const node=$(id);if(!node)continue;
-const update=()=>{if(!missionStarted[type])return;const msg=node.textContent.trim();if(type==='spy'&&(/تتفقد المشتل|checking the nursery|عم تتجسس|is spying/i.test(msg))){const previous=notices.querySelector('[data-kind="spy"]');if(previous)previous.remove();return;}add(type,msg)};
+const update=()=>{if(!missionStarted[type])return;const msg=node.textContent.trim();if(type==='mouse'&&(/دقايق بين الصيدات|minutes? between hunts|needs a .*rest|بدها ترتاح|عم تفتش عن الفأرة|looking for the mouse/i.test(msg))){const previous=notices.querySelector('[data-kind="mouse"]');if(previous&&/دقايق بين الصيدات|minutes? between hunts|needs a .*rest|بدها ترتاح|عم تفتش عن الفأرة|looking for the mouse/i.test(previous.dataset.message||''))previous.remove();return;}if(type==='spy'&&(/تتفقد المشتل|checking the nursery|عم تتجسس|is spying/i.test(msg))){const previous=notices.querySelector('[data-kind="spy"]');if(previous)previous.remove();return;}add(type,msg)};
 new MutationObserver(update).observe(node,{childList:true,characterData:true,subtree:true});update();
 }
 const treatCount=$('catTreatCount'),treatValue=$('catTreatStatValue'),treatBar=$('catTreatStatBar');if(treatCount&&treatValue){const syncTreat=()=>{const value=(treatCount.textContent.match(/\d+/)||['0'])[0];treatValue.textContent=value+' حبة';if(treatBar)treatBar.style.width=Math.min(100,Number(value)*20)+'%'};new MutationObserver(syncTreat).observe(treatCount,{childList:true,characterData:true,subtree:true});syncTreat()}
