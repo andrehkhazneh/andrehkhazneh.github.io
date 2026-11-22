@@ -11,5 +11,7 @@
  function abuCanCare(abu,active,progress){return canWork(abu)&&!!active&&progress<100}
  function jasmineShouldRestock(staff,stock,money){return !!(staff&&staff.hired&&stock.fertilizer<=1&&money>=10)}
  function jasmineUrgentRequest(stock){return stock.catfood<=1?'catfood':null}
- root.YasmineStaffCore=Object.freeze({canWork:canWork,nanaAction:nanaAction,abuCanCare:abuCanCare,jasmineShouldRestock:jasmineShouldRestock,jasmineUrgentRequest:jasmineUrgentRequest});
+ function canHire(worker,money,sales,price,unlockSales){return !worker.hired&&sales>=unlockSales&&money>=price}
+ function canPayWages(worker,money,wage){return !!worker.paused&&money>=wage}
+ root.YasmineStaffCore=Object.freeze({canWork:canWork,nanaAction:nanaAction,abuCanCare:abuCanCare,jasmineShouldRestock:jasmineShouldRestock,jasmineUrgentRequest:jasmineUrgentRequest,canHire:canHire,canPayWages:canPayWages});
 })(window);
