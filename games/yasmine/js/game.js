@@ -203,7 +203,7 @@ function check(){const path=[0,1,2,5],dirs=['E','E','S'],op={E:'W',W:'E',N:'S',S
 progress.textContent='🚰 ابدأ من الحنفية ووصل المي للنبتة';cleanup=()=>{board.style.direction='';board.style.background=''}
 }}
 
-}];
+];
 function win(){if(finished)return;finished=true;cleanup();state.money+=5;save();render();board.replaceChildren();board.hidden=true;info.textContent='🎉 برافو! خلّصت المهمة وربحت 5 عملات!';progress.textContent='💰 +5 عملات';start.textContent='🎮 مهمة جديدة'}
 start.addEventListener('click',()=>{cleanup();cleanup=()=>{};finished=false;let next=Math.floor(Math.random()*games.length);if(next===previous)next=(next+1)%games.length;previous=next;board.style.cssText='';board.hidden=false;board.replaceChildren();progress.textContent='0';start.textContent='🎮 غيّر المهمة';info.textContent=games[next].name+' — '+games[next].hint;games[next].setup()});
 })();
