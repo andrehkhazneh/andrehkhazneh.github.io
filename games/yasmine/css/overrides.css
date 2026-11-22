@@ -156,3 +156,20 @@ body.night-ui #nanaCatWater{background:#34495c;color:#eff8ff}
 @keyframes nanaOfferFood{to{transform:translate(-35px,-6px) rotate(-12deg)}}
 @keyframes nanaFillWater{to{transform:rotate(-16deg) translateY(-7px)}}
 @media(prefers-reduced-motion:reduce){#nanaCareScene .nana-care-bowl{animation:none!important}}
+
+/* Feedback fixes: Nana card stays in Staff; show a full-sized caretaker only in cat scene. */
+#nanaCareScene{right:1%!important;bottom:5%!important;width:30%!important;height:83%!important;z-index:4!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-end!important}
+#nanaCareScene[hidden]{display:none!important}
+#nanaCareScene .nana-care-person{font-size:clamp(70px,20vw,115px)!important;line-height:1!important;display:block!important;transform-origin:center bottom}
+#nanaCareScene .nana-care-bowl{font-size:clamp(27px,8vw,43px)!important;line-height:1!important}
+#catScene #catBed{left:1%!important;bottom:0!important;width:36%!important;height:44%!important;z-index:1!important}
+#catScene #catBed svg{display:block;width:100%;height:100%}
+/* Spy cat must peek from behind the planter, not float as a detached head. */
+#spyMimi{bottom:3%!important;width:100px!important;height:120px!important;z-index:14!important}
+#spyMimi.spy-in,#spyMimi.spy-in.spy-peek{left:60%!important;bottom:3%!important;z-index:14!important}
+#spyCover{z-index:16!important;bottom:2%!important}
+#spyMimi svg{position:absolute;bottom:0;height:72px!important}
+#spyMimi:before{content:'';position:absolute;left:24px;bottom:0;width:52px;height:65px;border-radius:40% 40% 20% 20%;background:#e9a35e;border:3px solid #a76234;box-sizing:border-box}
+#spyMimi.spy-peek{animation:spyHeadPeekFixed 1.8s ease-in-out infinite!important}
+@keyframes spyHeadPeekFixed{0%,100%{transform:translateY(5px)}50%{transform:translateY(-4px)}}
+@media(prefers-reduced-motion:reduce){#spyMimi.spy-peek{animation:none!important}}
