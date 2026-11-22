@@ -32,7 +32,7 @@ document.getElementById('musicToggle').onclick=function(){setMusic(!audioSetting
     saveAudio();
   };
 });
-function freshCat(){return {fullness:60,mood:55,toy:false}}
+function freshCat(){return window.YasmineCatCore.freshCat()}
 var key='yasmine-nursery-preview-v1';var state={gameEpoch:Date.now(),dayMode:'auto',weatherMode:'auto',gardenName:'حديقة السعادة',dismissedEmpty:false,money:50,sales:0,kind:'jasmine',progress:0,quality:100,care:0,active:true,lang:'ar',cat:freshCat(),nurseryName:'مشتل الياسمينة',catName:'مشمش',namesSet:false,stock:{fertilizer:4,catfood:3},staff:{hired:false,mood:60,request:null,nextRequest:Date.now()+45000,dialogue:''},yasminFace:'',emergencyFertilizerUsed:false};
 function safeNumber(v,fallback,min,max){return typeof v==='number'&&Number.isFinite(v)?Math.min(max,Math.max(min,v)):fallback}
 function normalizeGameState(s){
@@ -153,11 +153,7 @@ $('catToy').onclick=function(){
   render();
 };
 function tickCat(delta){
-  catSeconds+=delta;
-  if(catSeconds<15)return;
-  catSeconds-=15;
-  state.cat.fullness=Math.max(0,state.cat.fullness-2);
-  state.cat.mood=Math.max(0,state.cat.mood-1);
+  catSeconds=window.YasmineCatCore.tickNeeds(state.cat,catSeconds+delta);
 }
 function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}}
 var requests=[{type:'fertilizer',cost:20},{type:'catfood',cost:15},{type:'bonus',cost:30}];
