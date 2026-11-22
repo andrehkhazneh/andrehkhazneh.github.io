@@ -266,17 +266,18 @@ var spyStyle=document.createElement('style');
 spyStyle.textContent='#spyMimi{position:absolute;bottom:6%;left:-24%;width:100px;height:75px;z-index:15;pointer-events:none;transition:left 3s ease-in-out;filter:drop-shadow(0 5px 4px #0004)}#spyMimi.spy-in{left:18%}#spyMimi.spy-out{left:105%}#spyMimi svg{width:100%;height:100%}#spyCaption{position:absolute;left:8%;right:8%;top:2%;bottom:auto;z-index:17;background:#fff9e6e8;color:#27442d;border-radius:15px;padding:8px;text-align:center;font-weight:bold;pointer-events:none}';
 document.head.appendChild(spyStyle);
 var spyMimi=document.createElement('div');spyMimi.id='spyMimi';spyMimi.hidden=true;
-spyMimi.innerHTML='<svg viewBox="0 0 130 90" aria-hidden="true"><path d="M92 58Q129 61 116 18" fill="none" stroke="#bb6b30" stroke-width="12" stroke-linecap="round"/><ellipse cx="74" cy="57" rx="38" ry="22" fill="#e9a052" stroke="#a75c32" stroke-width="3"/><path d="M48 40L35 7 18 26 7 7 5 48Z" fill="#e9a052" stroke="#a75c32" stroke-width="3"/><ellipse cx="25" cy="42" rx="24" ry="22" fill="#f3b86e" stroke="#a75c32" stroke-width="3"/><circle cx="15" cy="38" r="3"/><circle cx="34" cy="38" r="3"/><path d="M24 46q5 7 10 0" fill="none" stroke="#7c4831" stroke-width="2"/><path d="M55 72h-10m43 0h-12" stroke="#a75c32" stroke-width="8" stroke-linecap="round"/></svg>';
+spyMimi.innerHTML='<svg viewBox="0 0 120 95" aria-hidden="true"><path d="M19 47L16 13L43 29Q60 20 78 28L104 12L102 48Q109 71 84 83Q57 94 32 80Q12 69 19 47Z" fill="#edab61" stroke="#a76234" stroke-width="3"/><path d="M24 34L22 23L40 34M82 34L99 22L96 37" fill="#f3a6a0"/><ellipse cx="45" cy="54" rx="5" ry="7" fill="#322b25"/><ellipse cx="78" cy="54" rx="5" ry="7" fill="#322b25"/><path d="M55 66L66 66L60 72Z" fill="#bc7073"/><path d="M60 72Q51 80 45 73M60 72Q69 80 75 73" stroke="#8a5236" stroke-width="2.5" fill="none"/><path d="M35 69L12 66M35 75L13 79M85 69L108 66M85 75L109 79" stroke="#8a5236" stroke-width="2"/></svg>';
 $('scene').appendChild(spyMimi);
+var spyCover=document.createElement('div');spyCover.id='spyCover';spyCover.hidden=true;spyCover.setAttribute('aria-hidden','true');spyCover.innerHTML='<svg viewBox="0 0 130 90" aria-hidden="true"><rect x="15" y="38" width="104" height="45" rx="8" fill="#a7764b" stroke="#795335" stroke-width="3"/><path d="M15 51H119M37 38V83M96 38V83" stroke="#d2a477" stroke-width="4"/><path d="M17 37Q22 12 42 25Q54 0 70 23Q94 5 111 32" fill="#428d57" stroke="#27653d" stroke-width="3"/><path d="M34 26Q23 10 17 16M69 22Q76 8 88 12M103 27Q114 15 123 22" fill="none" stroke="#428d57" stroke-width="9" stroke-linecap="round"/></svg>';$('scene').appendChild(spyCover);
 var spyCaption=document.createElement('div');spyCaption.id='spyCaption';spyCaption.hidden=true;$('scene').appendChild(spyCaption);
 var spyVisualStarted=0;
 function updateSpyScene(){
  var spy=state.catSpy, running=spy.status==='running',ar=state.lang==='ar';
- if(!running){spyMimi.hidden=true;spyCaption.hidden=true;spyVisualStarted=0;return}
- spyMimi.hidden=false;spyCaption.hidden=false;
+ if(!running){spyMimi.hidden=true;spyCaption.hidden=true;spyCover.hidden=true;spyVisualStarted=0;return}
+ spyMimi.hidden=false;spyCaption.hidden=false;spyCover.hidden=false;
  var remain=spy.end-Date.now();
  spyCaption.textContent=remain>4000?(ar?'🐾 '+state.catName+' عم تتسلّل لتراقب أبو وردة...':'🐾 '+state.catName+' is sneaking up on John...'):(ar?'🤫 ششش... '+state.catName+' عم تتلصّص!':'🤫 Shhh... '+state.catName+' is spying!');
- if(!spyVisualStarted){spyVisualStarted=Date.now();spyMimi.className='';requestAnimationFrame(function(){spyMimi.className='spy-in'})}
+ if(!spyVisualStarted){spyVisualStarted=Date.now();spyMimi.className='';requestAnimationFrame(function(){spyMimi.className='spy-in spy-peek'})}
  if(remain<1800)spyMimi.className='spy-out';
 }
 setInterval(function(){
