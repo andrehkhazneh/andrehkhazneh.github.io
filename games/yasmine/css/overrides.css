@@ -72,3 +72,25 @@ body.night-ui .audio-controls label,body.night-ui #sfxLabel,body.night-ui #music
 #catTab{font-size:clamp(16px,3.8vw,19px)!important}
 
 #nanaPanel{margin-top:16px;background:#eee9f7}#nanaPanel .nana-art{width:min(42%,170px);max-height:230px;flex-shrink:0}#nanaPanel .staff-intro{display:flex;align-items:center;justify-content:space-between;gap:12px}#catSheetOverlay[hidden],#catHuntStage[hidden]{display:none!important}#catSheetOverlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center}#catSheet{box-sizing:border-box;width:min(100%,600px);max-height:75vh;max-height:75dvh;overflow-y:auto;overscroll-behavior:contain;background:#283b50;color:#fff;border:1px solid #7c8fa2;border-radius:22px 22px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 35px #0006;animation:sheetUp .2s ease-out}#catSheet .sheet-grip{height:5px;width:56px;border-radius:10px;background:#a8b4c2;margin:0 auto 12px}#catSheet .sheet-head{display:flex;justify-content:space-between;align-items:center}#catSheetClose{width:44px;height:44px;flex:none}#catSheetBalance{font-weight:700}body.cat-shop-open{overflow:hidden}#catHuntStage{position:relative;overflow:hidden;height:160px;border-radius:18px;background:linear-gradient(#d7e7f0,#c6e5c4);margin:12px 0}#huntCat{position:absolute;bottom:20px;left:15%;font-size:65px;transition:transform .5s}#huntBang{position:absolute;top:-10px;right:-5px;font-size:25px;color:#b32424}#huntMouseArt{position:absolute;width:95px;height:75px;bottom:12px;right:8%;transition:transform .5s}#catHuntStage[data-phase="crouch"] #huntCat{transform:scaleY(.7) translateY(24px)}#catHuntStage[data-phase="crouch"] #huntBang,#catHuntStage[data-phase="chase"] #huntBang{display:none}#catHuntStage[data-phase="chase"] #huntCat{transform:translateX(110px) rotate(-8deg)}#catHuntStage[data-phase="chase"] #huntMouseArt{transform:translateX(110px)}#catHuntStage[data-variant="1"][data-phase="chase"] #huntCat{transform:translate(110px,-20px)}#catHuntStage[data-variant="2"][data-phase="chase"] #huntCat{transform:translate(100px,10px) rotate(8deg)}#catMouseReport:empty{display:none;margin:0;padding:0}@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}@media(prefers-reduced-motion:reduce){#catSheet,#huntCat,#huntMouseArt{animation:none!important;transition:none!important}}@media(max-width:440px){#nanaPanel .nana-art{width:38%}}
+/* Four visual refinements: manager card, cat hat, mouse chase and spying. */
+.employee-manager-card{display:flex;align-items:center;gap:12px;padding:12px;margin:12px 0;border:1px solid #e7cda7;border-radius:16px;background:#fff8ed;color:#49372b}
+.employee-manager-icon{font-size:40px;flex-shrink:0}.employee-manager-card h4{margin:0 0 5px;font-size:20px}.employee-manager-card p{margin:4px 0;line-height:1.5}
+body.night-ui .employee-manager-card{background:#30445a;color:#f6f2e9;border-color:#64758b}
+#catHuntStage[data-phase="spot"] #huntCat{animation:huntSpot .7s ease-in-out infinite alternate}
+#catHuntStage[data-phase="chase"] #huntCat{animation:huntCatRun 1.8s ease-in-out both}
+#catHuntStage[data-phase="chase"] #huntMouseArt{animation:huntMouseRun 1.8s ease-in-out both}
+@keyframes huntSpot{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-7px) rotate(5deg)}}
+@keyframes huntCatRun{0%{transform:translateX(0) scaleX(1)}35%{transform:translateX(100px) scaleX(1)}65%{transform:translateX(125px) translateY(-20px) scaleX(1)}100%{transform:translateX(145px) translateY(0) scaleX(1)}}
+@keyframes huntMouseRun{0%{transform:translateX(0)}45%{transform:translateX(-60px)}75%{transform:translateX(-95px) translateY(-12px)}100%{transform:translateX(-115px)}}
+#spyCover{position:absolute;bottom:5%;left:5%;width:55%;height:100px;z-index:16;pointer-events:none}
+#spyCover .spy-planter{position:absolute;bottom:0;left:4%;font-size:45px;filter:drop-shadow(0 3px 2px #0003);animation:spyLeaves 2.4s ease-in-out infinite}
+#spyCover .spy-water-can{position:absolute;bottom:7%;right:4%;font-size:28px;animation:spyWater 1.5s ease-in-out infinite;transform-origin:80% 90%}
+#spyCover .spy-work-hint{position:absolute;bottom:30%;right:8%;font-size:48px;animation:spyWorker 2s ease-in-out infinite;transform-origin:bottom}
+#spyMimi.spy-peek{animation:spyPeek 1.6s ease-in-out infinite;z-index:15}
+#spyMimi.spy-peek svg{animation:spyLook 1.3s ease-in-out infinite alternate}
+@keyframes spyPeek{0%,100%{transform:translateY(6px)}50%{transform:translateY(-7px)}}
+@keyframes spyLook{from{transform:translateX(-2px)}to{transform:translateX(3px)}}
+@keyframes spyLeaves{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(4deg)}}
+@keyframes spyWater{0%,100%{transform:rotate(0)}50%{transform:rotate(-22deg)}}
+@keyframes spyWorker{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(7deg)}}
+@media(prefers-reduced-motion:reduce){#catHuntStage #huntCat,#catHuntStage #huntMouseArt,#spyMimi.spy-peek,#spyMimi.spy-peek svg,#spyCover *{animation:none!important}}
