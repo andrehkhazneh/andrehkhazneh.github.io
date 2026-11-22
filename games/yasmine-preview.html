@@ -18,7 +18,12 @@
 #nanaFeather{display:none;position:absolute;top:100%;right:25%;z-index:4;font-size:32px;transform-origin:top}
 #nanaUpper.playing #nanaFeather{display:block;animation:featherSwing 2.6s ease-in-out}
 @keyframes featherSwing{0%{transform:translateY(-20px) rotate(-20deg)}45%{transform:translateY(80px) rotate(28deg)}80%{transform:translateY(45px) rotate(-25deg)}100%{transform:translateY(-20px)}}
-#catScene .nana-character,#catScene [id*=nanaSprite]{display:none}#nanaCatAction,#nanaCatWater{display:none!important}#nanaUpperSpeech{color:#18263a!important;font-size:18px;line-height:1.5}#catTreatCount{display:none!important}#catTreatStat{font-weight:800;font-size:19px;color:#183d31}#catTreatStat .bar{height:14px;border-radius:20px;background:#e4e9e6;overflow:hidden;margin-top:8px}#catTreatStat .fill{height:100%;background:#2b965d;transition:width .2s}
+#catScene .nana-character,#catScene [id*=nanaSprite]{display:none}#nanaCatAction,#nanaCatWater{display:none!important}#nanaUpperSpeech{color:#18263a!important;font-size:18px;line-height:1.5}#catTreatCount{display:none!important}/* Keep Mishmish's four stat bars aligned on identical rows. */
+#catArea .cat-stats>div{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:minmax(44px,auto) 14px;align-items:center;column-gap:5px;min-width:0}
+#catArea .cat-stats>div>span{grid-column:1;grid-row:1;min-width:0}
+#catArea .cat-stats>div>b{grid-column:2;grid-row:1;white-space:nowrap}
+#catArea .cat-stats>div>.bar{grid-column:1/-1;grid-row:2;margin:0!important;width:100%;height:14px}
+#catTreatStat{font-weight:800;font-size:19px;color:#183d31}#catTreatStat .bar{height:14px;border-radius:20px;background:#e4e9e6;overflow:hidden;margin-top:8px}#catTreatStat .fill{height:100%;background:#2b965d;transition:width .2s}
 #catHuntStage{min-height:160px;overflow:hidden;position:relative;background:linear-gradient(#e4f6dc,#f6e5c9);border-radius:18px}
 #catHuntStage:after{content:'🌿 🪴 🌼 🪴';position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:30px;pointer-events:none}
 #catHuntStage #huntCat{width:120px!important;height:110px!important;position:absolute;bottom:24px;right:8%;z-index:2}
