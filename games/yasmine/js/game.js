@@ -211,7 +211,7 @@ board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';let saved=0;for(let i=
 },
 {name:'💧 إصلاح الري',hint:'دوّر قطع الأنابيب لتوصل الحنفية بالنبتة، وبعدها المي بتمشي.',setup(){
 board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';board.style.direction='ltr';
-const shapes=[['E','S'],['W','E'],['W','S'],['N','S'],['N','E'],['W','E']];const rotation={N:'E',E:'S',S:'W',W:'N'};
+const shapes=[['W','E'],['W','E'],['W','S'],['N','S'],['N','E'],['N','E']];const rotation={N:'E',E:'S',S:'W',W:'N'};
 const pieces=shapes.map((ports,i)=>({ports:ports.map(p=>{let q=p;for(let n=0;n<[1,2,3,1,2,3][i];n++)q=rotation[q];return q}),el:null}));
 const draw=ports=>{const m={N:'╵',E:'╶',S:'╷',W:'╴'};if(ports.includes('N')&&ports.includes('S'))return '┃';if(ports.includes('E')&&ports.includes('W'))return '━';return ports.includes('N')?(ports.includes('E')?'┗':'┛'):(ports.includes('E')?'┏':'┓')};
 const label=document.createElement('div');label.textContent='🚰 البداية: أعلى اليسار   →   🌱 النهاية: أسفل اليمين';label.style.cssText='grid-column:1/-1;text-align:center;color:white;font-weight:800';board.append(label);
