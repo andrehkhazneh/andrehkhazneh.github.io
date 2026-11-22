@@ -420,8 +420,8 @@ var mouse=document.createElement('div');mouse.id='huntMouse';mouse.innerHTML='<s
 mouse.style.cssText='position:absolute;bottom:9%;right:8%;font-size:45px;z-index:16;transition:right 3s linear;pointer-events:none';
 $('scene').appendChild(mouse);
 $('catMouseHunt').onclick=function(){
- if(state.catHunt.status==='running')return;
- var now=Date.now();if(now-state.catHuntLast<ECONOMY_CONFIG.catCooldownMs){$('catMouseReport').textContent=state.lang==='ar'?'القطة بدها ترتاح 3 دقايق بين الصيدات.':'The cat needs a 3-minute rest between hunts.';return}state.catHuntLast=now;var eligible=state.cat.fullness>ECONOMY_CONFIG.catMinFullness&&state.cat.mood>ECONOMY_CONFIG.catMinMood;state.cat.fullness=Math.max(0,state.cat.fullness-ECONOMY_CONFIG.catFullnessCost);state.catHunt={status:'running',end:now+4800,variant:Math.floor(Math.random()*3),coinEligible:eligible};
+ if(state.catHunt.status==='running'||Date.now()<(Number(state.catHunt.cooldownUntil)||0))return;
+ var now=Date.now();state.catHuntLast=now;var eligible=state.cat.fullness>ECONOMY_CONFIG.catMinFullness&&state.cat.mood>ECONOMY_CONFIG.catMinMood;state.cat.fullness=Math.max(0,state.cat.fullness-ECONOMY_CONFIG.catFullnessCost);state.catHunt={status:'running',end:now+4800,cooldownUntil:now+4800+120000,variant:Math.floor(Math.random()*3),coinEligible:eligible};
  activeArea='cat';save();render();
 };
 $('catMouseReward').onclick=function(){
@@ -434,15 +434,25 @@ renderCatExtras=function(){
  previousRenderCatExtras();renderBoutique();
  var ar=state.lang==='ar',hunt=state.catHunt;
  $('catMouseHunt').textContent=ar?'🐭 ابعت '+state.catName+' جولة بالمشتل لتصيد فأرة':'🐭 Send '+state.catName+' on a mouse patrol';
- $('catMouseHunt').disabled=hunt.status==='running';
- $('catMouseReport').textContent=hunt.status==='running'?(ar?state.catName+' عم تفتش عن الفأرة...':''+state.catName+' is looking for the mouse...'):(hunt.status==='done'||hunt.status==='rewarded')?(ar?'🐱 '+state.catName+' كمشت الفأرة وطردتها من المشتل!':'🐱 '+state.catName+' caught the mouse and chased it away!'):'';
+ var mouseCooldown=Math.max(0,(Number(hunt.cooldownUntil)||0)-Date.now());
+ if(mouseCooldown>0&&hunt.status!=='running'){var mouseSeconds=Math.ceil(mouseCooldown/1000);$('catMouseHunt').textContent=(ar?'🐭 صيد الفأرة متاح بعد ':'🐭 Mouse patrol in ')+String(Math.floor(mouseSeconds/60)).padStart(2,'0')+':'+String(mouseSeconds%60).padStart(2,'0');}
+ $('catMouseHunt').disabled=hunt.status==='running'||mouseCooldown>0;
+ $('catMouseHunt').style.opacity=$('catMouseHunt').disabled?'0.55':'';
+ $('catMouseHunt').style.filter=$('catMouseHunt').disabled?'grayscale(1)':'';
+ $('catMouseReport').textContent=hunt.status==='running'?'':(hunt.status==='done'||hunt.status==='rewarded')?(ar?'🐱 '+state.catName+' كمشت الفأرة وطردتها من المشتل!':'🐱 '+state.catName+' caught the mouse and chased it away!'):'';
  $('catMouseReward').hidden=hunt.status!=='done';
  $('catMouseReward').textContent=ar?'🍬 كافئ '+state.catName+' بحبة مكافأة على شطارتها':'🍬 Reward '+state.catName+' with a treat';
  $('catMouseReward').disabled=state.catTreats<1;
 };
 setInterval(function(){
  var hunt=state.catHunt;
- if(hunt.status!=='running'){mouse.hidden=true;$('catHuntStage').hidden=true;return}
+ if(hunt.status!=='running'){
+  mouse.hidden=true;$('catHuntStage').hidden=true;
+  var remainMouse=Math.max(0,(Number(hunt.cooldownUntil)||0)-Date.now()),mouseBtn=$('catMouseHunt');
+  if(mouseBtn){if(remainMouse>0){var t=Math.ceil(remainMouse/1000);mouseBtn.textContent=(state.lang==='ar'?'🐭 صيد الفأرة متاح بعد ':'🐭 Mouse patrol in ')+String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');mouseBtn.disabled=true;mouseBtn.style.opacity='0.55';mouseBtn.style.filter='grayscale(1)';}
+  else if(mouseBtn.disabled){mouseBtn.disabled=false;mouseBtn.style.opacity='';mouseBtn.style.filter='grayscale(0)';mouseBtn.textContent=state.lang==='ar'?'🐭 ابعت '+state.catName+' جولة بالمشتل لتصيد فأرة':'🐭 Send '+state.catName+' on a mouse patrol';}}
+  return
+ }
  mouse.hidden=true;spyMimi.hidden=true;spyCaption.hidden=true;$('catHuntStage').hidden=false;var elapsed=4800-Math.max(0,hunt.end-Date.now());$('catHuntStage').dataset.phase=elapsed<1300?'spot':elapsed<2900?'crouch':'chase';$('catHuntStage').dataset.variant=hunt.variant||0;
  var remain=hunt.end-Date.now();
  if(remain>4500){
