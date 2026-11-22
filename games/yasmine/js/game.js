@@ -294,8 +294,8 @@ $('catTreatBuy').onclick=function(){
  state.money-=10;state.catTreats+=3;sound('purchase');save();render();
 };
 $('catSpy').onclick=function(){
- if(state.catSpy.status==='running'||!state.abu.hired)return;
- state.catSpy={status:'running',report:'',end:Date.now()+8000};
+ if(state.catSpy.status==='running'||!state.abu.hired||Date.now()<(Number(state.catSpy.cooldownUntil)||0))return;
+ state.catSpy={status:'running',report:'',end:Date.now()+8000,cooldownUntil:Date.now()+8000+120000};
  activeArea='nursery';sound('notify');save();render();
  $('nurseryArea').scrollIntoView({behavior:'smooth',block:'center'});
 };
@@ -314,7 +314,11 @@ function renderCatExtras(){
   spy.status='done';spy.report=sleeping?'sleeping':'working';sound('notify');save();
  }
  $('catSpy').textContent=spy.status==='running'?(ar?'🐾 '+state.catName+' عم تتجسس...':'🐾 '+state.catName+' is spying...'):(ar?'🕵️ ابعت '+state.catName+' تتجسس على أبو وردة':'🕵️ Send '+state.catName+' to spy on John');
- $('catSpy').disabled=spy.status==='running'||!state.abu.hired;
+ var spyCooldown=Math.max(0,(Number(spy.cooldownUntil)||0)-Date.now());
+ if(spy.status!=='running'&&spyCooldown>0){var secs=Math.ceil(spyCooldown/1000);$('catSpy').textContent=(ar?'🕵️ التجسس متاح بعد ':'🕵️ Spy available in ')+String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');}
+ $('catSpy').disabled=spy.status==='running'||spyCooldown>0||!state.abu.hired;
+ $('catSpy').style.opacity=$('catSpy').disabled?'0.55':'';
+ $('catSpy').style.filter=$('catSpy').disabled?'grayscale(1)':'';
  $('catSpyReport').textContent=spy.status==='running'?(ar?state.catName+' رايحة تتفقد المشتل، استناها شوي...':''+state.catName+' is checking the nursery...'):spy.report?(spy.report==='sleeping'?(ar?'🐱 '+state.catName+': كمشتو نايم! 😴':'🐱 '+state.catName+': Caught John napping! 😴'):(ar?'🐱 '+state.catName+': أبو وردة عم يكدح بالمشتل! 💪':'🐱 '+state.catName+': John is working hard! 💪')):(ar?'دلّع '+state.catName+' بلمسة، وابعتها بمهمة تجسس!':'Tap '+state.catName+' to pet her, or send her on a spy mission!');
  $('catTreatReward').hidden=spy.status!=='done';
  $('catTreatReward').textContent=ar?'🍬 كافئ '+state.catName+' بحبة مكافأة':'🍬 Reward '+state.catName+' with a treat';
@@ -323,7 +327,7 @@ function renderCatExtras(){
 
 /* Visible spy mission: Mimi sneaks into the nursery and watches John. */
 var spyStyle=document.createElement('style');
-spyStyle.textContent='#spyMimi{position:absolute;bottom:6%;left:-24%;width:100px;height:75px;z-index:15;pointer-events:none;transition:left 3s ease-in-out;filter:drop-shadow(0 5px 4px #0004)}#spyMimi.spy-in{left:18%}#spyMimi.spy-out{left:105%}#spyMimi svg{width:100%;height:100%}#spyCaption{position:absolute;left:8%;right:8%;top:2%;bottom:auto;z-index:17;background:#fff9e6e8;color:#27442d;border-radius:15px;padding:8px;text-align:center;font-weight:bold;pointer-events:none}';
+spyStyle.textContent='#spyMimi{position:absolute;bottom:6%;right:-24%;width:100px;height:75px;z-index:15;pointer-events:none;transition:right 2s ease-in-out;filter:drop-shadow(0 5px 4px #0004)}#spyMimi.spy-in{right:5%}#spyMimi.spy-out{right:-24%}#spyMimi svg{width:100%;height:100%}#spyCaption{position:absolute;left:8%;right:8%;top:2%;bottom:auto;z-index:17;background:#fff9e6e8;color:#27442d;border-radius:15px;padding:8px;text-align:center;font-weight:bold;pointer-events:none}';
 document.head.appendChild(spyStyle);
 var spyMimi=document.createElement('div');spyMimi.id='spyMimi';spyMimi.hidden=true;
 spyMimi.innerHTML='<svg viewBox="0 0 120 95" aria-hidden="true"><path d="M19 47L16 13L43 29Q60 20 78 28L104 12L102 48Q109 71 84 83Q57 94 32 80Q12 69 19 47Z" fill="#edab61" stroke="#a76234" stroke-width="3"/><path d="M24 34L22 23L40 34M82 34L99 22L96 37" fill="#f3a6a0"/><ellipse cx="45" cy="54" rx="5" ry="7" fill="#322b25"/><ellipse cx="78" cy="54" rx="5" ry="7" fill="#322b25"/><path d="M55 66L66 66L60 72Z" fill="#bc7073"/><path d="M60 72Q51 80 45 73M60 72Q69 80 75 73" stroke="#8a5236" stroke-width="2.5" fill="none"/><path d="M35 69L12 66M35 75L13 79M85 69L108 66M85 75L109 79" stroke="#8a5236" stroke-width="2"/></svg>';
@@ -340,14 +344,18 @@ function updateSpyScene(){
  if(spyButton)spyButton.textContent=(ar?'🐾 '+state.catName+' عم تتجسس... ':'🐾 '+state.catName+' is spying... ')+Math.max(0,Math.ceil(remain/1000))+' '+(ar?'ثانية':'s');
  spyCaption.textContent=remain>4000?(ar?'🐾 '+state.catName+' عم تتسلّل لتراقب أبو وردة...':'🐾 '+state.catName+' is sneaking up on John...'):(ar?'🤫 ششش... '+state.catName+' عم تتلصّص!':'🤫 Shhh... '+state.catName+' is spying!');
  if(!spyVisualStarted){spyVisualStarted=Date.now();spyMimi.className='';requestAnimationFrame(function(){spyMimi.className='spy-in spy-peek'})}
- if(remain<1800)spyMimi.className='spy-out';
+ if(remain<2200)spyMimi.className='spy-out';
 }
 setInterval(function(){
  updateSpyScene();
  var spy=state.catSpy;
+ if(spy.status!=='running'&&activeArea==='cat'&&Date.now()<(Number(spy.cooldownUntil)||0)){
+  var remaining=Math.ceil((spy.cooldownUntil-Date.now())/1000),button=$('catSpy');
+  if(button){button.textContent=(state.lang==='ar'?'🕵️ التجسس متاح بعد ':'🕵️ Spy available in ')+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');button.disabled=true;button.style.opacity='0.55';button.style.filter='grayscale(1)';}
+ }else if(spy.status!=='running'&&activeArea==='cat'&&$('catSpy').disabled&&state.abu.hired){renderCatExtras()}
  if(spy.status==='running'&&Date.now()>=spy.end){
   spy.status='done';spy.report=state.abu.paused?'sleeping':'working';sound('notify');save();
-  activeArea='cat';render();$('catArea').scrollIntoView({behavior:'smooth',block:'center'});
+  activeArea='cat';render();$('catArea').scrollIntoView({behavior:'smooth',block:'start'});
  }
 },250);
 
