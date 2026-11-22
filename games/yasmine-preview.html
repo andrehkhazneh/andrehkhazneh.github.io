@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>حديقة السعادة | Andreh’s Garden</title>
-<link rel="stylesheet" href="yasmine/css/base.css?v=20261122-mishmish10">
+<link rel="stylesheet" href="yasmine/css/base.css?v=20261122-voice11">
 <link rel="stylesheet" href="yasmine/css/overrides.css?v=20261122-mishmish10"><style id="mishmishRefinement">
 #catArea>.grid,#catArea .grid:has(#catWater){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
 #catArea .grid:has(#catWater)>button{font-size:clamp(16px,4vw,21px)!important;font-weight:800!important;min-width:0!important;min-height:72px!important;white-space:normal!important;line-height:1.4!important}
@@ -18,7 +18,7 @@
 #nanaFeather{display:none;position:absolute;top:100%;right:25%;z-index:4;font-size:32px;transform-origin:top}
 #nanaUpper.playing #nanaFeather{display:block;animation:featherSwing 2.6s ease-in-out}
 @keyframes featherSwing{0%{transform:translateY(-20px) rotate(-20deg)}45%{transform:translateY(80px) rotate(28deg)}80%{transform:translateY(45px) rotate(-25deg)}100%{transform:translateY(-20px)}}
-#catScene .nana-character,#catScene [id*=nanaSprite]{display:none}
+#catScene .nana-character,#catScene [id*=nanaSprite]{display:none}#nanaCatAction,#nanaCatWater{display:none!important}#nanaUpperSpeech{color:#18263a!important;font-size:18px;line-height:1.5}#catTreatCount{display:none!important}#catTreatStat{font-weight:800;font-size:19px;color:#183d31}#catTreatStat .bar{height:14px;border-radius:20px;background:#e4e9e6;overflow:hidden;margin-top:8px}#catTreatStat .fill{height:100%;background:#2b965d;transition:width .2s}
 #catHuntStage{min-height:160px;overflow:hidden;position:relative;background:linear-gradient(#e4f6dc,#f6e5c9);border-radius:18px}
 #catHuntStage:after{content:'🌿 🪴 🌼 🪴';position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:30px;pointer-events:none}
 #catHuntStage #huntCat{width:120px!important;height:110px!important;position:absolute;bottom:24px;right:8%;z-index:2}
@@ -32,7 +32,7 @@
 #mishmishNotices .mish-notice{background:#fffaf0!important;color:#17243b!important}
 #mishmishNotices .mish-notice strong{color:#17243b!important;font-size:20px!important;font-weight:900!important}
 #mishmishNotices .mish-notice p{color:#17243b!important;font-size:19px!important;font-weight:800!important;opacity:1!important;text-shadow:none!important}
-#mishmishNotices .mish-close{background:#dc2626!important;color:#fff!important;border:2px solid #fff!important;width:42px!important;height:42px!important;font-size:28px!important;font-weight:900!important;display:grid!important;place-items:center!important;line-height:1!important;cursor:pointer}
+#mishmishNotices .mish-notice{padding-right:65px!important;min-height:56px}#mishmishNotices .mish-close{right:9px!important;top:9px!important;width:35px!important;height:35px!important;font-size:23px!important}#mishmishNotices .mish-close{background:#dc2626!important;color:#fff!important;border:2px solid #fff!important;width:42px!important;height:42px!important;font-size:28px!important;font-weight:900!important;display:grid!important;place-items:center!important;line-height:1!important;cursor:pointer}
 #yasminMiniGames{margin:14px 0;padding:14px;border:2px solid #a4c8e8;border-radius:18px;background:#203b61;color:#fff}
 #yasminMiniGames h3{margin:0 0 8px;font-size:22px;color:#fff}
 #yasminMiniGames p,#yasminMiniGames strong{color:#fff}
@@ -127,7 +127,7 @@
 </div>
 <div class="cat-stats">
 <div><span id="catFullnessLabel">الشبع</span> <b id="catFullness"></b><div class="bar" aria-hidden="true"><div id="catFullnessBar" class="fill"></div></div></div>
-<div><span id="catHydrationLabel">الارتواء</span> <b id="catHydration">75%</b><div class="bar"><div id="catHydrationBar" class="fill" style="width:75%"></div></div></div><div><span id="catMoodLabel">المزاج</span> <b id="catMood"></b><div class="bar" aria-hidden="true"><div id="catMoodBar" class="fill"></div></div></div>
+<div><span id="catHydrationLabel">الارتواء</span> <b id="catHydration">75%</b><div class="bar"><div id="catHydrationBar" class="fill" style="width:75%"></div></div></div><div><span id="catMoodLabel">المزاج</span> <b id="catMood"></b><div class="bar" aria-hidden="true"><div id="catMoodBar" class="fill"></div></div></div><div id="catTreatStat"><span>🍬 المكافآت المتوفرة</span> <b id="catTreatStatValue">0 حبة</b><div class="bar"><div id="catTreatStatBar" class="fill" style="width:0%"></div></div></div>
 </div>
 <div class="grid">
 <button id="catWater" type="button">💧 اسقيها</button><button id="catFeed" type="button">🍲 طعميها</button>
@@ -170,9 +170,10 @@ const node=$(id);if(!node)continue;
 const update=()=>add(type,node.textContent);
 new MutationObserver(update).observe(node,{childList:true,characterData:true,subtree:true});update();
 }
+const treatCount=$('catTreatCount'),treatValue=$('catTreatStatValue'),treatBar=$('catTreatStatBar');if(treatCount&&treatValue){const syncTreat=()=>{const value=(treatCount.textContent.match(/\d+/)||['0'])[0];treatValue.textContent=value+' حبة';if(treatBar)treatBar.style.width=Math.min(100,Number(value)*20)+'%'};new MutationObserver(syncTreat).observe(treatCount,{childList:true,characterData:true,subtree:true});syncTreat()}
 const scene=$('catScene'),nana=$('nanaUpper'),speech=$('nanaUpperSpeech'),action=$('nanaCatAction');
 if(scene&&nana){const original=scene.querySelector('[id*=nana],.nana-character');if(original&&original.tagName.toLowerCase()==='svg'){const clone=original.cloneNode(true);clone.removeAttribute('id');clone.style.cssText='height:55px;width:55px';$('nanaUpperArt').replaceChildren(clone);original.style.display='none'}}
-function showNana(){const hired=!!($('hireNana')&&/إلغاء|موظّفة|تم التوظيف|hired/i.test($('hireNana').textContent||''));if(hired)nana.hidden=false;return hired}
+function showNana(){const hired=!!($('hireNana')&&/إلغاء|موظّفة|تم التوظيف|hired/i.test($('hireNana').textContent||''));nana.hidden=!hired;return hired}
 if(action){new MutationObserver(()=>{if(action.textContent.trim()&&showNana())speech.textContent=action.textContent.trim()}).observe(action,{childList:true,characterData:true,subtree:true})}
 setInterval(()=>{if(showNana()&&!nana.classList.contains('playing')&&Math.random()<.25){nana.classList.add('playing');speech.textContent='يلا يا مشمش، امسكي الريشة!';setTimeout(()=>nana.classList.remove('playing'),2800)}},20000);
 const water=$('catWater'),bowl=$('catScene');if(water&&bowl)water.addEventListener('click',()=>{let el=$('mishWaterBowl');if(!el){el=document.createElement('div');el.id='mishWaterBowl';el.textContent='🥣💧';el.style.cssText='position:absolute;bottom:5%;left:20%;font-size:30px;z-index:3';bowl.style.position='relative';bowl.append(el)}el.hidden=false;setTimeout(()=>el.hidden=true,2800)});
