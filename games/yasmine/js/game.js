@@ -276,6 +276,8 @@ function updateSpyScene(){
  if(!running){spyMimi.hidden=true;spyCaption.hidden=true;spyCover.hidden=true;spyVisualStarted=0;return}
  spyMimi.hidden=false;spyCaption.hidden=false;spyCover.hidden=false;
  var remain=spy.end-Date.now();
+ var spyButton=$('catSpy');
+ if(spyButton)spyButton.textContent=(ar?'🐾 '+state.catName+' عم تتجسس... ':'🐾 '+state.catName+' is spying... ')+Math.max(0,Math.ceil(remain/1000))+' '+(ar?'ثانية':'s');
  spyCaption.textContent=remain>4000?(ar?'🐾 '+state.catName+' عم تتسلّل لتراقب أبو وردة...':'🐾 '+state.catName+' is sneaking up on John...'):(ar?'🤫 ششش... '+state.catName+' عم تتلصّص!':'🤫 Shhh... '+state.catName+' is spying!');
  if(!spyVisualStarted){spyVisualStarted=Date.now();spyMimi.className='';requestAnimationFrame(function(){spyMimi.className='spy-in spy-peek'})}
  if(remain<1800)spyMimi.className='spy-out';
