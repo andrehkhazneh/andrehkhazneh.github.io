@@ -390,7 +390,7 @@ function purrCat(){
   gain.gain.setValueAtTime(.0001,t);gain.gain.linearRampToValueAtTime(.018*audioSettings.sfxVolume/100,t+.15);gain.gain.setValueAtTime(.018*audioSettings.sfxVolume/100,t+.65);gain.gain.linearRampToValueAtTime(.0001,t+1.05);
   osc.connect(gain);gain.connect(ctx.destination);osc.start(t);lfo.start(t);osc.stop(t+1.07);lfo.stop(t+1.07);
  }
- $('catMessage').textContent=state.lang==='ar'?'🐱 خرررر... ميمي مبسوطة بالدلع!':'🐱 Purrrr... Mimi loves being petted!';
+ $('catMessage').textContent=state.lang==='ar'?'🐱 خرررر... '+state.catName+' مبسوطة بالدلع!':'🐱 Purrrr... '+state.catName+' loves being petted!';
  save();
 }
 $('catScene').style.cursor='pointer';
@@ -424,7 +424,7 @@ function renderCatExtras(){
  }
  $('catSpy').textContent=spy.status==='running'?(ar?'🐾 '+state.catName+' عم تتجسس...':'🐾 '+state.catName+' is spying...'):(ar?'🕵️ ابعت '+state.catName+' تتجسس على أبو وردة':'🕵️ Send '+state.catName+' to spy on John');
  $('catSpy').disabled=spy.status==='running'||!state.abu.hired;
- $('catSpyReport').textContent=spy.status==='running'?(ar?'ميمي رايحة تتفقد المشتل، استناها شوي...':''+state.catName+' is checking the nursery...'):spy.report?(spy.report==='sleeping'?(ar?'🐱 '+state.catName+': كمشتو نايم! 😴':'🐱 '+state.catName+': Caught John napping! 😴'):(ar?'🐱 '+state.catName+': أبو وردة عم يكدح بالمشتل! 💪':'🐱 '+state.catName+': John is working hard! 💪')):(ar?'دلّع '+state.catName+' بلمسة، وابعتها بمهمة تجسس!':'Tap '+state.catName+' to pet her, or send her on a spy mission!');
+ $('catSpyReport').textContent=spy.status==='running'?(ar?state.catName+' رايحة تتفقد المشتل، استناها شوي...':''+state.catName+' is checking the nursery...'):spy.report?(spy.report==='sleeping'?(ar?'🐱 '+state.catName+': كمشتو نايم! 😴':'🐱 '+state.catName+': Caught John napping! 😴'):(ar?'🐱 '+state.catName+': أبو وردة عم يكدح بالمشتل! 💪':'🐱 '+state.catName+': John is working hard! 💪')):(ar?'دلّع '+state.catName+' بلمسة، وابعتها بمهمة تجسس!':'Tap '+state.catName+' to pet her, or send her on a spy mission!');
  $('catTreatReward').hidden=spy.status!=='done';
  $('catTreatReward').textContent=ar?'🍬 كافئ '+state.catName+' بحبة مكافأة':'🍬 Reward '+state.catName+' with a treat';
  $('catTreatReward').disabled=state.catTreats<1;
@@ -444,7 +444,7 @@ function updateSpyScene(){
  if(!running){spyMimi.hidden=true;spyCaption.hidden=true;spyVisualStarted=0;return}
  spyMimi.hidden=false;spyCaption.hidden=false;
  var remain=spy.end-Date.now();
- spyCaption.textContent=remain>4000?(ar?'🐾 '+state.catName+' عم تتسلّل لتراقب أبو وردة...':'🐾 '+state.catName+' is sneaking up on John...'):(ar?'🤫 ششش... '+state.catName+' عم تتلصّص!':'🤫 Shhh... Mimi is spying!');
+ spyCaption.textContent=remain>4000?(ar?'🐾 '+state.catName+' عم تتسلّل لتراقب أبو وردة...':'🐾 '+state.catName+' is sneaking up on John...'):(ar?'🤫 ششش... '+state.catName+' عم تتلصّص!':'🤫 Shhh... '+state.catName+' is spying!');
  if(!spyVisualStarted){spyVisualStarted=Date.now();spyMimi.className='';requestAnimationFrame(function(){spyMimi.className='spy-in'})}
  if(remain<1800)spyMimi.className='spy-out';
 }
@@ -533,7 +533,7 @@ renderCatExtras=function(){
  var ar=state.lang==='ar',hunt=state.catHunt;
  $('catMouseHunt').textContent=ar?'🐭 ابعت '+state.catName+' جولة بالمشتل لتصيد فأرة':'🐭 Send '+state.catName+' on a mouse patrol';
  $('catMouseHunt').disabled=hunt.status==='running';
- $('catMouseReport').textContent=hunt.status==='running'?(ar?'ميمي عم تفتش عن الفأرة...':''+state.catName+' is looking for the mouse...'):(hunt.status==='done'||hunt.status==='rewarded')?(ar?'🐱 '+state.catName+' كمشت الفأرة وطردتها من المشتل!':'🐱 '+state.catName+' caught the mouse and chased it away!'):'';
+ $('catMouseReport').textContent=hunt.status==='running'?(ar?state.catName+' عم تفتش عن الفأرة...':''+state.catName+' is looking for the mouse...'):(hunt.status==='done'||hunt.status==='rewarded')?(ar?'🐱 '+state.catName+' كمشت الفأرة وطردتها من المشتل!':'🐱 '+state.catName+' caught the mouse and chased it away!'):'';
  $('catMouseReward').hidden=hunt.status!=='done';
  $('catMouseReward').textContent=ar?'🍬 كافئ '+state.catName+' بحبة مكافأة على شطارتها':'🍬 Reward '+state.catName+' with a treat';
  $('catMouseReward').disabled=state.catTreats<1;
