@@ -1,0 +1,111 @@
+.audio-controls button.switch[aria-checked="false"]{background:#bd393e!important;color:#fff!important}.audio-controls button.switch[aria-checked="true"]{background:#23854b!important;color:#fff!important}#staffArea #staffTitle{font-size:clamp(36px,9vw,40px)!important;line-height:1.25!important;white-space:normal;overflow-wrap:anywhere}#staffArea #staffTitle #yasminFace{font-size:22px!important}#abuPanel .staff-intro{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;flex-wrap:nowrap!important}#abuPanel .staff-intro>div:first-child{flex:1!important;min-width:0!important}#abuPanel #abuTitle{display:flex;align-items:center;justify-content:flex-start;gap:8px;flex-wrap:nowrap;font-size:clamp(36px,9vw,40px)!important;line-height:1.25!important;white-space:nowrap}#abuTitle .abu-icon{font-size:24px;line-height:1;flex:none}#buyFertilizerDirect{width:100%;margin-top:12px;font-size:clamp(17px,4vw,21px)!important;padding:12px!important}
+
+#catScene:not(.is-napping)>svg{visibility:visible!important;display:block!important;opacity:1!important}#catScene.is-napping:not(:has(#catBed:not([hidden])))>svg{visibility:visible!important}#settingsPanel[hidden],#identityPanel[hidden],#settingsNamesPanel[hidden]{display:none!important}#weatherMode{max-width:100%;min-width:0}#daySettings{min-width:0}
+
+
+#missionPanel,#stockHint[hidden],#careInfo[hidden],#jokeRating[hidden],#abuNotice[hidden]{display:none!important}
+#staffArea{padding:16px!important}
+#staffArea .staff-intro{align-items:flex-start!important;gap:10px!important;margin-bottom:0!important}
+#staffArea .staff-intro>div{align-self:flex-start;padding-top:4px}
+#staffArea #staffTitle{margin:0 0 3px!important;line-height:1.25}
+#staffArea #staffRole{margin:0!important;line-height:1.3}
+#staffArea #staffMood{margin:0 0 8px!important;text-align:end;line-height:1.3}
+#staffArea .yasmin-art{max-height:220px!important}
+#staffArea #stockPanel{margin:8px 0!important}
+#staffArea #stockPanel .stock-row{padding:8px 0!important}
+#staffArea #staffDialogue{margin:8px 0 12px!important;padding:12px!important}
+#staffArea #jokeRating{display:flex;gap:9px;align-items:center;margin:8px 0}
+#jokeRating button:not(#jokeClose){flex:1;min-width:0}
+#jokeClose{flex:0 0 34px!important;min-width:34px!important;padding:5px!important;font-size:23px;line-height:1}
+#abuNotice{margin:8px 0 12px!important}
+#scene{position:relative;overflow:hidden}
+#scene[data-weather="rain"]::after{content:"";pointer-events:none;position:absolute;inset:0;background:repeating-linear-gradient(105deg,transparent 0 19px,rgba(206,233,255,.48) 20px 21px,transparent 22px 35px);background-size:110px 110px;animation:rainfall .65s linear infinite}
+#scene[data-weather="wind"] .cloud{animation:windcloud 3s ease-in-out infinite alternate}
+#scene[data-weather="wind"] .plant{transform:translateX(-50%)}#scene[data-weather="wind"] .plant svg{transform-box:fill-box;transform-origin:50% 100%;animation:windplant 2.4s ease-in-out infinite alternate}
+@keyframes rainfall{to{background-position:-45px 110px}}
+@keyframes windcloud{to{transform:translateX(55px)}}
+@keyframes windplant{from{transform:rotate(-2deg)}to{transform:rotate(3deg)}}
+body.night-ui{background:linear-gradient(#131e32,#1d2b3b)!important;color:#e5ecf1!important}
+body.night-ui main,body.night-ui .panel,body.night-ui #settingsPanel,body.night-ui #staffArea,body.night-ui .staff-request,body.night-ui #daySettings,body.night-ui #employeesPanel{background:#243448!important;color:#edf3f5!important;border-color:#52657a!important}
+body.night-ui button,body.night-ui select,body.night-ui input{background:linear-gradient(#42566b,#304357)!important;color:#f5f8ff!important;border-color:#73859a!important;box-shadow:0 5px #192a3c!important}
+body.night-ui p,body.night-ui .info,body.night-ui .staff-mood,body.night-ui .foot,body.night-ui h1,body.night-ui h2,body.night-ui h3,body.night-ui span,body.night-ui label,body.night-ui b{color:#e5ecf1}
+body.night-ui .staff-dialogue,body.night-ui .abu-notice{background:#34475b!important;color:#f6f7f8!important}
+body.night-ui .bar{background:#42536a!important}
+body.night-ui .stock-row{border-color:#52657a!important}
+
+
+
+body.night-ui .hud.hud-3d>div{background:linear-gradient(#354c63,#2a4055)!important;color:#fff!important;border-color:#607c94!important;box-shadow:0 6px #172637!important}
+body.night-ui .hud.hud-3d>div span,body.night-ui .hud.hud-3d>div b,body.night-ui #money,body.night-ui #sales,body.night-ui #quality{color:#fff!important;opacity:1!important;text-shadow:none!important}
+#staffArea .staff-intro{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start!important;direction:rtl;gap:6px!important}
+#staffArea .staff-intro>div{grid-column:1;grid-row:1;min-width:0}
+#staffArea .yasmin-art{grid-column:2;grid-row:1 / span 2;width:100%!important;max-height:250px!important;align-self:start}
+#staffArea #stockPanel{grid-column:1;grid-row:2;margin:8px 0 0!important;align-self:end}
+#staffArea #stockPanel .stock-row{font-size:clamp(12px,3.2vw,17px);gap:5px;padding:8px 0!important}
+#staffArea #staffMood{margin:6px 0 4px!important}
+#scene[data-weather="rain"]::after{background:none!important;content:"";background-image:radial-gradient(ellipse 1px 8px at 12% 18%,rgba(196,225,246,.65) 95%,transparent),radial-gradient(ellipse 1px 9px at 37% 61%,rgba(196,225,246,.6) 95%,transparent),radial-gradient(ellipse 1px 7px at 68% 35%,rgba(196,225,246,.6) 95%,transparent),radial-gradient(ellipse 1px 8px at 88% 76%,rgba(196,225,246,.65) 95%,transparent)!important;background-size:90px 105px!important;animation:rainfall .9s linear infinite!important;opacity:.75}
+#staffArea #jokeRating[hidden]{display:none!important}
+
+
+
+#gameTime{font-weight:bold;text-align:center;padding:9px;margin:8px auto 0;border-radius:14px;background:#e5f0d7;color:#244633;max-width:260px}
+body.night-ui #gameTime{background:#344b60;color:#fff}
+header #siteBack{background:linear-gradient(#445b72,#293e54)!important;color:#fff!important;border-color:#72869b!important;box-shadow:0 5px #16283a!important}
+body:not(.night-ui) header #siteBack{background:linear-gradient(#fffef0,#dce8c9)!important;color:#2d4934!important;box-shadow:0 5px #8aa07b!important}
+body.night-ui .audio-controls .sound-control{background:#30475d!important;color:#fff!important;border:1px solid #698098}
+body.night-ui .audio-controls label,body.night-ui #sfxLabel,body.night-ui #musicLabel{color:#fff!important;opacity:1!important}
+#scene[data-weather="rain"]::after{content:"";position:absolute;inset:-30% 0 0;pointer-events:none;background-image:repeating-linear-gradient(100deg,transparent 0 27px,rgba(205,234,255,.68) 28px 29px,transparent 30px 49px)!important;background-size:110px 140px!important;animation:rainMove .65s linear infinite!important;z-index:8}
+@keyframes rainMove{from{transform:translateY(-65px)}to{transform:translateY(75px)}}
+#scene[data-weather="rain"] .cloud{animation:windcloud 4s ease-in-out infinite alternate!important;opacity:1!important}
+#staffArea #jokeRating[hidden]{display:none!important}
+
+
+
+#scene[data-weather="rain"]{background:linear-gradient(180deg,#697a88 0%,#99a9b1 56%,#c4d0ca 78%,#83ad86 79%)!important}
+#scene[data-weather="rain"] .sun{display:none!important}
+#scene[data-weather="rain"] .cloud{font-size:clamp(70px,16vw,115px)!important;filter:grayscale(1) brightness(.78) drop-shadow(40px 12px 5px #66717b)!important;opacity:.96!important;animation:rainClouds 7s ease-in-out infinite alternate!important}
+#scene[data-weather="rain"]::before{content:"☁️ ☁️";position:absolute;top:1%;right:6%;left:5%;font-size:clamp(44px,11vw,76px);letter-spacing:12px;filter:grayscale(1) brightness(.8);opacity:.85;pointer-events:none;z-index:2;animation:rainClouds 9s ease-in-out infinite alternate}
+@keyframes rainClouds{from{transform:translateX(-18px)}to{transform:translateX(24px)}}
+#nextGoal{margin:7px 0 12px;padding:10px 12px;cursor:pointer;text-align:start}#nextGoal[hidden]{display:none!important}#nextGoal strong{display:block;font-size:14px;margin-bottom:5px}#nextGoal .goal-bars{display:grid;grid-template-columns:1fr 1fr;gap:8px}#nextGoal label{display:block;font-size:12px}#nextGoal progress{width:100%;height:12px;accent-color:#4c9c60}#nextGoal p{font-size:12px;margin:5px 0 0}#event{z-index:7;touch-action:manipulation;min-width:48px;min-height:48px}#event[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){#event{animation:none!important}}
+
+
+#catTab{font-size:clamp(16px,3.8vw,19px)!important}
+
+#nanaPanel{margin-top:16px;background:#eee9f7}#nanaPanel .nana-art{width:min(42%,170px);max-height:230px;flex-shrink:0}#nanaPanel .staff-intro{display:flex;align-items:center;justify-content:space-between;gap:12px}#catSheetOverlay[hidden],#catHuntStage[hidden]{display:none!important}#catSheetOverlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center}#catSheet{box-sizing:border-box;width:min(100%,600px);max-height:75vh;max-height:75dvh;overflow-y:auto;overscroll-behavior:contain;background:#283b50;color:#fff;border:1px solid #7c8fa2;border-radius:22px 22px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 35px #0006;animation:sheetUp .2s ease-out}#catSheet .sheet-grip{height:5px;width:56px;border-radius:10px;background:#a8b4c2;margin:0 auto 12px}#catSheet .sheet-head{display:flex;justify-content:space-between;align-items:center}#catSheetClose{width:44px;height:44px;flex:none}#catSheetBalance{font-weight:700}body.cat-shop-open{overflow:hidden}#catHuntStage{position:relative;overflow:hidden;height:160px;border-radius:18px;background:linear-gradient(#d7e7f0,#c6e5c4);margin:12px 0}#huntCat{position:absolute;bottom:20px;left:15%;font-size:65px;transition:transform .5s}#huntBang{position:absolute;top:-10px;right:-5px;font-size:25px;color:#b32424}#huntMouseArt{position:absolute;width:95px;height:75px;bottom:12px;right:8%;transition:transform .5s}#catHuntStage[data-phase="crouch"] #huntCat{transform:scaleY(.7) translateY(24px)}#catHuntStage[data-phase="crouch"] #huntBang,#catHuntStage[data-phase="chase"] #huntBang{display:none}#catHuntStage[data-phase="chase"] #huntCat{transform:translateX(110px) rotate(-8deg)}#catHuntStage[data-phase="chase"] #huntMouseArt{transform:translateX(110px)}#catHuntStage[data-variant="1"][data-phase="chase"] #huntCat{transform:translate(110px,-20px)}#catHuntStage[data-variant="2"][data-phase="chase"] #huntCat{transform:translate(100px,10px) rotate(8deg)}#catMouseReport:empty{display:none;margin:0;padding:0}@keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}@media(prefers-reduced-motion:reduce){#catSheet,#huntCat,#huntMouseArt{animation:none!important;transition:none!important}}@media(max-width:440px){#nanaPanel .nana-art{width:38%}}
+/* Four visual refinements: manager card, cat hat, mouse chase and spying. */
+.employee-manager-card{display:flex;align-items:center;gap:12px;padding:12px;margin:12px 0;border:1px solid #e7cda7;border-radius:16px;background:#fff8ed;color:#49372b}
+.employee-manager-icon{font-size:40px;flex-shrink:0}.employee-manager-card h4{margin:0 0 5px;font-size:20px}.employee-manager-card p{margin:4px 0;line-height:1.5}
+body.night-ui .employee-manager-card{background:#30445a;color:#f6f2e9;border-color:#64758b}
+#catHuntStage[data-phase="spot"] #huntCat{animation:huntSpot .7s ease-in-out infinite alternate}
+#catHuntStage[data-phase="chase"] #huntCat{animation:huntCatRun 1.8s ease-in-out both}
+#catHuntStage[data-phase="chase"] #huntMouseArt{animation:huntMouseRun 1.8s ease-in-out both}
+@keyframes huntSpot{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-7px) rotate(5deg)}}
+@keyframes huntCatRun{0%{transform:translateX(0) scaleX(1)}35%{transform:translateX(100px) scaleX(1)}65%{transform:translateX(125px) translateY(-20px) scaleX(1)}100%{transform:translateX(145px) translateY(0) scaleX(1)}}
+@keyframes huntMouseRun{0%{transform:translateX(0)}45%{transform:translateX(-60px)}75%{transform:translateX(-95px) translateY(-12px)}100%{transform:translateX(-115px)}}
+#spyCover{position:absolute;bottom:5%;left:5%;width:55%;height:100px;z-index:16;pointer-events:none}
+#spyCover .spy-planter{position:absolute;bottom:0;left:4%;font-size:45px;filter:drop-shadow(0 3px 2px #0003);animation:spyLeaves 2.4s ease-in-out infinite}
+#spyCover .spy-water-can{position:absolute;bottom:7%;right:4%;font-size:28px;animation:spyWater 1.5s ease-in-out infinite;transform-origin:80% 90%}
+#spyCover .spy-work-hint{position:absolute;bottom:30%;right:8%;font-size:48px;animation:spyWorker 2s ease-in-out infinite;transform-origin:bottom}
+#spyMimi.spy-peek{animation:spyPeek 1.6s ease-in-out infinite;z-index:15}
+#spyMimi.spy-peek svg{animation:spyLook 1.3s ease-in-out infinite alternate}
+@keyframes spyPeek{0%,100%{transform:translateY(6px)}50%{transform:translateY(-7px)}}
+@keyframes spyLook{from{transform:translateX(-2px)}to{transform:translateX(3px)}}
+@keyframes spyLeaves{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(4deg)}}
+@keyframes spyWater{0%,100%{transform:rotate(0)}50%{transform:rotate(-22deg)}}
+@keyframes spyWorker{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(7deg)}}
+@media(prefers-reduced-motion:reduce){#catHuntStage #huntCat,#catHuntStage #huntMouseArt,#spyMimi.spy-peek,#spyMimi.spy-peek svg,#spyCover *{animation:none!important}}
+
+/* Staff tab manager card and clean, layered spying scene. */
+#workersYasminCard{background:linear-gradient(135deg,#fff8e8,#f0f9e7);color:#344638}
+#workersYasminCard .staff-intro{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#workersYasminCard h2{margin:0;font-size:clamp(26px,6vw,38px)}
+#workersYasminCard .workers-manager-portrait{font-size:54px;line-height:1}
+body.night-ui #workersYasminCard{background:linear-gradient(135deg,#34475a,#2b3c4d)!important;color:#f5f6f0!important}
+#spyMimi{bottom:18%!important;left:110%;width:82px!important;height:68px!important;z-index:15!important;transition:left 2.4s ease-in-out!important}
+#spyMimi.spy-in,#spyMimi.spy-in.spy-peek{left:64%!important}
+#spyMimi.spy-out{left:110%!important}
+#spyCover{left:auto!important;right:2%!important;bottom:4%!important;width:132px!important;height:94px!important;z-index:16!important}
+#spyCover svg{display:block;width:100%;height:100%;filter:drop-shadow(0 3px 3px #0003)}
+#spyMimi.spy-peek{animation:spyPeek 1.6s ease-in-out infinite!important}
+@media(max-width:360px){#spyMimi.spy-in,#spyMimi.spy-in.spy-peek{left:60%!important}#spyCover{width:116px!important}}
+@media(prefers-reduced-motion:reduce){#spyMimi.spy-peek{animation:none!important}#spyMimi{transition:none!important}}
