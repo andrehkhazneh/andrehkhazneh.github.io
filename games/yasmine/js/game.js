@@ -165,45 +165,42 @@ const start=document.getElementById('miniGameStart'),board=document.getElementBy
 if(!start||!board)return;
 let previous=-1,finished=false,cleanup=()=>{},score=0;
 const games=[
-{name:'🍂 تنظيف المشتل',hint:'اسحب خمس ورقات يابسة إلى السلة.',setup(){
-let count=0;board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';const bin=document.createElement('div');bin.textContent='🧺 اسحب الورق لهون';bin.className='mini-bin';bin.style.gridColumn='1/-1';board.append(bin);
-for(let i=0;i<5;i++){const leaf=document.createElement('button');leaf.textContent='🍂';leaf.draggable=true;leaf.setAttribute('aria-label','ورقة يابسة');leaf.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',String(i)));leaf.onclick=()=>collect(leaf);board.append(leaf)}
-bin.addEventListener('dragover',e=>e.preventDefault());bin.addEventListener('drop',e=>{e.preventDefault();const leaves=[...board.querySelectorAll('button')];const leaf=leaves[Number(e.dataTransfer.getData('text/plain'))];if(leaf)collect(leaf)});
-function collect(leaf){if(leaf.disabled||finished)return;leaf.disabled=true;leaf.textContent='✅';count++;progress.textContent=count+' / 5';if(count===5)win()}
+{name:'🍂 تنظيف المشتل',hint:'اجمع 12 ورقة يابسة قبل انتهاء 35 ثانية. انتبه من الزهور!',setup(){
+board.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';let count=0,errors=0,seconds=35;const status=document.createElement('div');status.style.cssText='grid-column:1/-1;text-align:center;color:white;font-size:19px;font-weight:800';board.append(status);
+const items=Array.from({length:16},(_,i)=>i<12?'🍂':'🌷');for(let i=items.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[items[i],items[j]]=[items[j],items[i]]}
+function update(){status.textContent='🍂 '+count+'/12  |  ⏳ '+seconds+' ث  |  ❌ '+errors+'/3'}
+items.forEach(item=>{const b=document.createElement('button');b.textContent=item;b.style.minHeight='66px';b.onclick=()=>{if(finished||b.disabled)return;if(item==='🍂'){b.disabled=true;b.textContent='🧺';count++;if(count===12){win();return}}else{errors++;b.disabled=true;b.textContent='❌';if(errors>=3){fail('لمست ثلاث زهور!');return}}update()};board.append(b)});
+update();const timer=setInterval(()=>{if(finished)return;seconds--;update();if(seconds<=0)fail('خلص الوقت!')},1000);cleanup=()=>clearInterval(timer)
 }},
-{name:'🪴 ترتيب الأصص',hint:'اسحب كل أصيص إلى الرف اللي بنفس لونه.',setup(){
-let placed=0,selected=null;board.style.display='block';board.style.gridTemplateColumns='';const colors=[['🔴','أحمر'],['🟡','أصفر'],['🔵','أزرق']];
-const shelves=document.createElement('div');shelves.style.cssText='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:14px';
-const pots=document.createElement('div');pots.style.cssText='display:flex;flex-wrap:wrap;gap:8px;justify-content:center';
-const order=[0,2,1,0,2];const targets=[];
-colors.forEach(([emoji,name],i)=>{const shelf=document.createElement('div');shelf.style.cssText='min-height:95px;border:3px dashed '+['#e96b6b','#e7bd46','#64a3f3'][i]+';border-radius:14px;background:#fff8e8;color:#15243a;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16px;font-weight:800';shelf.textContent=emoji+' رف '+name;shelf.dataset.color=i;shelf.addEventListener('dragover',e=>e.preventDefault());shelf.addEventListener('drop',e=>{e.preventDefault();const p=targets[Number(e.dataTransfer.getData('text/plain'))];if(p)place(p,shelf)});shelf.onclick=()=>{if(selected)place(selected,shelf)};shelves.append(shelf)});
-order.forEach((color,i)=>{const p=document.createElement('button');p.textContent='🪴'+colors[color][0];p.dataset.color=color;p.draggable=true;p.style.cssText='min-width:64px;min-height:66px;font-size:30px;touch-action:none';p.addEventListener('dragstart',e=>e.dataTransfer.setData('text/plain',String(i)));p.addEventListener('pointerdown',e=>{selected=p;p.setPointerCapture(e.pointerId)});p.addEventListener('pointerup',e=>{const hit=document.elementFromPoint(e.clientX,e.clientY);const shelf=hit&&hit.closest('[data-color]');if(shelf&&shelf.parentElement===shelves)place(p,shelf)});p.onclick=()=>{selected=p;progress.textContent='اختار الرف المطابق للأصيص'};pots.append(p);targets.push(p)});
-function place(p,shelf){if(finished||p.disabled)return;if(p.dataset.color!==shelf.dataset.color){progress.textContent='جرّب رف بنفس اللون';return}p.disabled=true;p.remove();const icon=document.createElement('span');icon.textContent='🪴';icon.style.fontSize='26px';shelf.append(icon);placed++;selected=null;progress.textContent=placed+' / 5';if(placed===5)win()}
-board.append(shelves,pots);cleanup=()=>{board.style.display='';board.style.gridTemplateColumns=''}
+{name:'🧠 لعبة الذاكرة',hint:'افتح 16 بطاقة وابحث عن 8 أزواج متطابقة.',setup(){
+board.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';const symbols=['🐱','🌷','🌻','🍓','🦋','🐝','🍀','🍎'],deck=[...symbols,...symbols];for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}
+let first=null,locked=false,pairs=0,moves=0,pending=0;
+deck.forEach(symbol=>{const b=document.createElement('button');b.textContent='❔';b.style.cssText='min-height:70px;aspect-ratio:1;font-size:29px';b.onclick=()=>{if(finished||locked||b.disabled||b===first)return;b.textContent=symbol;if(!first){first=b;return}const a=first;first=null;moves++;if(a.textContent===b.textContent){a.disabled=b.disabled=true;a.style.background=b.style.background='#b9e8c2';pairs++;progress.textContent='🧠 '+pairs+'/8 أزواج | '+moves+' محاولة';if(pairs===8)win()}else{locked=true;pending=setTimeout(()=>{a.textContent=b.textContent='❔';locked=false},900)}};board.append(b)});progress.textContent='🧠 0/8 أزواج';cleanup=()=>clearTimeout(pending)
 }},
-{name:'🌱 جمع البذور',hint:'اسحب السلة بإصبعك يمين وشمال والتقط خمس بذور.',setup(){
-board.style.display='block';board.style.position='relative';board.style.height='260px';board.style.overflow='hidden';board.style.touchAction='none';let caught=0,x=50,falling=[],last=0,raf=0;
-const basket=document.createElement('div');basket.textContent='🧺';basket.setAttribute('aria-label','اسحب السلة');basket.style.cssText='position:absolute;bottom:4px;left:calc(50% - 30px);width:60px;font-size:43px;z-index:3;pointer-events:none';board.append(basket);
-function move(e){const rect=board.getBoundingClientRect();x=Math.max(10,Math.min(90,(e.clientX-rect.left)/rect.width*100));basket.style.left='calc('+x+'% - 30px)'}
-board.addEventListener('pointerdown',move);board.addEventListener('pointermove',move);
-function frame(t){if(finished)return;const h=board.clientHeight;if(t-last>750){last=t;const el=document.createElement('span'),px=10+Math.random()*80;el.textContent='🌱';el.style.cssText='position:absolute;top:0;left:'+px+'%;font-size:28px;pointer-events:none';board.append(el);falling.push({el,x:px,y:0})}falling=falling.filter(o=>{o.y+=2.3;o.el.style.top=o.y+'px';if(o.y>h-65&&Math.abs(o.x-x)<12){o.el.remove();caught++;progress.textContent=caught+' / 5';if(caught>=5)win();return false}if(o.y>h){o.el.remove();return false}return true});raf=requestAnimationFrame(frame)}raf=requestAnimationFrame(frame);
-cleanup=()=>{cancelAnimationFrame(raf);board.removeEventListener('pointerdown',move);board.removeEventListener('pointermove',move);board.style.display='';board.style.height='';board.style.position='';board.style.overflow='';board.style.touchAction=''}
+{name:'🐛 إنقاذ النباتات',hint:'اضغط على الديدان المتحركة قبل ما توصل للزهور! أنقذ 12 نبتة، وخسارتك الثالثة بتنهي الجولة.',setup(){
+board.style.cssText='display:block;position:relative;height:310px;overflow:hidden;background:linear-gradient(#b9e3f7,#c9e8b4);border-radius:15px;touch-action:manipulation';let saved=0,lost=0,spawn=0;let bugs=[];const flowers=document.createElement('div');flowers.textContent='🌷 🌻 🌷 🌼 🌷';flowers.style.cssText='position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:29px;pointer-events:none';board.append(flowers);
+function update(){progress.textContent='🐛 '+saved+'/12 | 🌷 خسائر '+lost+'/3'}
+const timer=setInterval(()=>{if(finished)return;spawn++;if(spawn%5===0){const b=document.createElement('button');b.textContent='🐛';b.style.cssText='position:absolute;top:0;left:'+(4+Math.random()*76)+'%;width:54px;height:48px;min-height:48px;font-size:29px;z-index:2';const bug={el:b,y:0,speed:3+Math.random()*2};b.onclick=()=>{if(finished)return;bugs=bugs.filter(o=>o!==bug);b.remove();saved++;update();if(saved>=12)win()};board.append(b);bugs.push(bug)}bugs=bugs.filter(o=>{o.y+=o.speed;o.el.style.top=o.y+'px';if(o.y>250){o.el.remove();lost++;update();if(lost>=3)fail('الديدان وصلت للزهور!');return false}return true})},110);update();cleanup=()=>{clearInterval(timer);board.style.cssText=''}
 }},
-{name:'🐛 إنقاذ النباتات',hint:'اضغط الديدان قبل ما توصل للنباتات! أنقذ خمس نباتات.',setup(){
-board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';let saved=0;for(let i=0;i<9;i++){let b=document.createElement('button');b.textContent=i<5?'🐛':'🌷';b.onclick=()=>{if(finished||b.disabled)return;if(b.textContent==='🐛'){b.textContent='🌿';b.disabled=true;saved++;progress.textContent=saved+' / 5';if(saved===5)win()}};board.append(b)}}
-},
-{name:'💧 إصلاح الري',hint:'دوّر قطع الأنابيب لتوصل الحنفية بالنبتة، وبعدها المي بتمشي.',setup(){
-board.style.gridTemplateColumns='repeat(3,minmax(0,1fr))';board.style.direction='ltr';
-const shapes=[['W','E'],['W','E'],['W','S'],['N','S'],['N','E'],['N','E']];const rotation={N:'E',E:'S',S:'W',W:'N'};
-const pieces=shapes.map((ports,i)=>({ports:ports.map(p=>{let q=p;for(let n=0;n<[1,2,3,1,2,3][i];n++)q=rotation[q];return q}),el:null}));
-const draw=ports=>{const m={N:'╵',E:'╶',S:'╷',W:'╴'};if(ports.includes('N')&&ports.includes('S'))return '┃';if(ports.includes('E')&&ports.includes('W'))return '━';return ports.includes('N')?(ports.includes('E')?'┗':'┛'):(ports.includes('E')?'┏':'┓')};
-const label=document.createElement('div');label.textContent='🚰 البداية: أعلى اليسار   →   🌱 النهاية: أسفل اليمين';label.style.cssText='grid-column:1/-1;text-align:center;color:white;font-weight:800';board.append(label);
-pieces.forEach((p,i)=>{const b=document.createElement('button');b.textContent=draw(p.ports);b.style.cssText='font-size:44px;min-height:75px';b.setAttribute('aria-label','دوّر أنبوب رقم '+(i+1));b.onclick=()=>{if(finished)return;p.ports=p.ports.map(x=>rotation[x]);b.textContent=draw(p.ports);check()};p.el=b;board.append(b)});
-function check(){const path=[0,1,2,5],dirs=['E','E','S'],op={E:'W',W:'E',N:'S',S:'N'};let ok=pieces[0].ports.includes('W');for(let i=0;i<path.length-1;i++){const a=pieces[path[i]],b=pieces[path[i+1]];if(!a.ports.includes(dirs[i])||!b.ports.includes(op[dirs[i]]))ok=false}if(!pieces[5].ports.includes('E'))ok=false;progress.textContent=ok?'💧 المي وصلت للنبتة!':'🚰 دوّر الأنابيب حتى يتصل المسار';if(ok){board.style.background='linear-gradient(120deg,#1c5d8c,#2e8b73)';setTimeout(()=>{if(!finished)win()},500)}}
-progress.textContent='🚰 ابدأ من الحنفية ووصل المي للنبتة';cleanup=()=>{board.style.direction='';board.style.background=''}
+{name:'🚗 كراج السيارات',hint:'حرّك السيارات أفقياً أو عمودياً لتفتح الطريق للسيارة الحمراء نحو المخرج.',setup(){
+board.style.cssText='display:block;direction:ltr;background:#273950;padding:6px;border-radius:14px';const vehicles=[
+{id:'red',x:1,y:2,n:2,d:'h',icon:'🚘',color:'#e95656'},
+{id:'a',x:0,y:0,n:3,d:'v',icon:'🚕',color:'#f2c65a'},
+{id:'b',x:3,y:0,n:3,d:'v',icon:'🚙',color:'#6ebcde'},
+{id:'c',x:4,y:1,n:2,d:'v',icon:'🚗',color:'#a995dd'},
+{id:'d',x:2,y:3,n:2,d:'h',icon:'🚐',color:'#8ed2a6'},
+{id:'e',x:5,y:3,n:3,d:'v',icon:'🚕',color:'#e6a169'},
+{id:'f',x:0,y:4,n:2,d:'h',icon:'🚙',color:'#ce98cb'}
+];let moves=0;const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(6,48px);gap:3px;touch-action:pan-y';board.append(grid);
+for(let i=0;i<36;i++){const cell=document.createElement('div');cell.style.cssText='background:#52637a;border-radius:5px;grid-column:'+((i%6)+1)+';grid-row:'+(Math.floor(i/6)+1);grid.append(cell)}
+function blocked(x,y,self){return vehicles.some(v=>v!==self&&x>=v.x&&x<v.x+(v.d==='h'?v.n:1)&&y>=v.y&&y<v.y+(v.d==='v'?v.n:1))}
+function move(v,sign,steps){let changed=false;for(let s=0;s<steps;s++){const nx=v.x+(v.d==='h'?sign:0),ny=v.y+(v.d==='v'?sign:0);if(nx<0||ny<0||nx+(v.d==='h'?v.n:1)>6||ny+(v.d==='v'?v.n:1)>6)break;let free=true;for(let j=0;j<v.n;j++){if(blocked(nx+(v.d==='h'?j:0),ny+(v.d==='v'?j:0),v))free=false}if(!free)break;v.x=nx;v.y=ny;changed=true}if(changed){moves++;draw();if(vehicles[0].x===4)win()}}
+function draw(){grid.querySelectorAll('button').forEach(b=>b.remove());vehicles.forEach(v=>{const b=document.createElement('button');b.textContent=v.icon;b.style.cssText='grid-column:'+(v.x+1)+'/span '+(v.d==='h'?v.n:1)+';grid-row:'+(v.y+1)+'/span '+(v.d==='v'?v.n:1)+';z-index:2;min-height:0;font-size:25px;padding:0;border-radius:9px;border:2px solid #fff8;background:'+v.color+';touch-action:none';let sx=0,sy=0;b.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;b.setPointerCapture(e.pointerId)});b.addEventListener('pointerup',e=>{const delta=v.d==='h'?e.clientX-sx:e.clientY-sy;if(Math.abs(delta)<12)return;const cellWidth=grid.clientWidth/6;move(v,delta>0?1:-1,Math.max(1,Math.round(Math.abs(delta)/Math.max(38,cellWidth))))});grid.append(b)});progress.textContent='🚘 حرّر السيارة الحمراء | الحركات: '+moves}
+const exit=document.createElement('div');exit.textContent='➡️ المخرج';exit.style.cssText='color:white;text-align:right;font-weight:800;margin:8px';board.append(exit);draw();cleanup=()=>{board.style.cssText=''}
 }}
-
 ];
+function fail(message){if(finished)return;finished=true;cleanup();board.replaceChildren();board.hidden=true;info.textContent='💡 '+message;progress.textContent='جرّب مرة تانية، بدون خسارة عملات';start.textContent='🎮 مهمة جديدة'}
+
 function win(){if(finished)return;finished=true;cleanup();state.money+=5;save();render();board.replaceChildren();board.hidden=true;info.textContent='🎉 برافو! خلّصت المهمة وربحت 5 عملات!';progress.textContent='💰 +5 عملات';start.textContent='🎮 مهمة جديدة'}
 start.addEventListener('click',()=>{cleanup();cleanup=()=>{};finished=false;let next=Math.floor(Math.random()*games.length);if(next===previous)next=(next+1)%games.length;previous=next;board.style.cssText='';board.hidden=false;board.replaceChildren();progress.textContent='0';start.textContent='🎮 غيّر المهمة';info.textContent=games[next].name+' — '+games[next].hint;games[next].setup()});
 })();
