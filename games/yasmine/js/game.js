@@ -337,7 +337,7 @@ function renderBoutique(){
 <path d="M46 125Q47 148 76 151Q125 163 177 151Q206 145 207 125Q198 137 183 140Q126 153 69 139Q53 135 46 125Z" fill="#c99c70" stroke="#a57750" stroke-width="3" stroke-linejoin="round"/>
 <path d="M59 140Q124 161 193 140" fill="none" stroke="#e0b78d" stroke-width="4" stroke-linecap="round"/>
 </svg>`:'';
- catBed.hidden=!state.catItems.bed;catSleep.hidden=!napping;$('catScene').classList.toggle('is-napping',napping);
+ catBed.hidden=!state.catItems.bed;catSleep.hidden=true;$('catScene').classList.remove('is-napping');
 }
 /* Put the reward action directly below both mission buttons, with reports below it. */
 $('catMouseHunt').after($('catMouseReward'));
