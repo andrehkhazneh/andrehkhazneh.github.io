@@ -173,3 +173,21 @@ body.night-ui #nanaCatWater{background:#34495c;color:#eff8ff}
 #spyMimi.spy-peek{animation:spyHeadPeekFixed 1.8s ease-in-out infinite!important}
 @keyframes spyHeadPeekFixed{0%,100%{transform:translateY(5px)}50%{transform:translateY(-4px)}}
 @media(prefers-reduced-motion:reduce){#spyMimi.spy-peek{animation:none!important}}
+
+/* Cat scene mobile composition: ground -> oval bed -> cat -> Nana. */
+#catScene{position:relative!important;isolation:isolate;aspect-ratio:2/1;overflow:hidden!important}
+#catScene::before{content:"";position:absolute;z-index:0;left:0;right:0;top:73%;height:2px;background:#e2b98e;pointer-events:none}
+#catScene::after{content:"";position:absolute;z-index:0;left:17%;width:66%;bottom:5%;height:13%;border-radius:50%;background:#f1cfab;border:2px solid #f8debe;box-sizing:border-box;pointer-events:none}
+#catScene>svg{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-height:none!important;z-index:3!important;overflow:visible!important;pointer-events:none}
+#catScene #catBed{position:absolute!important;inset:auto auto 5% 2%!important;width:35%!important;height:47%!important;z-index:2!important;opacity:1!important;pointer-events:none}
+#catScene #catBed svg{display:block!important;width:100%!important;height:100%!important;max-height:none!important;object-fit:contain!important}
+#catScene #catAccessories{z-index:4!important}
+#catScene #nanaCareScene{position:absolute!important;inset:auto 1% 4% auto!important;width:23%!important;height:88%!important;z-index:5!important;display:block!important;filter:none!important;pointer-events:none}
+#catScene #nanaCareScene[hidden]{display:none!important}
+#catScene #nanaCareScene svg{width:100%!important;height:100%!important;max-height:none!important;display:block!important;overflow:visible!important}
+#catScene #nanaCareScene .nana-hand-bowl{opacity:0;transition:opacity .15s}
+#catScene #nanaCareScene.feeding .nana-hand-bowl{opacity:1;animation:nanaOfferBowl 1s ease-in-out 3 alternate;transform-origin:85px 110px}
+@keyframes nanaOfferBowl{to{transform:translate(-9px,-5px) rotate(-8deg)}}
+#catScene #nanaCareScene.feeding ~ svg .cat-bowl{opacity:0}
+@media(max-width:360px){#catScene #nanaCareScene{right:1%!important;width:22%!important;height:85%!important}#catScene #catBed{left:1%!important;width:34%!important;height:43%!important}}
+@media(prefers-reduced-motion:reduce){#catScene #nanaCareScene.feeding .nana-hand-bowl{animation:none!important}}
