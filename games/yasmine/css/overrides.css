@@ -133,3 +133,16 @@ body.night-ui #nanaWorkerSummary{background:#30445a!important;color:#f6f2e9!impo
 #catHuntStage[data-phase="chase"] #huntMouseArt{animation:huntMouseRun 1.3s ease-in-out forwards!important}
 @keyframes huntPounce{0%{transform:translateX(0) translateY(0)}50%{transform:translateX(80px) translateY(-20px)}100%{transform:translateX(120px) translateY(0)}}
 @media(prefers-reduced-motion:reduce){#catHuntStage[data-phase="chase"] #huntCat,#catHuntStage[data-phase="chase"] #huntMouseArt,#spyMimi.spy-peek{animation:none!important}}
+
+/* Nana works in the cat tab after hiring; keep her original lavender card. */
+#catArea #nanaPanel{display:block;margin:20px 0 0;background:#eee8f7!important;border:1px solid #d1bedf!important;color:#344638!important;border-radius:24px}
+#catArea #nanaPanel .staff-dialogue{background:#fff5d9!important;color:#344638!important}
+body.night-ui #catArea #nanaPanel{background:#3c344e!important;color:#f4eefa!important;border-color:#756488!important}
+body.night-ui #catArea #nanaPanel .staff-dialogue{background:#50485e!important;color:#fff5dc!important}
+#catFeed[hidden]{display:none!important}
+#catArea .grid:has(#catFeed[hidden]){grid-template-columns:repeat(2,minmax(0,1fr))}
+#nanaCatWater{display:flex;align-items:center;gap:10px;margin:12px 0;padding:12px 15px;background:#e8f5fc;border:1px solid #a5cddd;border-radius:16px;color:#315469;line-height:1.5}
+#nanaCatWater[hidden]{display:none!important}
+#nanaCatWater>span:first-child{font-size:30px}
+body.night-ui #nanaCatWater{background:#34495c;color:#eff8ff}
+#catScene #catBed{left:1%!important;bottom:1%!important;width:44%!important;height:57%!important;z-index:0!important}
