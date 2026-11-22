@@ -246,7 +246,7 @@ function updateYasminFinancialAid(){
   else if(state.money>=30)state.yasminAidOpen=false;
   if(before!==state.yasminAidOpen)save();
   const section=document.getElementById('yasminMiniGames');
-  if(section)section.hidden=!state.yasminAidOpen;
+  if(section){section.hidden=!state.yasminAidOpen;section.style.display=state.yasminAidOpen?'':'none';}
   const host=document.getElementById('staffArea');
   if(!host)return;
   let notice=document.getElementById('yasminAidNotice');
