@@ -41,7 +41,7 @@ function normalizeGameState(s){
   s.progress=safeNumber(s.progress,0,0,100);s.quality=safeNumber(s.quality,100,0,100);
   s.care=safeNumber(s.care,0,0,100000000);
   if(!s.cat||typeof s.cat!=='object'||Array.isArray(s.cat))s.cat=freshCat();
-  s.cat.fullness=safeNumber(s.cat.fullness,60,0,100);s.cat.mood=safeNumber(s.cat.mood,55,0,100);s.cat.hydration=safeNumber(s.cat.hydration,75,0,100);s.cat.hydrationSeconds=safeNumber(s.cat.hydrationSeconds,0,0,30);
+  s.cat.fullness=safeNumber(s.cat.fullness,60,0,100);s.cat.mood=safeNumber(s.cat.mood,55,0,100);s.cat.hydration=safeNumber(s.cat.hydration,75,0,100);s.cat.hydrationSeconds=safeNumber(s.cat.hydrationSeconds,0,0,15);
   if(!s.stock||typeof s.stock!=='object'||Array.isArray(s.stock))s.stock={fertilizer:4,catfood:3};
   s.stock.fertilizer=safeNumber(s.stock.fertilizer,4,0,1000000);s.stock.catfood=safeNumber(s.stock.catfood,3,0,1000000);
   if(!s.staff||typeof s.staff!=='object'||Array.isArray(s.staff))s.staff={hired:false,mood:60,request:null,nextRequest:Date.now()+45000,dialogue:''};
@@ -184,9 +184,9 @@ function giveCatWater(source){
 $('catWater').onclick=function(){giveCatWater('player')};
 function tickCat(delta){
   state.cat.hydrationSeconds+=delta;
-  if(state.cat.hydrationSeconds>=30){
-    var thirstSteps=Math.floor(state.cat.hydrationSeconds/30);
-    state.cat.hydrationSeconds-=thirstSteps*30;
+  if(state.cat.hydrationSeconds>=15){
+    var thirstSteps=Math.floor(state.cat.hydrationSeconds/15);
+    state.cat.hydrationSeconds-=thirstSteps*15;
     state.cat.hydration=Math.max(0,state.cat.hydration-thirstSteps);
     if(state.cat.hydration<20&&!catThirstWarned&&(!state.nana.hired||state.nana.paused)){catThirstWarned=true;msg(state.lang==='ar'?'💧 '+state.catName+' عطشانة، اسقيها!':'💧 '+state.catName+' is thirsty! Give her water!')}
     save();
