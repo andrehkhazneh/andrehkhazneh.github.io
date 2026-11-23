@@ -259,13 +259,27 @@ const water=$('catWater'),bowl=$('catScene');if(water&&bowl)water.addEventListen
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script><script id="gameRulesScript">(function(){
-const open=document.getElementById('gameRulesOpen'),dialog=document.getElementById('gameRulesDialog'),close=document.getElementById('gameRulesClose'),sheet=document.getElementById('gameRulesSheet');
-if(!open||!dialog||!close||!sheet)return;
+const open=document.getElementById('gameRulesOpen'),dialog=document.getElementById('gameRulesDialog'),sheet=document.getElementById('gameRulesSheet');
+if(!open||!dialog||!sheet)return;
+const arabic=sheet.outerHTML,english="<div id=\"gameRulesSheet\" dir=\"ltr\" lang=\"en\" tabindex=\"-1\"><button type=\"button\" id=\"gameRulesClose\" aria-label=\"Close rules\">✕ Close</button>\n<h2 id=\"gameRulesHeading\">📖 Garden of Happiness — Game Rules</h2>\n<p>A quick guide to the most important game rules. Open any section to learn more.</p>\n<details open><summary>🌱 Planting and selling</summary><p>Plant seeds, care for your plant until it blooms, then sell it to a customer to earn coins. You can buy new seeds after selling your current plant. Plant quality depends on how well you care for it.</p></details>\n<details><summary>🎮 Yasmin's missions and financial assistance</summary><p>🔴 When your balance drops below <strong>20 coins</strong>, Yasmin's missions unlock and a red notification appears. Each successfully completed mission earns <strong>5 coins</strong>.</p><p>If your balance rises to 20–29 coins, the missions stay available if they were already unlocked. At <strong>30 coins or more</strong>, the missions disappear. They unlock again only after your balance drops below 20.</p><p>Minigames: Nursery Cleanup, Memory Match, Plant Rescue, and Parking Garage.</p></details>\n<details><summary>👩🏻‍🌾 Employees</summary><p>Abu Warda unlocks after <strong>6 sales</strong>. Hiring costs <strong>80 coins</strong>, and his salary is <strong>15 coins every 3 sales</strong>. He helps water plants and remove worms.</p><p>Nana, the cat caretaker, unlocks after <strong>12 sales</strong> and costs <strong>120 coins</strong> to hire. An employee may stop working if wages are overdue.</p></details>\n<details><summary>🐱 Mishmish and her missions</summary><p>You can feed Mishmish, give her water, brush her, and play with her. Keep an eye on hunger, mood, hydration, and treats.</p><p>After spying on Abu Warda or going on a mouse hunt, the mission button turns gray and shows a <strong>two-minute</strong> countdown. The button becomes available again afterward. Mishmish's reports tell you what happened.</p></details>\n<details><summary>💾 Saving your progress</summary><p>Your progress is automatically saved in your browser on this device. Do not clear the website's data if you want to keep your sales and coins. The “Restart game” button starts a new game.</p></details>\n";
+function isEnglish(){return document.documentElement.lang==='en'}
+function syncRules(){
+ const en=isEnglish(),oldDetails=[...sheet.querySelectorAll('details')].map(d=>d.open);
+ const template=document.createElement('template');template.innerHTML=en?english:arabic;
+ const updated=template.content.firstElementChild;
+ if(!updated)return;
+ sheet.innerHTML=updated.innerHTML;sheet.dir=en?'ltr':'rtl';sheet.lang=en?'en':'ar';
+ [...sheet.querySelectorAll('details')].forEach((d,i)=>{if(i<oldDetails.length)d.open=oldDetails[i]});
+ open.textContent=en?'📖 Game Rules':'📖 قواعد اللعبة';
+}
 function hide(){dialog.hidden=true;document.body.style.overflow='';open.focus()}
-open.addEventListener('click',()=>{dialog.hidden=false;document.body.style.overflow='hidden';sheet.focus()});
-close.addEventListener('click',hide);
+open.addEventListener('click',()=>{syncRules();dialog.hidden=false;document.body.style.overflow='hidden';sheet.focus()});
+sheet.addEventListener('click',e=>{if(e.target.closest('#gameRulesClose'))hide()});
 dialog.addEventListener('click',e=>{if(e.target===dialog)hide()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!dialog.hidden)hide()});
+document.getElementById('lang')?.addEventListener('click',()=>{setTimeout(syncRules,0)});
+new MutationObserver(()=>{const en=isEnglish();if(sheet.lang!==(en?'en':'ar'))syncRules()}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+syncRules();
 })();</script><script id="levelScript">(function(){
 'use strict';
 var limits=[0,10,25,50,80,120,170,230,300,400];
