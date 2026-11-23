@@ -492,8 +492,10 @@ function updateSpyScene(){
  if(remain<2200)spyMimi.className='spy-out';
 }
 setInterval(function(){
- updateSpyScene();
+ if(document.hidden)return;
  var spy=state.catSpy;
+ if(spy.status!=='running'&&activeArea!=='cat')return;
+ updateSpyScene();
  if(spy.status!=='running'&&activeArea==='cat'&&Date.now()<(Number(spy.cooldownUntil)||0)){
   var remaining=Math.ceil((spy.cooldownUntil-Date.now())/1000),button=$('catSpy');
   if(button){button.textContent=(state.lang==='ar'?'🕵️ التجسس متاح بعد ':'🕵️ Spy available in ')+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');button.disabled=true;button.style.opacity='0.55';button.style.filter='grayscale(1)';}
@@ -590,6 +592,7 @@ renderCatExtras=function(){
  $('catMouseReward').disabled=state.catTreats<1;
 };
 setInterval(function(){
+ if(document.hidden||activeArea!=='cat')return;
  var hunt=state.catHunt;
  if(hunt.status!=='running'){
   mouse.hidden=true;$('catHuntStage').hidden=true;
@@ -616,6 +619,6 @@ setInterval(function(){
 var previousRenderCat=renderCat;
 renderCat=function(){previousRenderCat();renderCatExtras();var n=state.nana;$('nanaCatAction').hidden=!n.action;$('nanaCatAction').textContent=n.action||'';if(n.hired&&!n.paused){$('nanaDialogue').textContent=(state.lang==='ar'?nanaLinesAr:nanaLinesEn)[n.dialogueIndex%10].replace('{cat}',state.catName)}};
 
-var lastNotificationCount=notificationCount();var lastTick=Date.now(),wasReady=state.active&&state.progress>=100;setInterval(function(){updateClock();updateSky();if(state.weatherMode==='auto')updateWeather();var now=Date.now(),delta=Math.min(2,(now-lastTick)/1000);lastTick=now;if(document.hidden)return;tickCat(delta);tickStaff();tickAbu();tickNana();tickCatEmergency();var n=notificationCount();if(n>lastNotificationCount&&state.staff.hired)sound('notify');lastNotificationCount=n;if(state.active&&state.progress<100){state.progress=Math.min(100,state.progress+100*delta/crops[state.kind].time);if(state.progress>=100&&!wasReady){sound('bloom');wasReady=true}render()}else render();if(!state.active||state.progress<100)wasReady=false},1000);setInterval(function(){if(Date.now()>=eventNext){scheduleEvent();if(!document.hidden&&activeArea==='nursery')eventSpawn()}},1000);render();msg(state.lang==='ar'?'بلّش اعتني بالياسمينة!':'Start caring for your jasmine!');
+var lastNotificationCount=notificationCount();var lastTick=Date.now(),wasReady=state.active&&state.progress>=100;setInterval(function(){var now=Date.now(),delta=Math.min(2,(now-lastTick)/1000);lastTick=now;if(document.hidden)return;updateClock();updateSky();if(state.weatherMode==='auto')updateWeather();tickCat(delta);tickStaff();tickAbu();tickNana();tickCatEmergency();var n=notificationCount();if(n>lastNotificationCount&&state.staff.hired)sound('notify');lastNotificationCount=n;if(state.active&&state.progress<100){state.progress=Math.min(100,state.progress+100*delta/crops[state.kind].time);if(state.progress>=100&&!wasReady){sound('bloom');wasReady=true}render()}else render();if(!state.active||state.progress<100)wasReady=false},1000);setInterval(function(){if(Date.now()>=eventNext){scheduleEvent();if(!document.hidden&&activeArea==='nursery')eventSpawn()}},1000);render();msg(state.lang==='ar'?'بلّش اعتني بالياسمينة!':'Start caring for your jasmine!');
 if(audioSettings.music)tryPlayMusic();
 })();
