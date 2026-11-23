@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>حديقة السعادة | Andreh’s Garden</title>
+<link rel="stylesheet" href="yasmine/css/base.css?v=20261122-voice11">
+<link rel="stylesheet" href="yasmine/css/overrides.css?v=20261122-mishmish10"><style id="mishmishRefinement">
+#catArea>.grid,#catArea .grid:has(#catWater){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+#catArea .grid:has(#catWater)>button{font-size:clamp(16px,4vw,21px)!important;font-weight:800!important;min-width:0!important;min-height:72px!important;white-space:normal!important;line-height:1.4!important}
+#catArea .mission-row{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:nowrap!important;direction:rtl}
+#catArea .mission-row>button{flex:1;min-width:0;font-weight:700}
+#catArea .mission-row>.mission-timer{position:static!important;flex:0 0 auto!important;min-width:55px;text-align:center;font-weight:800}
+#catSpyReport,#catMouseReport{display:none!important}
+#mishmishNotices{display:grid;gap:10px;margin:10px 0}
+.mish-notice{position:relative;background:#fff9e9;border:2px solid #e4ba75;border-radius:17px;padding:15px 42px 15px 15px;box-shadow:0 5px 13px #67482222;animation:mishPop .3s ease}
+.mish-notice strong{display:block;font-size:18px;color:#684027;margin-bottom:6px}.mish-notice p{margin:0;font-size:18px;line-height:1.6;font-weight:700;color:#473525}
+.mish-close{position:absolute;right:7px;top:7px;border:0;border-radius:50%;background:#f1ded0;color:#59392a;width:29px;height:29px;font-size:21px;cursor:pointer}
+@keyframes mishPop{from{opacity:0;transform:translateY(9px) scale(.96)}to{opacity:1;transform:none}}
+#nanaUpper:not([hidden]){position:relative;display:flex;align-items:center;gap:12px;background:#f6ecfa;border-radius:16px;padding:10px;margin:8px 0 12px;min-height:65px}
+#nanaUpperArt{font-size:38px}#nanaUpperSpeech{background:white;border-radius:13px;padding:8px 12px;font-weight:700;flex:1}
+#nanaFeather{display:none;position:absolute;top:100%;right:25%;z-index:4;font-size:32px;transform-origin:top}
+#nanaUpper.playing #nanaFeather{display:block;animation:featherSwing 2.6s ease-in-out}
+@keyframes featherSwing{0%{transform:translateY(-20px) rotate(-20deg)}45%{transform:translateY(80px) rotate(28deg)}80%{transform:translateY(45px) rotate(-25deg)}100%{transform:translateY(-20px)}}
+#catScene .nana-character,#catScene [id*=nanaSprite]{display:none}#nanaCatAction,#nanaCatWater{display:none!important}#nanaUpperSpeech{color:#18263a!important;font-size:18px;line-height:1.5}#catTreatCount{display:none!important}/* Keep Mishmish's four stat bars aligned on identical rows. */
+#catArea .cat-stats>div{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:minmax(44px,auto) 14px;align-items:center;column-gap:5px;min-width:0}
+#catArea .cat-stats>div>span{grid-column:1;grid-row:1;min-width:0}
+#catArea .cat-stats>div>b{grid-column:2;grid-row:1;white-space:nowrap}
+#catArea .cat-stats>div>.bar{grid-column:1/-1;grid-row:2;margin:0!important;width:100%;height:14px}
+#catTreatStat{font-weight:800;font-size:19px;color:#183d31}#catTreatStat .bar{height:14px;border-radius:20px;background:#e4e9e6;overflow:hidden;margin-top:8px}#catTreatStat .fill{height:100%;background:#2b965d;transition:width .2s}
+#catHuntStage{min-height:160px;overflow:hidden;position:relative;background:linear-gradient(#e4f6dc,#f6e5c9);border-radius:18px}
+#catHuntStage:after{content:'🌿 🪴 🌼 🪴';position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:30px;pointer-events:none}
+#catHuntStage #huntCat{width:120px!important;height:110px!important;position:absolute;bottom:24px;right:8%;z-index:2}
+#catHuntStage #huntMouseArt{width:72px!important;height:75px!important;position:absolute;bottom:20px;left:10%;z-index:2}
+#catHuntStage:not([hidden]) #huntCat{animation:catChase 6s ease-in-out infinite}
+#catHuntStage:not([hidden]) #huntMouseArt{animation:mouseDodge 6s ease-in-out infinite}
+@keyframes catChase{0%,100%{transform:translateX(0) rotate(0)}30%{transform:translateX(-90px)}48%{transform:translateX(-125px) rotate(-12deg)}65%{transform:translateX(-45px) rotate(15deg)}80%{transform:translateX(-75px)}}
+@keyframes mouseDodge{0%,100%{transform:translateX(0)}25%{transform:translateX(65px)}45%{transform:translateX(-35px) scaleX(-1)}65%{transform:translateX(85px)}}
+
+/* Readable Mishmish reports and touch-friendly close */
+#mishmishNotices .mish-notice{background:#fffaf0!important;color:#17243b!important}
+#mishmishNotices .mish-notice strong{color:#17243b!important;font-size:20px!important;font-weight:900!important}
+#mishmishNotices .mish-notice p{color:#17243b!important;font-size:19px!important;font-weight:800!important;opacity:1!important;text-shadow:none!important}
+#mishmishNotices .mish-notice{padding-right:65px!important;min-height:56px}#mishmishNotices .mish-close{right:9px!important;top:9px!important;width:35px!important;height:35px!important;font-size:23px!important}#mishmishNotices .mish-close{background:#dc2626!important;color:#fff!important;border:2px solid #fff!important;width:42px!important;height:42px!important;font-size:28px!important;font-weight:900!important;display:grid!important;place-items:center!important;line-height:1!important;cursor:pointer}
+#yasminMiniGames{margin:14px 0;padding:14px;border:2px solid #a4c8e8;border-radius:18px;background:#203b61;color:#fff}
+#yasminMiniGames h3{margin:0 0 8px;font-size:22px;color:#fff}
+#yasminMiniGames p,#yasminMiniGames strong{color:#fff}
+#miniGameBoard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+#miniGameBoard button{min-height:64px;font-size:32px;background:#fff4d9;color:#17243b;border:2px solid #dfb96c;border-radius:14px;touch-action:manipulation}
+#miniGameBoard button:disabled{opacity:.45}
+#miniGameStart{min-height:52px;font-size:18px;font-weight:800}
+
+/* Spy report card: readable header, isolated close button, no overlapping text */
+#mishmishNotices{display:grid;gap:12px;margin:12px 0}
+#mishmishNotices .mish-notice{box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) 44px;grid-template-areas:'title close' 'body body';gap:8px 12px;padding:14px!important;direction:rtl;border-radius:18px;overflow-wrap:anywhere}
+#mishmishNotices .mish-notice strong{grid-area:title;align-self:center;margin:0!important;min-width:0;line-height:1.4}
+#mishmishNotices .mish-notice p{grid-area:body;margin:0!important;line-height:1.6}
+#mishmishNotices .mish-close{grid-area:close;position:static!important;justify-self:end;align-self:start;min-width:42px;min-height:42px}
+/* Mishmish: right-side glossy red close button, matching supplied reference. */
+#mishmishNotices .mish-notice{grid-template-columns:48px minmax(0,1fr)!important;grid-template-areas:'close title' 'body body'!important;direction:rtl!important}
+#mishmishNotices .mish-close{grid-area:close!important;justify-self:start!important;position:static!important;width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;padding:0!important;border:2px solid #b90000!important;border-radius:50%!important;color:#fff!important;font-size:35px!important;font-weight:900!important;line-height:1!important;text-shadow:0 1px 1px #900!important;background:linear-gradient(165deg,#ff8585 0%,#ff2424 20%,#ed0000 58%,#a50000 100%)!important;box-shadow:inset 0 4px 3px #ffffffa8,inset 0 -4px 5px #79000088,0 5px 0 #849b7d,0 7px 10px #0003!important}
+#mishmishNotices .mish-notice strong{grid-area:title!important;text-align:right!important}
+</style><style id="gameRulesStyles">
+#gameRulesOpen{font-weight:800}
+#gameRulesDialog[hidden]{display:none!important}
+#gameRulesDialog{position:fixed;inset:0;z-index:99999;background:#172e26aa;display:flex;align-items:center;justify-content:center;padding:15px;box-sizing:border-box}
+#gameRulesSheet{width:min(640px,100%);max-height:88dvh;overflow:auto;overscroll-behavior:contain;background:#fcfff3;color:#24452e;border:2px solid #9fb795;border-radius:22px;padding:20px;box-shadow:0 15px 50px #0005;box-sizing:border-box;text-align:right}
+#gameRulesSheet h2{font-size:clamp(24px,5vw,32px);margin:0 0 12px}
+#gameRulesSheet h3{font-size:20px;margin:14px 0 7px}
+#gameRulesSheet p{font-size:17px;line-height:1.8;margin:5px 0}
+#gameRulesSheet details{border-bottom:1px solid #c9d8c3;padding:10px 0}
+#gameRulesSheet summary{font-size:19px;font-weight:800;cursor:pointer}
+/* Keep guide text readable when the garden switches to night mode. */
+#gameRulesDialog #gameRulesSheet{background:#fcfff3!important;color:#24452e!important;opacity:1!important;-webkit-text-fill-color:#24452e!important}
+#gameRulesDialog #gameRulesSheet :is(h2,h3,p,summary,strong,details){color:#24452e!important;opacity:1!important;-webkit-text-fill-color:#24452e!important;text-shadow:none!important}
+#gameRulesDialog #gameRulesClose{background:#e9f3dd!important;color:#24452e!important;-webkit-text-fill-color:#24452e!important;opacity:1!important}
+#gameRulesClose{float:left;background:#e9f3dd;color:#24452e;border:1px solid #8eaa86;border-radius:13px;padding:8px 16px;font-weight:800;cursor:pointer}
+</style>
+<style id="desktopSettingsLayout">
+/* Keep settings labels separate from their controls in both languages. */
+#daySettings{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+#daySettings>label{display:block;margin:0;font-weight:700;line-height:1.5}
+#daySettings>label[for="weatherMode"]{margin-block-start:8px}
+#daySettings>select{display:block;width:100%;min-width:0;max-width:100%;min-height:48px;padding:10px 12px;border:1px solid #9bab8e;border-radius:10px;background:#fff;color:inherit;font:inherit}
+#daySettings>.info{margin:0;line-height:1.6}
+@media(min-width:900px){
+  main{width:calc(100% - 48px);max-width:1200px;padding:24px 24px 65px}
+}
+</style><style id="abuStatusCompactFix">#abuStatusPanel:has(#abuWorkStatus:not([hidden])){height:64px!important;min-height:64px!important;max-height:none!important;padding:0!important;box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important}#abuStatusPanel #abuWorkStatus:not([hidden]){margin:0!important;padding:0 10px!important;min-height:0!important;width:100%;height:auto!important;display:block!important;line-height:1.25!important;text-align:center!important;font-size:28px!important;box-sizing:border-box!important}#abuStatusPanel:has(#abuWorkStatus:not([hidden])):has(#abuWagePay:not([hidden])){height:auto!important;min-height:64px!important;padding:8px!important;flex-direction:column!important}</style><style id="seedButtonFont24">#shop button{font-size:24px!important}</style><style id="buyerFont22">#sellPanel #buyerText,#sellPanel #sell{font-size:22px!important}</style><style id="settingsEmployeeCards2026">
+#employeesPanel .settings-employee-list{display:grid;gap:12px;margin:14px 0}
+#employeesPanel .settings-employee-card{background:#f5f7eb;border:1px solid #d6dccb;border-radius:20px;padding:0;overflow:hidden}
+#employeesPanel .settings-nana-card{background:#efe9f7;border-color:#d5c9e2}
+#employeesPanel .settings-employee-card summary{display:flex;direction:rtl;align-items:center;gap:12px;cursor:pointer;list-style:none;padding:12px;min-height:92px}
+#employeesPanel .settings-employee-card summary::-webkit-details-marker{display:none}
+#employeesPanel .settings-employee-portrait{flex:0 0 78px;width:78px;height:86px;border-radius:14px;background:#e6eedf;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#employeesPanel .settings-nana-card .settings-employee-portrait{background:#e4ddef}
+#employeesPanel .settings-employee-portrait svg{width:auto!important;height:82px!important;max-width:100%;display:block;flex:none}
+#employeesPanel .settings-employee-portrait .abu-icon{font-size:52px;line-height:1}
+#employeesPanel .settings-employee-heading{flex:1;min-width:0;display:grid;gap:5px;text-align:right}
+#employeesPanel .settings-employee-heading strong{font-size:26px;color:#294d37}
+#employeesPanel .settings-employee-heading small{font-size:17px;color:#5b7562}
+#employeesPanel .settings-employee-chevron{font-size:26px;color:#53705b}
+#employeesPanel .settings-employee-card[open] .settings-employee-chevron{transform:rotate(180deg)}
+#employeesPanel .settings-employee-detail{padding:4px 16px 16px;text-align:right;font-size:19px;line-height:1.6;color:#34543c}
+#employeesPanel .settings-employee-detail p{margin:10px 0;overflow-wrap:anywhere}
+#employeesPanel .settings-employee-detail p:last-child{color:#46754b}
+/* Employee settings: readable contrast in both day and night themes. */
+body:not(.night-ui) #employeesPanel .settings-employee-card{background:#f5f7eb!important;border-color:#d6dccb!important}
+body:not(.night-ui) #employeesPanel .settings-nana-card{background:#efe9f7!important;border-color:#d5c9e2!important}
+body:not(.night-ui) #employeesPanel .settings-employee-card .settings-employee-detail,body:not(.night-ui) #employeesPanel .settings-employee-card .settings-employee-detail p,body:not(.night-ui) #employeesPanel .settings-employee-card .settings-employee-heading strong{color:#294d37!important;opacity:1!important}
+body:not(.night-ui) #employeesPanel .settings-employee-card .settings-employee-heading small,body:not(.night-ui) #employeesPanel .settings-employee-card .settings-employee-chevron{color:#526c56!important;opacity:1!important}
+body:not(.night-ui) #employeesPanel .settings-employee-card .settings-employee-detail p:last-child{color:#31643e!important}
+body.night-ui #employeesPanel .settings-employee-card{background:#30445a!important;border-color:#64758b!important}
+body.night-ui #employeesPanel .settings-nana-card{background:#3d3655!important;border-color:#817393!important}
+body.night-ui #employeesPanel .settings-employee-card .settings-employee-detail,body.night-ui #employeesPanel .settings-employee-card .settings-employee-detail p,body.night-ui #employeesPanel .settings-employee-card .settings-employee-heading strong{color:#f4f7f9!important;opacity:1!important}
+body.night-ui #employeesPanel .settings-employee-card .settings-employee-heading small,body.night-ui #employeesPanel .settings-employee-card .settings-employee-chevron{color:#d4e0e8!important;opacity:1!important}
+body.night-ui #employeesPanel .settings-employee-card .settings-employee-detail p:last-child{color:#a6e6b8!important}
+body.night-ui #employeesPanel .settings-employee-portrait{background:#435a66!important}
+body.night-ui #employeesPanel .settings-nana-card .settings-employee-portrait{background:#514764!important}
+</style><style id="levelStyles">
+#levelHeader{margin:10px auto 16px;width:100%;max-width:760px}
+#levelHeadingRow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap}
+#levelHeadingRow #title{flex:1;min-width:0;margin:0!important;text-align:right;font-size:clamp(21px,5vw,38px)!important;line-height:1.35}
+#levelHeadingRow #gameTime{flex:0 0 auto;width:auto!important;min-width:0!important;max-width:40%;margin:0!important;padding:8px 12px!important;font-size:clamp(14px,3.5vw,21px)!important;white-space:nowrap;line-height:1.4}
+#levelProgressRow{display:flex;align-items:center;gap:10px;margin-top:10px}
+#levelBadge{flex:0 0 auto;font-weight:900;font-size:clamp(14px,3.6vw,19px);white-space:nowrap}
+#levelTrack{height:11px;border-radius:99px;overflow:hidden;background:#94a8a455;flex:1;min-width:0}
+#levelFill{height:100%;width:0;background:linear-gradient(90deg,#2b9965,#74cb8a);border-radius:99px;transition:width .4s ease}
+#levelCaption{text-align:center;font-size:clamp(12px,3vw,15px);opacity:.9;margin-top:5px}
+#levelToast[hidden]{display:none!important}
+#levelToast{position:fixed;z-index:8000;top:15%;left:50%;transform:translateX(-50%);width:min(90vw,360px);padding:20px;text-align:center;border-radius:20px;background:#f7ffe9;color:#21442f;border:2px solid #77b98a;box-shadow:0 12px 30px #0005;font-size:23px;font-weight:900}
+@media(max-width:360px){#levelHeadingRow{gap:5px}#levelHeadingRow #gameTime{padding:6px!important}#levelHeadingRow #title{font-size:20px!important}}
+</style><style id="compactHeader20261122">
+header:has(#siteBack){display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;flex-wrap:nowrap!important}
+header #siteBack,header #topEditNames{box-sizing:border-box!important;min-height:55px!important;margin:0!important;white-space:nowrap!important;font-size:clamp(16px,4vw,21px)!important;padding:12px 18px!important}
+header #siteBack{display:inline-flex!important;align-items:center!important;justify-content:center!important;border-radius:999px!important;background:linear-gradient(180deg,#e5f0dc 0%,#c9dfbd 55%,#aecb9e 100%)!important;color:#284b32!important;border:2px solid #83a47c!important;box-shadow:inset 0 3px 3px #ffffffb0,inset 0 -3px 4px #7a9b7355,0 5px 0 #6e9068,0 8px 13px #0002!important;text-shadow:0 1px #fff7!important;font-weight:900!important;text-decoration:none!important}
+body.night header #siteBack,body.dark header #siteBack,html[data-theme="dark"] header #siteBack{background:linear-gradient(180deg,#506b72,#3b5662 55%,#304756)!important;color:#f3f7f5!important;border-color:#6f8c94!important;box-shadow:inset 0 2px 3px #ffffff30,0 5px 0 #203541,0 8px 13px #0003!important;text-shadow:none!important}
+
+header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44732c66,0 2px 0 #6e9068!important}
+#settingsQuickActions{margin-bottom:12px;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#settingsQuickActions button{min-width:0;white-space:normal}
+@media(max-width:380px){header #siteBack,header #topEditNames{padding:10px 12px!important}}
+</style><style id="bilingualCatRulesLayout">
+#gameRulesSheet[lang="en"]{direction:ltr!important;text-align:left!important}
+#gameRulesSheet[lang="en"] #gameRulesClose{float:right!important;margin-left:14px;margin-right:0}
+#gameRulesSheet[lang="en"] :is(h2,p,summary,details){text-align:left!important;direction:ltr!important}
+#gameRulesSheet[lang="en"] summary{list-style-position:inside}
+#gameRulesSheet[lang="ar"]{direction:rtl!important;text-align:right!important}
+#gameRulesSheet[lang="ar"] #gameRulesClose{float:left!important;margin-right:14px;margin-left:0}
+#catArea[lang="en"] .mish-notice{direction:ltr!important;text-align:left!important}
+#catArea[lang="en"] .mish-notice .mish-close{float:right!important}
+#catArea[lang="en"] .mish-notice strong,#catArea[lang="en"] .mish-notice p{direction:ltr!important;text-align:left!important}
+#catArea[lang="en"] .cat-stats{direction:ltr!important}
+#catArea[lang="en"] .cat-stats>div{direction:ltr!important}
+#catArea[lang="en"] #catMessage{direction:ltr!important;text-align:center!important}
+/* Compact cat care layout: remove the purring message and its reserved gap. */
+#catArea #catMessage{display:none!important}
+#catArea #mishmishNotices:empty{display:none!important}
+#catArea #catExtras{margin-top:8px!important;gap:10px!important}
+#catArea #catBoutique:has(#catBoutiqueItems[hidden]){display:none!important}
+</style><style id="catHydrationAnimation">
+#catScene .cat-water-bowl{display:none}
+#catScene.cat-drinking .cat-bowl{display:none!important}
+#catScene.cat-drinking .cat-water-bowl{display:inline!important}
+#catScene.cat-drinking svg .cat-walk{animation:mishmishWalkDrink 4.1s ease-in-out 1 both;transform-box:fill-box;transform-origin:center bottom}
+#catScene.cat-drinking svg .cat-head{animation:mishmishHeadDrink 4.1s ease-in-out 1 both;transform-box:fill-box;transform-origin:center 75%}
+#catScene.cat-drinking svg .water-ripples{animation:mishmishWaterRipple .7s ease-in-out infinite alternate}
+@keyframes mishmishWalkDrink{0%,100%{transform:translateX(0)}25%,72%{transform:translateX(45px)}}
+@keyframes mishmishHeadDrink{0%,23%,75%,100%{transform:translateY(0) rotate(0)}35%,65%{transform:translateY(10px) rotate(8deg)}}
+@keyframes mishmishWaterRipple{from{opacity:.25;transform:scale(.86)}to{opacity:1;transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){#catScene.cat-drinking svg .cat-walk,#catScene.cat-drinking svg .cat-head,#catScene.cat-drinking svg .water-ripples{animation:none}}
+#gameRulesSheet .employee-rule{margin:10px 0 10px 12px;padding:10px 12px;border:1px solid #c9d7c4;border-radius:12px;background:#f4f9ef}#gameRulesSheet .employee-rule summary{font-size:17px}#gameRulesSheet .employee-rule p{font-size:16px;line-height:1.7}
+</style></head><body><main>
+<header><a class="btn" id="siteBack" href="/#games">رجوع ←</a><button type="button" id="topEditNames" aria-expanded="false" aria-controls="settingsPanel">⚙️ الإعدادات</button></header>
+<div id="gameRulesDialog" role="dialog" aria-modal="true" aria-labelledby="gameRulesHeading" hidden>
+<div id="gameRulesSheet" dir="rtl" lang="ar" tabindex="-1"><button type="button" id="gameRulesClose" aria-label="إغلاق القواعد">✕ إغلاق</button><h2 id="gameRulesHeading">📖 قواعد حديقة السعادة</h2><p>دليل مختصر لقواعد اللعبة. افتح القسم اللي بدك تعرف عنه.</p><details><summary>🌱 الزراعة والبيع</summary><p>ازرع البذور واعتنِ بالنبتة حتى تزهر، وبعدين بيعها لتحصل على عملات. جودة النبتة بتتأثر بالعناية فيها.</p><p>أبو وردة بيساعد بالسقاية والتسميد وإزالة الدود إذا كان موظف وعم يشتغل.</p></details><details><summary>👩🏻‍🌾 الموظفون</summary><details class="employee-rule"><summary>👩🏻‍🌾 ياسمين — مديرة المشتل</summary><p>بتتابع مخزون السماد وطعام القطة. لما المخزون ينزل تحت 5، بتطلب موافقتك على الشراء، وما في خصم تلقائي.</p><p>بتساعدك بالمهمات والمساعدة المالية عند انخفاض الرصيد.</p></details><details class="employee-rule"><summary>👵 نانا — مربّية القطط</summary><p>بتنفتح بعد 12 مبيعة، وتوظيفها بكلفة 120 عملة، وراتبها 20 عملة كل 3 مبيعات.</p><p>بتسقي القطة وبتطعمها تلقائياً عند 25%، وبتساعد بالتمشيط واللعب. كل إطعام أو سقاية بيرفع المؤشر 25 نقطة، متل اللاعب.</p><p>إذا الطعام خلص ووصل الشبع إلى 10%، بتشتري 5 حصص بالطوارئ، وبتسجّل فاتورة 20 عملة تشمل أجرة النقل. ما بتشتري لمجرد إن المخزون خلص.</p><p>إذا عليها راتب مستحق وما اندفع، ممكن تتوقف عن العمل.</p></details><details class="employee-rule"><summary>👨‍🌾 أبو وردة — عامل المشتل</summary><p>بينفتح بعد 6 مبيعات، وتوظيفه بكلفة 80 عملة، وراتبه 15 عملة كل 3 مبيعات.</p><p>بيساعد بالسقاية والتسميد وإزالة الدود. ممكن يتوقف إذا كان راتبه مستحقاً.</p></details></details><details><summary>🐱 القطة والعناية اليومية</summary><p>الشبع بينخفض تدريجياً من 100% إلى 20% خلال 3 دقائق تقريباً، والارتواء والمزاج خلال دقيقتين تقريباً.</p><p>بتقدر تطعمي القطة وتسقيها وتمشّطيها وتلعبي معها. الأكل والشرب بيرفعوا المؤشر 25 نقطة لكل عملية، وما في عمليتين عناية بنفس الوقت.</p><p>قبل توظيف نانا، بيطلع تنبيه إذا القطة جاعت أو عطشت. بعد توظيفها، نانا بتتدخل عند 25% وبتعطي الأولوية للعطش، طالما عم تشتغل.</p></details><details><summary>🚨 طوارئ الطعام وجمعية الحيوانات</summary><p>ياسمين بتطلب موافقتك لما مخزون طعام القطة ينزل تحت 5. نانا ما بتشتري لمجرد نفاد المخزون.</p><p>إذا خلص الطعام ووصل شبع القطة إلى 10%، نانا الموظفة بتشتري 5 حصص طارئة: 15 عملة للطعام و5 عملات للنقل.</p><p>فاتورة نانا 20 عملة، وما بتنخصم إلا بموافقتك. إذا الفاتورة السابقة ما اندفعت، ما بتعمل شراء طارئ جديد تلقائياً.</p><p>إذا ما معك مال والطعام خلص والقطة جاعت كتير، جمعية أصدقاء الحيوانات بتقدّم 3 حصص إسعافية مجانية.</p><p>إذا نانا مو موظفة ومعك مال، بيطلع تنبيه طوارئ لتشتري الطعام بنفسك.</p></details><details><summary>🎮 مهمات ياسمين والمساعدة المالية</summary><p>إذا نزل رصيدك لأقل من 20 عملة، بتنفتح مهمات ياسمين وبيظهر إشعار أحمر. كل مهمة ناجحة بتعطيك 5 عملات.</p><p>إذا صار معك 20 إلى 29 عملة، بتضل المهمات مفتوحة إذا كانت انفتحت. عند 30 عملة أو أكثر بتختفي، وما بترجع إلا إذا نزل الرصيد تحت 20.</p><p>الألعاب: تنظيف المشتل، الذاكرة، إنقاذ النباتات، وكراج السيارات.</p></details><details><summary>🕵️ مهمات القطة</summary><p>القطة بتقدر تتجسس على أبو وردة وتطلع بجولة لصيد الفأرة.</p><p>بعد المهمة، الزر بيصير رمادي مع عدّاد انتظار دقيقتين، وبعدها بيتفعّل مجدداً. تقارير القطة بتخبرك بالنتيجة.</p></details><details><summary>💾 حفظ التقدم والإعدادات</summary><p>تقدمك محفوظ تلقائياً ببيانات المتصفح على جهازك. لا تمسح بيانات الموقع إذا بدك تحافظ على مبيعاتك ومصاريك وموظفينك.</p><p>زر «إعادة اللعبة من البداية» بيبدأ لعبة جديدة وبيمسح التقدم المحفوظ.</p></details></div></div><div id="settingsPanel" class="panel" hidden><div class="staff-actions" id="settingsQuickActions"><button id="lang" type="button">English</button><button type="button" id="gameRulesOpen" aria-haspopup="dialog">📖 قواعد اللعبة</button></div><div class="staff-actions"><button id="settingsNames" type="button">✏️ تعديل الأسماء</button><button id="settingsAudio" type="button">🔊 تعديل الصوت</button><button id="employeesToggle" type="button">👥 الموظفين</button></div><div id="settingsNamesPanel" hidden></div><div id="employeesPanel" class="staff-request" hidden><h3 id="employeesTitle">👥 الموظفين</h3><div class="settings-employee-list">
+<details class="settings-employee-card"><summary><span class="settings-employee-portrait"><svg class="yasmin-art" viewBox="0 0 180 270" role="img" aria-label="ياسمين، مزارعة كرتونية مبتسمة بقبعة قش وملابس زرقاء تحمل جزرة"><ellipse cx="90" cy="258" rx="66" ry="8" fill="#a5b49a" opacity=".35"/><g class="yasmin-person"><path d="M45 125Q25 133 24 173L29 197Q39 204 48 191L52 161Z" fill="#ed9baf"/><path d="M130 125Q152 129 154 157L163 184Q160 197 148 193L137 170Z" fill="#ed9baf"/><path d="M48 125Q90 110 132 125L138 205H42Z" fill="#f2a1b2"/><path d="M53 151H127L130 219H50Z" fill="#3b78aa" stroke="#27527e" stroke-width="3"/><path d="M58 123L69 160M123 123L111 160" stroke="#3b78aa" stroke-width="13" stroke-linecap="round"/><rect x="76" y="171" width="30" height="25" rx="5" fill="#548dbb" stroke="#285b83" stroke-width="2"/><circle cx="69" cy="158" r="4" fill="#f9d48b"/><circle cx="112" cy="158" r="4" fill="#f9d48b"/><path d="M52 216L49 248H78L84 216M98 216L104 248H132L128 216" fill="#32618e" stroke="#264d76" stroke-width="3"/><path d="M48 242H79V257H44Q39 251 48 242ZM103 242H134Q146 251 138 257H102Z" fill="#c65c54" stroke="#913d3a" stroke-width="3"/><path d="M52 75Q46 28 90 28Q137 28 129 83L131 115H49Z" fill="#70452d"/><ellipse cx="90" cy="82" rx="38" ry="45" fill="#f8c5a0" stroke="#d99579" stroke-width="2"/><path d="M53 75Q46 43 72 41Q94 50 115 43Q132 48 127 78L120 62Q92 60 74 57L58 72Z" fill="#70452d"/><ellipse cx="76" cy="83" rx="4" ry="5" fill="#342b2c"/><ellipse cx="106" cy="83" rx="4" ry="5" fill="#342b2c"/><circle cx="75" cy="81" r="1.3" fill="white"/><circle cx="105" cy="81" r="1.3" fill="white"/><circle cx="65" cy="97" r="6" fill="#ef9a9b" opacity=".6"/><circle cx="116" cy="97" r="6" fill="#ef9a9b" opacity=".6"/><path id="yasminMouth" d="M80 103Q90 115 102 103" stroke="#a94c53" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M37 49Q40 31 91 28Q143 31 145 49Q94 64 35 52Z" fill="#e7bb72" stroke="#a87539" stroke-width="4"/><path d="M62 39Q63 7 91 7Q119 7 122 39Z" fill="#f2cb84" stroke="#a87539" stroke-width="4"/><path d="M62 34Q92 42 123 34" fill="none" stroke="#b45b4d" stroke-width="5"/><g class="yasmin-carrot"><path d="M154 153L148 183Q158 198 166 183L161 154Z" fill="#f58c36" stroke="#c56b2c" stroke-width="2"/><path d="M157 155Q143 149 147 139Q155 139 158 148Q160 137 170 139Q173 150 160 155Z" fill="#4f9953"/><path d="M145 183Q136 176 141 170Q147 168 150 177" fill="#f8c5a0"/></g></g></svg></span><span class="settings-employee-heading"><strong id="yasminEmployeeName">ياسمين</strong><small id="yasminEmployeeDescription">مديرة المشتل</small></span><span class="settings-employee-chevron">⌄</span></summary><div class="settings-employee-detail"><p id="yasminEmployeeDuty">مسؤولة عن المشتل والمخزون وطلبات الشراء والدعابات</p><p id="yasminSalary"></p><p id="yasminEmployeeState">● تعمل</p></div></details>
+<details class="settings-employee-card"><summary><span class="settings-employee-portrait"><span class="abu-icon" aria-hidden="true">👨‍🌾</span></span><span class="settings-employee-heading"><strong id="abuEmployeeName">أبو وردة</strong><small id="abuEmployeeRole">مسؤول العناية بالنباتات</small></span><span class="settings-employee-chevron">⌄</span></summary><div class="settings-employee-detail"><p id="abuEmployeeDuty">يسقي النبتة ويسمّدها ويكافح الدود تلقائياً</p><p id="abuSalary"></p></div></details>
+<details class="settings-employee-card settings-nana-card" open><summary><span class="settings-employee-portrait"><svg viewBox="0 0 180 240" class="nana-art" role="img" aria-label="Nana cat caretaker"><path d="M53 74Q30 15 90 14Q149 15 127 74" fill="#adb2bf"/><circle cx="90" cy="76" r="43" fill="#f5c5ad"/><path d="M48 59Q48 19 90 25Q133 19 132 59Q113 39 90 43Q66 41 48 59" fill="#b6bcc9"/><circle cx="131" cy="30" r="23" fill="#b3b9c5"/><path d="M49 74Q36 96 48 112M132 74Q146 96 134 111" stroke="#b7bcc9" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="76" cy="77" r="14" stroke="#826b85" stroke-width="3" fill="none"/><circle cx="105" cy="77" r="14" stroke="#826b85" stroke-width="3" fill="none"/><path d="M90 77h1" stroke="#826b85" stroke-width="3"/><circle cx="76" cy="77" r="3" fill="#594454"/><circle cx="105" cy="77" r="3" fill="#594454"/><circle cx="62" cy="92" r="9" fill="#f19b9e" opacity=".65"/><circle cx="119" cy="92" r="9" fill="#f19b9e" opacity=".65"/><path d="M78 100Q90 114 103 100" fill="none" stroke="#9e5c6b" stroke-width="3" stroke-linecap="round"/><path d="M49 122Q90 103 131 122L151 212H30Z" fill="#b8a1db"/><path d="M67 123H113L120 211H61Z" fill="#fff0d9"/><path d="M77 172q-6-7 0-11q5-2 8 3q4-6 9-2q6 4 0 10q-9 9-17 0M77 154h3m9-3h3m9 4h3" fill="#bd9e8c" stroke="#bd9e8c" stroke-width="2" stroke-linecap="round"/><path d="M45 142L24 174L39 183L63 155M135 141L157 170L145 182L120 154" fill="#f5c5ad" stroke="#b8a1db" stroke-width="9" stroke-linecap="round"/><ellipse cx="23" cy="183" rx="25" ry="9" fill="#e7d5b5" stroke="#9c8574" stroke-width="3"/><path d="M141 183Q158 151 165 133" fill="none" stroke="#8b6a52" stroke-width="3"/><path d="M165 133q-22-19-12-27q18 8 12 27q20-19 24-6q-8 15-24 6" fill="#82b8d9"/><path d="M57 211v21h28v-21M100 211v21h28v-21" fill="#786d93"/></svg></span><span class="settings-employee-heading"><strong id="nanaEmployeeName">نانا</strong><small id="nanaEmployeeRole">مربّية القطط</small></span><span class="settings-employee-chevron">⌄</span></summary><div class="settings-employee-detail"><p id="nanaEmployeeDuty">بتطعم القطة وبتسقيها وبتساعد بتمشيطها واللعب معها</p><p id="nanaEmployeeSalary">20 عملة كل 3 مبيعات</p><p id="nanaEmployeeState">● تعمل</p></div></details></div><button id="employeesClose" type="button">إغلاق</button></div><div id="daySettings"><label for="dayMode">🌤️ الوقت والسماء</label><select id="dayMode"><option value="auto">تلقائي — دورة اليوم</option><option value="day">نهار دائم</option><option value="night">ليل دائم</option></select><p id="skyPhase" class="info"></p><p id="skyClock" class="info"></p><label for="weatherMode">🌦️ الطقس</label><select id="weatherMode"><option value="auto">🔄 تلقائي — طقس متغير</option><option value="clear">☀️ صحو</option><option value="rain">🌧️ مطر</option><option value="wind">💨 ريح</option></select><p id="weatherStatus" class="info"></p></div><div id="settingsAudioPanel" hidden><div class="audio-controls"><div class="sound-control"><label for="sfxToggle" id="sfxLabel">🔊 المؤثرات</label><button id="sfxToggle" class="switch" role="switch" aria-checked="true" type="button"><span></span><b>ON</b></button><input id="sfxVolume" type="range" min="0" max="100" value="85" aria-label="Effects volume"></div><div class="sound-control"><label for="musicToggle" id="musicLabel">🎹 موسيقى الجاز</label><button id="musicToggle" class="switch" role="switch" aria-checked="false" type="button"><span></span><b>OFF</b></button><input id="musicVolume" type="range" min="0" max="100" value="85" aria-label="Music volume"></div></div></div><button id="restartGame" type="button" style="margin-top:12px;width:100%">🔄 إعادة اللعبة من البداية</button></div><div id="levelHeader"><div id="levelHeadingRow"><h1 id="title">🌿 مشتل الياسمينة</h1><div id="gameTime" role="status"></div></div><div id="levelProgressRow"><span id="levelBadge" dir="ltr">Level 1</span><div id="levelTrack" role="progressbar" aria-label="التقدم للمستوى التالي" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div id="levelFill"></div></div></div><div id="levelCaption">0 / 10 مبيعات للمستوى التالي</div></div><p class="sub" id="subtitle" hidden></p><div id="levelToast" role="status" aria-live="polite" hidden></div>
+<section class="panel" id="identityPanel" hidden><div class="staff-grid"><label><span id="gardenNameLabel">اسم الحديقة</span><div class="identity-edit"><input id="gardenNameInput" maxlength="24" autocomplete="off"><button type="button" id="saveGardenName">✓</button></div></label><label><span id="nurseryNameLabel">اسم المشتل</span><div class="identity-edit" id="nurseryEdit"><input id="nurseryNameInput" maxlength="12" autocomplete="off"><button type="button" id="saveNurseryName">✓</button></div><div id="nurseryNameDone" class="identity-done" hidden></div></label><label><span id="catNameLabel">اسم القطة</span><div class="identity-edit" id="catEdit"><input id="catNameInput" maxlength="10" autocomplete="off"><button type="button" id="saveCatName">✓</button></div><div id="catNameDone" class="identity-done" hidden></div></label></div></section><div hidden><button id="editNames" type="button">✏️ تعديل الأسماء</button></div><div class="panel hud hud-3d"><div><span id="moneyLabel">المال</span><b id="money">💰 50</b></div><div><span id="salesLabel">المبيعات</span><b id="sales">0</b></div><div id="qualityCard" role="button" tabindex="0" aria-label="تفاصيل جودة النبتة"><span id="qualityLabel">الجودة</span><b id="quality">100%</b><small id="qualityReason" hidden></small></div></div>
+<div id="nextGoal" class="panel" role="button" tabindex="0" hidden><strong id="goalTitle"></strong><div class="goal-bars"><div><label id="goalSalesLabel"></label><progress id="goalSalesBar" max="100" value="0"></progress></div><div><label id="goalCoinsLabel"></label><progress id="goalCoinsBar" max="100" value="0"></progress></div></div><p id="goalRemaining"></p></div><nav class="game-nav" id="gameNav" aria-label="التنقّل داخل اللعبة">
+<div class="nursery-tab-wrap"><button id="nurseryTab" type="button" aria-controls="nurseryArea" aria-pressed="true">🌱 المشتل</button><span id="nurseryBadge" class="nursery-badge" hidden>!</span></div>
+<button id="catTab" type="button" aria-controls="catArea" aria-pressed="false">🐱 القطة</button><button id="staffTab" type="button" aria-controls="staffArea" aria-pressed="false">👩🏻‍🌾 ياسمين <span id="staffBadge" class="staff-badge" hidden>0</span></button><button id="workersTab" type="button" aria-controls="workersArea" aria-pressed="false">👥 موظفين <span id="workersBadge" class="staff-badge" hidden>!</span></button>
+</nav><div id="abuNotice" class="abu-notice" hidden></div>
+<section id="nurseryArea" aria-labelledby="nurseryTab">
+<div class="panel"><div class="row"><b id="cropName">الياسمينة</b><span id="clock">⏱ 02:30</span></div><div class="bar" style="margin:12px 0"><div id="growth" class="fill"></div></div><div class="row info"><span id="stage">بذرة</span><span id="pct">0%</span></div></div>
+<div class="scene" id="scene"><div class="sun"></div><div class="cloud">☁️</div><div class="plant" id="plant"></div><div class="pot"></div><div id="abuWorker" hidden aria-label="أبو وردة يعمل بالمشتل"><svg viewBox="0 0 110 190" width="100%" height="100%" aria-hidden="true"><ellipse cx="55" cy="184" rx="42" ry="5" fill="#537d5b" opacity=".3"/><path d="M33 126L30 174H49L56 135L62 174H82L77 124" fill="#285f89"/><path d="M27 170H52V183H23Q18 179 27 170M61 170H84Q94 181 83 183H60Z" fill="#6e4030"/><rect x="23" y="69" width="64" height="66" rx="17" fill="#4a9d53"/><path d="M40 80V134M70 80V134" stroke="#e9b548" stroke-width="8"/><path d="M25 82L10 120M86 82L100 118" stroke="#edb47d" stroke-width="15" stroke-linecap="round"/><ellipse cx="55" cy="51" rx="30" ry="35" fill="#eeb481"/><path d="M26 48Q55 17 84 48" fill="#573a24"/><ellipse cx="43" cy="55" rx="3" ry="4" fill="#30251d"/><ellipse cx="67" cy="55" rx="3" ry="4" fill="#30251d"/><path d="M45 69Q55 78 65 69" stroke="#7e4935" stroke-width="3" fill="none"/><path d="M18 33Q55 -3 92 33L101 42H9Z" fill="#dfae46" stroke="#a8792c" stroke-width="4"/><path d="M31 25H79" stroke="#86562e" stroke-width="6"/></svg></div><button class="event" id="event" hidden aria-label="Event">🐛</button></div>
+<p id="message" class="message" aria-live="polite"></p>
+<div class="panel" id="abuStatusPanel"><p id="abuWorkStatus" class="info" style="font-size:28px;line-height:1.3;text-align:center;font-weight:600;min-height:64px;display:flex;align-items:center;justify-content:center;box-sizing:border-box" hidden></p><button id="abuWagePay" type="button" hidden>💰 ادفع راتب أبو وردة · 15</button><div id="manualCare" class="grid"><button id="water">💧 سقاية</button><button id="feed">🌱 سماد</button><button id="emergencyFertilizer" type="button" hidden>🌱 سماد إسعافي مجاني (مرة واحدة)</button><button id="sun" hidden>☀️ شمس</button></div><p class="info" id="careInfo">العناية بتسرّع النمو، بس انتبه لجودة النبتة. كل زر إله وقت راحة قصير.</p></div>
+<div class="nurseryQuickActions" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;direction:rtl">
+<button type="button" id="customerToggle" aria-expanded="false" aria-controls="sellPanel" style="position:relative;min-width:0;padding:16px 7px;border-radius:18px;font-weight:bold">🧑‍🌾 <span id="customerToggleLabel">زبون المشتل</span><span id="customerAlert" hidden style="position:absolute;top:-9px;left:-6px;background:#d92e3e;color:white;border-radius:50%;min-width:23px;height:23px;line-height:23px;font-size:13px">!</span></button>
+<button type="button" id="seedToggle" aria-expanded="false" aria-controls="seedPanel" style="position:relative;min-width:0;padding:16px 7px;border-radius:18px;font-weight:bold">🛒 <span id="seedToggleLabel">متجر البذور</span><span id="seedAlert" hidden style="position:absolute;top:-9px;left:-6px;background:#d92e3e;color:white;border-radius:50%;min-width:23px;height:23px;line-height:23px;font-size:13px">!</span></button>
+</div>
+<div class="panel" id="sellPanel" hidden><div class="row"><b id="buyerTitle">🧑‍🌾 زبون المشتل</b><b id="offer" hidden></b></div><p id="buyerText">لما تزهر النبتة، بيجي زبون ليشتريها.</p><div class="orders"><button id="sell" disabled>بيع النبتة</button></div></div>
+<div class="panel" id="seedPanel" hidden><h2 id="shopTitle">🛒 متجر البذور</h2><p class="info" id="shopInfo">اشتري بذرة جديدة بعد البيع، وجرّب أنواع مختلفة.</p><div class="shop" id="shop"></div><button id="emergencySeedBtn" type="button" hidden>🌱 بذرة إسعافية مجانية</button><p id="emergencySeedHint" class="info" hidden></p></div>
+<div class="panel" id="missionPanel" hidden><div class="row"><b id="missionTitle">🎯 مهمة المشتل</b><span id="mission">بيع 3 نباتات</span></div><p class="info" id="missionInfo">كل عملية بيع بتزيد مصاريك وبتقرّبك من توسيع المشتل.</p><button id="reset">إعادة التجربة</button></div>
+</section>
+<section id="catArea" class="panel" aria-labelledby="catTitle" hidden>
+<div class="cat-heading"><h2 id="catTitle">قطة المشتل</h2><div id="catShopMount"></div></div>
+<div id="nanaUpper" hidden><div id="nanaUpperArt">👩‍🍳</div><div id="nanaUpperSpeech" aria-live="polite">أنا هون لاعتني بمشمش!</div><span id="nanaFeather">🪶</span></div><div class="cat-scene" id="catScene">
+<svg viewBox="0 0 360 180" aria-hidden="true">
+  <defs>
+    <linearGradient id="catFur" x2="0" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#fac36f"/><stop offset="1" stop-color="#e68b38"/>
+    </linearGradient>
+    <linearGradient id="catBowlShade" x2="0" y2="1">
+      <stop stop-color="#f78379"/><stop offset="1" stop-color="#c34a4d"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(113 58)">
+    <g class="cat-walk">
+      <ellipse cx="68" cy="83" rx="67" ry="8" fill="#94634a" opacity=".15"/>
+      <g class="cat-facing" stroke="#9a4d28" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path class="cat-tail" d="M37 54C20 59 5 52 4 38c-1-8 1-15 6-19 4-3 8 1 6 5-4 8-3 17 4 21 5 3 12 2 18-1z" fill="#e99b51"/>
+        <g>
+          <path class="cat-leg" d="M46 59l1 19q0 6 11 6h6q5-3 0-6l-5-2 3-17z" fill="#da8544"/>
+          <path class="cat-leg" d="M92 58l2 21q1 5 8 5h10q4-3 0-6l-8-2 4-17z" fill="#da8544"/>
+        </g>
+        <path d="M28 49c6-20 28-27 55-24 14 1 22 6 27 14 10 16 0 28-15 32-17 4-48 5-59-3-7-5-10-11-8-19z" fill="url(#catFur)"/>
+        <path d="M47 38q4 8 0 14m13-19q5 8 1 15m13-16q5 7 1 13" fill="none" stroke="#bc682f" stroke-width="3"/>
+        <g>
+          <path class="cat-leg" d="M33 57q-3 10 2 17l-2 5q-1 6 12 6h7q6-3 1-6l-7-2 4-12" fill="#ec9e50"/>
+          <path class="cat-leg" d="M82 58l1 22q1 6 9 6h9q6-3 1-7l-6-2 2-16" fill="#f5b463"/>
+        </g>
+        <g class="cat-head">
+          <path d="M88 34 87 13q0-4 4-2l16 10q7-2 13 0l12-10q4-3 4 2l-1 23q5 7 4 14c-1 13-11 20-25 20-16 0-28-6-29-18q-1-10 3-18z" fill="url(#catFur)"/>
+          <path d="M92 27v-9l10 7m22 1 8-8-1 11" fill="#ed9e85" stroke="none"/>
+          <path d="M107 26l2 7m6-8 1 7m5-6 1 6" stroke="#bc682f" fill="none"/>
+          <path d="M100 55q5-8 12-3 6-5 13 1 6 10-9 13-14 2-16-11z" fill="#ffe0ac" stroke="none"/>
+          <ellipse cx="104" cy="45" rx="2" ry="3" fill="#472818" stroke="none"/>
+          <ellipse cx="124" cy="44" rx="2" ry="3" fill="#472818" stroke="none"/>
+          <path d="M111 51q4-3 8 0l-4 4z" fill="#c87070" stroke-width="1.2"/>
+          <path d="M115 55q-2 5-6 3m6-3q2 5 6 3m-21-5-11-2m12 7-11 2m37-8 10-2m-9 7 10 2" fill="none" stroke-width="1.2"/>
+          <g id="catWornAccessories" pointer-events="none"></g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <g class="cat-tool cat-bowl">
+    <ellipse cx="280" cy="147" rx="23" ry="4" fill="#94634a" opacity=".22"/>
+    <path d="M258 131h43l-6 14q-15 6-31 0z" fill="url(#catBowlShade)" stroke="#a84340" stroke-width="2"/>
+    <ellipse cx="279.5" cy="131" rx="21.5" ry="5.5" fill="#f3a694" stroke="#a84340" stroke-width="2"/>
+    <path d="M265 131q5-9 10-5 5-8 10 0 5-3 9 5-14 5-29 0z" fill="#99592d"/>
+    <circle cx="277" cy="127" r="1.6" fill="#e1a35b"/><circle cx="286" cy="129" r="1.7" fill="#e1a35b"/>
+  </g>
+  <g class="cat-water-bowl">
+    <ellipse cx="280" cy="147" rx="23" ry="4" fill="#94634a" opacity=".22"/>
+    <path d="M258 131h43l-6 14q-15 6-31 0z" fill="#65a8d9" stroke="#3b7ea8" stroke-width="2"/>
+    <ellipse cx="279.5" cy="131" rx="21.5" ry="5.5" fill="#a4d5ef" stroke="#3b7ea8" stroke-width="2"/>
+    <ellipse cx="279.5" cy="130" rx="17.5" ry="3.5" fill="#4dbbe6"/>
+    <g class="water-ripples" fill="none" stroke="#e8fbff" stroke-width="1.5" style="transform-origin:280px 130px">
+      <ellipse cx="280" cy="130" rx="10" ry="2"/>
+      <path d="M272 127q8-4 16 0"/>
+    </g>
+  </g>
+  <g class="cat-tool cat-play-tool">
+    <g class="cat-yarn" fill="none" stroke="#a54e6e" stroke-width="2">
+      <path d="M288 135q12 9 19 4"/>
+      <circle cx="277" cy="130" r="12" fill="#f291b0"/>
+      <path d="M267 124q12 2 19 13m-13-18q7 2 14 11m-21 0 14 11"/>
+    </g>
+    <g class="cat-feather" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M289 139l39-42" stroke="#90603e" stroke-width="3"/>
+      <path d="M289 139q-9-5-7-15" fill="none" stroke="#90603e" stroke-width="1.6"/>
+      <path d="M282 124q-17 3-15-17 14 1 15 17z" fill="#b874d5" stroke="#784594" stroke-width="1.7"/>
+      <path d="M283 126l-12-15m7 9-8-1m6-3 1-5" stroke="#f6e0ff" stroke-width="1.2"/>
+    </g>
+  </g>
+  <g class="cat-tool cat-brush" transform="rotate(-14 173 92)" stroke-linecap="round">
+    <path d="M180 90h22q6 0 6 4t-6 4h-22" fill="#c17d55" stroke="#8d5538" stroke-width="2"/>
+    <rect x="151" y="86" width="34" height="13" rx="6" fill="#ed9c78" stroke="#8d5538" stroke-width="2"/>
+    <path d="M156 99v6m5-6v7m5-7v7m5-7v7m5-7v7m5-7v5" stroke="#5e5143" stroke-width="2"/>
+  </g>
+</svg>
+</div>
+<div class="cat-stats">
+<div><span id="catFullnessLabel">الشبع</span> <b id="catFullness"></b><div class="bar" aria-hidden="true"><div id="catFullnessBar" class="fill"></div></div></div>
+<div><span id="catHydrationLabel">الارتواء</span> <b id="catHydration">75%</b><div class="bar"><div id="catHydrationBar" class="fill" style="width:75%"></div></div></div><div><span id="catMoodLabel">المزاج</span> <b id="catMood"></b><div class="bar" aria-hidden="true"><div id="catMoodBar" class="fill"></div></div></div><div id="catTreatStat"><span>🍬 المكافآت</span> <b id="catTreatStatValue">0 حبة</b><div class="bar"><div id="catTreatStatBar" class="fill" style="width:0%"></div></div></div>
+</div>
+<div class="grid">
+<button id="catWater" type="button">💧 اسقيها</button><button id="catFeed" type="button">🍲 طعميها</button>
+<button id="catPlay" type="button">🪶 العب معها</button>
+<button id="catBrush" type="button">🪮 مشّطها</button>
+</div>
+<section id="catEmergencyPanel" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d66d55;background:#fff0e8;color:#64362a;border-radius:16px" aria-live="polite"><strong id="catEmergencyText"></strong><div class="grid" style="margin-top:10px"><button id="catEmergencyBuy" type="button">🍲 اشتري 5 حصص · 15 عملة</button><button id="catEmergencyAid" type="button">❤️ اطلب مساعدة جمعية الحيوانات</button></div></section><section id="catEmergencyBill" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d2a35a;background:#fff4dc;color:#61482c;border-radius:16px"><strong id="catEmergencyBillText">🧾 فاتورة نانا</strong><button id="catEmergencyPay" type="button" style="display:block;width:100%;margin-top:10px">💰 وافق على دفع الفاتورة · 20 عملة</button></section><div id="mishmishNotices" aria-live="polite"></div><p id="catMessage" class="message" aria-live="polite"></p><p id="nanaCatAction" class="info" aria-live="polite" hidden></p><div id="nanaCatWater" class="nana-water" hidden><span aria-hidden="true">💧🥣</span><span id="nanaCatWaterText">نانا حطّت مي نظيفة لمشمش.</span></div><div id="catHuntStage" hidden aria-live="polite"><div id="huntCat"><svg viewBox="0 0 120 100" aria-label="cat"><path d="M13 60Q8 31 31 24L28 4L52 22Q71 15 89 23L111 4L108 43Q117 73 94 88Q68 105 37 88Q18 82 13 60Z" fill="#eba45f" stroke="#995b32" stroke-width="3"/><path d="M30 28L32 15L46 26M92 27L106 14L103 36" fill="#efb2a7"/><ellipse cx="46" cy="55" rx="5" ry="7" fill="#382b28"/><ellipse cx="82" cy="55" rx="5" ry="7" fill="#382b28"/><path d="M58 68L70 68L64 74Z" fill="#d78383"/><path d="M64 74Q55 83 47 75M64 74Q73 83 81 75" stroke="#895b3d" stroke-width="2" fill="none"/><path d="M39 69L14 65M39 76L14 81M89 69L113 65M89 76L113 81" stroke="#895b3d" stroke-width="2"/></svg><span id="huntBang">!</span></div><svg id="huntMouseArt" viewBox="0 0 120 90" aria-label="mouse"><path d="M20 58Q0 46 9 30" stroke="#b7aeb8" stroke-width="5" fill="none"/><circle cx="41" cy="29" r="18" fill="#f1a7b8"/><circle cx="83" cy="28" r="18" fill="#f1a7b8"/><ellipse cx="62" cy="53" rx="42" ry="29" fill="#a6a8b2"/><circle cx="48" cy="47" r="4" fill="#393846"/><circle cx="76" cy="47" r="4" fill="#393846"/><circle cx="62" cy="59" r="5" fill="#eaa2b2"/><path d="M62 63q-8 8-15 0m15 0q8 8 15 0" stroke="#58535e" stroke-width="2" fill="none"/></svg></div>
+<button id="catToy" type="button">🪶 اشتري لعبة ريشة · 💰 20</button>
+<div id="catExtras" style="display:grid;gap:12px;margin-top:18px">
+<button id="catTreatBuy" type="button" hidden></button>
+<div id="catTreatCount" class="info"></div>
+<div class="mission-row"><button id="catSpy" type="button"></button><span id="catSpyTimer" class="mission-timer" hidden></span></div><div id="catBoutique" class="panel" style="padding:12px;margin:8px 0"><div id="catBoutiqueItems" hidden style="grid-template-columns:repeat(2,minmax(0,1fr));gap:8px"></div></div><div class="mission-row"><button id="catMouseHunt" type="button">🐭 جولة صيد الفأرة</button><span id="catHuntTimer" class="mission-timer" hidden></span></div><p id="catMouseReport" class="message" aria-live="polite"></p><button id="catMouseReward" type="button" hidden></button>
+<p id="catSpyReport" class="message" aria-live="polite"></p>
+<button id="catTreatReward" type="button" hidden></button>
+</div></section>
+<section id="staffArea" class="panel" aria-labelledby="staffTitle" hidden><div class="staff-intro"><div><h2 id="staffTitle">ياسمين <span id="yasminFace"></span></h2><p id="staffRole" class="staff-mood">مسؤولة المشتل</p><div id="stockPanel"><div class="stock-row"><span id="fertilizerStockLabel">🌱 مخزون السماد</span><b id="fertilizerStock"></b></div><div class="stock-row"><span id="catFoodStockLabel">🍲 مخزون أكل القطة</span><b id="catFoodStock"></b></div><p id="staffMood" class="staff-mood" style="margin:12px 0 0;text-align:right;max-width:100%"></p><p class="info" id="stockHint" hidden></p><button id="buyFertilizerDirect" type="button">🌱 شراء 5 سماد · 💰 10</button></div></div><svg class="yasmin-art" viewBox="0 0 180 270" role="img" aria-label="ياسمين، مزارعة كرتونية مبتسمة بقبعة قش وملابس زرقاء تحمل جزرة"><ellipse cx="90" cy="258" rx="66" ry="8" fill="#a5b49a" opacity=".35"/><g class="yasmin-person"><path d="M45 125Q25 133 24 173L29 197Q39 204 48 191L52 161Z" fill="#ed9baf"/><path d="M130 125Q152 129 154 157L163 184Q160 197 148 193L137 170Z" fill="#ed9baf"/><path d="M48 125Q90 110 132 125L138 205H42Z" fill="#f2a1b2"/><path d="M53 151H127L130 219H50Z" fill="#3b78aa" stroke="#27527e" stroke-width="3"/><path d="M58 123L69 160M123 123L111 160" stroke="#3b78aa" stroke-width="13" stroke-linecap="round"/><rect x="76" y="171" width="30" height="25" rx="5" fill="#548dbb" stroke="#285b83" stroke-width="2"/><circle cx="69" cy="158" r="4" fill="#f9d48b"/><circle cx="112" cy="158" r="4" fill="#f9d48b"/><path d="M52 216L49 248H78L84 216M98 216L104 248H132L128 216" fill="#32618e" stroke="#264d76" stroke-width="3"/><path d="M48 242H79V257H44Q39 251 48 242ZM103 242H134Q146 251 138 257H102Z" fill="#c65c54" stroke="#913d3a" stroke-width="3"/><path d="M52 75Q46 28 90 28Q137 28 129 83L131 115H49Z" fill="#70452d"/><ellipse cx="90" cy="82" rx="38" ry="45" fill="#f8c5a0" stroke="#d99579" stroke-width="2"/><path d="M53 75Q46 43 72 41Q94 50 115 43Q132 48 127 78L120 62Q92 60 74 57L58 72Z" fill="#70452d"/><ellipse cx="76" cy="83" rx="4" ry="5" fill="#342b2c"/><ellipse cx="106" cy="83" rx="4" ry="5" fill="#342b2c"/><circle cx="75" cy="81" r="1.3" fill="white"/><circle cx="105" cy="81" r="1.3" fill="white"/><circle cx="65" cy="97" r="6" fill="#ef9a9b" opacity=".6"/><circle cx="116" cy="97" r="6" fill="#ef9a9b" opacity=".6"/><path id="yasminMouth" d="M80 103Q90 115 102 103" stroke="#a94c53" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M37 49Q40 31 91 28Q143 31 145 49Q94 64 35 52Z" fill="#e7bb72" stroke="#a87539" stroke-width="4"/><path d="M62 39Q63 7 91 7Q119 7 122 39Z" fill="#f2cb84" stroke="#a87539" stroke-width="4"/><path d="M62 34Q92 42 123 34" fill="none" stroke="#b45b4d" stroke-width="5"/><g class="yasmin-carrot"><path d="M154 153L148 183Q158 198 166 183L161 154Z" fill="#f58c36" stroke="#c56b2c" stroke-width="2"/><path d="M157 155Q143 149 147 139Q155 139 158 148Q160 137 170 139Q173 150 160 155Z" fill="#4f9953"/><path d="M145 183Q136 176 141 170Q147 168 150 177" fill="#f8c5a0"/></g></g></svg></div><div id="staffDialogue" class="staff-dialogue" aria-live="polite"></div><section id="yasminMiniGames" aria-labelledby="miniGameHeading"><h3 id="miniGameHeading">🎮 مهمّات ياسمين</h3><p>ساعد ياسمين بالمشتل واربح 5 عملات عن كل مهمة! مجانية وقابلة للإعادة.</p><button id="miniGameStart" type="button">🌿 ابدأ مهمة مجانية</button><p id="miniGameInstruction" aria-live="polite"></p><div id="miniGameBoard" hidden></div><strong id="miniGameProgress" aria-live="polite"></strong></section><div class="staff-actions"><button id="hireStaff" type="button"></button><button id="staffJoke" type="button"></button></div><div id="jokeRating" class="staff-actions" hidden><button id="jokeClose" type="button" aria-label="إغلاق">×</button><button id="jokeGood" type="button"></button><button id="jokeBad" type="button"></button></div><section id="workersArea" aria-labelledby="workersTab" hidden><div class="panel workers-manager-card" id="workersYasminCard"><div class="staff-intro"><div><h2 id="workersYasminName">👩🏻‍🌾 ياسمين</h2><p id="workersYasminRole" class="staff-mood">مديرة المشتل</p></div><div class="workers-manager-portrait" aria-hidden="true">👩🏻‍🌾</div></div><p id="workersYasminInfo" class="staff-dialogue">مسؤولة عن المشتل والقطط، وما إلها راتب دوري. بتطلب مصاري للمشتريات والمكافآت فقط.</p><p id="workersYasminStatus" class="info"></p></div><div class="panel" id="abuPanel" style="background:#f1f8e9"><div class="staff-intro"><div><h2 id="abuTitle"><span id="abuName">أبو وردة</span><span class="abu-icon" aria-hidden="true">👨‍🌾</span></h2><p id="abuStatus" class="staff-mood"></p></div></div><p id="abuDialogue" class="staff-dialogue" aria-live="polite"></p><button type="button" id="hireAbu">توظيف أبو وردة</button><p id="abuWage" class="info"></p></div><div class="panel" id="nanaPanel"><div class="staff-intro"><div><h2 id="nanaTitle">نانا</h2><p id="nanaRole" class="staff-mood">مربّية القطط</p><p id="nanaStatus" class="staff-mood"></p></div><svg viewBox="0 0 180 240" class="nana-art" role="img" aria-label="Nana cat caretaker"><path d="M53 74Q30 15 90 14Q149 15 127 74" fill="#adb2bf"/><circle cx="90" cy="76" r="43" fill="#f5c5ad"/><path d="M48 59Q48 19 90 25Q133 19 132 59Q113 39 90 43Q66 41 48 59" fill="#b6bcc9"/><circle cx="131" cy="30" r="23" fill="#b3b9c5"/><path d="M49 74Q36 96 48 112M132 74Q146 96 134 111" stroke="#b7bcc9" stroke-width="8" fill="none" stroke-linecap="round"/><circle cx="76" cy="77" r="14" stroke="#826b85" stroke-width="3" fill="none"/><circle cx="105" cy="77" r="14" stroke="#826b85" stroke-width="3" fill="none"/><path d="M90 77h1" stroke="#826b85" stroke-width="3"/><circle cx="76" cy="77" r="3" fill="#594454"/><circle cx="105" cy="77" r="3" fill="#594454"/><circle cx="62" cy="92" r="9" fill="#f19b9e" opacity=".65"/><circle cx="119" cy="92" r="9" fill="#f19b9e" opacity=".65"/><path d="M78 100Q90 114 103 100" fill="none" stroke="#9e5c6b" stroke-width="3" stroke-linecap="round"/><path d="M49 122Q90 103 131 122L151 212H30Z" fill="#b8a1db"/><path d="M67 123H113L120 211H61Z" fill="#fff0d9"/><path d="M77 172q-6-7 0-11q5-2 8 3q4-6 9-2q6 4 0 10q-9 9-17 0M77 154h3m9-3h3m9 4h3" fill="#bd9e8c" stroke="#bd9e8c" stroke-width="2" stroke-linecap="round"/><path d="M45 142L24 174L39 183L63 155M135 141L157 170L145 182L120 154" fill="#f5c5ad" stroke="#b8a1db" stroke-width="9" stroke-linecap="round"/><ellipse cx="23" cy="183" rx="25" ry="9" fill="#e7d5b5" stroke="#9c8574" stroke-width="3"/><path d="M141 183Q158 151 165 133" fill="none" stroke="#8b6a52" stroke-width="3"/><path d="M165 133q-22-19-12-27q18 8 12 27q20-19 24-6q-8 15-24 6" fill="#82b8d9"/><path d="M57 211v21h28v-21M100 211v21h28v-21" fill="#786d93"/></svg></div><p id="nanaDialogue" class="staff-dialogue" aria-live="polite"></p><button id="hireNana" type="button"></button><p id="nanaWage" class="info"></p></div></section><div id="nurseryAlert" class="staff-request" hidden><b id="nurseryAlertTitle"></b><p id="nurseryAlertText"></p><div class="staff-actions"><button id="nurseryAlertAction" type="button"></button><button id="nurseryAlertDismiss" type="button"></button></div></div><div id="staffRequest" class="staff-request" hidden><b id="requestTitle"></b><p id="requestText"></p><div class="staff-actions"><button id="acceptRequest" type="button"></button><button id="rejectRequest" type="button"></button></div></div></section><p class="foot"><span id="gameFooter">التقدم محفوظ على جهازك · النمو خلال اللعب فقط</span></p>
+</main><audio id="jazzTrack" src="yasmine-jazz.mp3" preload="none" loop></audio>
+<script src="yasmine-jokes.js?v=cat-jokes-20261123"></script>
+<script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
+<script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
+<script src="yasmine/js/garden.js?v=20261122-mishmish10"></script>
+<script src="yasmine/js/game.js?v=thermal-fix-20261123"></script><script id="mishmishRefinementScript">
+(function(){
+function init(){
+const $=id=>document.getElementById(id), notices=$('mishmishNotices');
+if(!notices)return;
+const closed={spy:'',mouse:''};
+const missionStarted={spy:false,mouse:false};
+const spyButton=$('catSpy'),mouseButton=$('catMouseHunt');
+if(spyButton)spyButton.addEventListener('click',()=>{missionStarted.spy=true},true);
+if(mouseButton)mouseButton.addEventListener('click',()=>{missionStarted.mouse=true},true);
+function add(type,msg){
+msg=(msg||'').trim();if(!missionStarted[type]||!msg||msg===closed[type])return;
+const old=notices.querySelector('[data-kind="'+type+'"]');
+if(old&&old.dataset.message===msg)return;
+if(old)old.remove();
+const card=document.createElement('div');card.className='mish-notice';card.dataset.kind=type;card.dataset.message=msg;
+const close=document.createElement('button');close.className='mish-close';close.textContent='×';close.setAttribute('aria-label','إغلاق');close.onclick=()=>{closed[type]=msg;card.remove()};
+const title=document.createElement('strong');title.textContent=document.documentElement.lang==='en'?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير مشمش السرّي':'🐱🐭 نتيجة المطاردة');
+const p=document.createElement('p');p.textContent=msg;card.append(close,title,p);notices.append(card);syncNoticeLanguage();
+}
+function syncNoticeLanguage(){
+const en=document.documentElement.lang==='en';
+const cat=$('catArea');if(cat)cat.lang=en?'en':'ar';
+for(const card of notices.querySelectorAll('.mish-notice')){
+const type=card.dataset.kind,title=card.querySelector('strong'),close=card.querySelector('.mish-close');
+if(title)title.textContent=en?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير مشمش السرّي':'🐱🐭 نتيجة المطاردة');
+if(close)close.setAttribute('aria-label',en?'Close':'إغلاق');
+}
+const treats=$('catTreatStatValue'),count=$('catTreatCount');
+if(treats&&count){const value=(count.textContent.match(/[0-9]+/)||['0'])[0];const next=en?value+' treats':value+' حبة';if(treats.textContent!==next)treats.textContent=next}
+}
+new MutationObserver(syncNoticeLanguage).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+syncNoticeLanguage();
+for(const [id,type] of [['catSpyReport','spy'],['catMouseReport','mouse']]){
+const node=$(id);if(!node)continue;
+const update=()=>{if(!missionStarted[type])return;const msg=node.textContent.trim();if(type==='mouse'&&(/دقايق بين الصيدات|minutes? between hunts|needs a .*rest|بدها ترتاح|عم تفتش عن الفأرة|looking for the mouse/i.test(msg))){const previous=notices.querySelector('[data-kind="mouse"]');if(previous&&/دقايق بين الصيدات|minutes? between hunts|needs a .*rest|بدها ترتاح|عم تفتش عن الفأرة|looking for the mouse/i.test(previous.dataset.message||''))previous.remove();return;}if(type==='spy'&&(/تتفقد المشتل|checking the nursery|عم تتجسس|is spying/i.test(msg))){const previous=notices.querySelector('[data-kind="spy"]');if(previous)previous.remove();return;}add(type,msg)};
+new MutationObserver(update).observe(node,{childList:true,characterData:true,subtree:true});update();
+}
+const treatCount=$('catTreatCount'),treatValue=$('catTreatStatValue'),treatBar=$('catTreatStatBar');if(treatCount&&treatValue){const syncTreat=()=>{const value=(treatCount.textContent.match(/\d+/)||['0'])[0];treatValue.textContent=document.documentElement.lang==='en'?value+' treats':value+' حبة';if(treatBar)treatBar.style.width=Math.min(100,Number(value)*20)+'%'};new MutationObserver(syncTreat).observe(treatCount,{childList:true,characterData:true,subtree:true});syncTreat()}
+const scene=$('catScene'),nana=$('nanaUpper'),speech=$('nanaUpperSpeech'),action=$('nanaCatAction');
+if(scene&&nana){const original=scene.querySelector('[id*=nana],.nana-character');if(original&&original.tagName.toLowerCase()==='svg'){const clone=original.cloneNode(true);clone.removeAttribute('id');clone.style.cssText='height:55px;width:55px';$('nanaUpperArt').replaceChildren(clone);original.style.display='none'}}
+function showNana(){const hired=!!($('hireNana')&&/إلغاء|موظّفة|تم التوظيف|hired/i.test($('hireNana').textContent||''));nana.hidden=!hired;return hired}
+if(action){new MutationObserver(()=>{if(action.textContent.trim()&&showNana())speech.textContent=action.textContent.trim()}).observe(action,{childList:true,characterData:true,subtree:true})}
+setInterval(()=>{if(showNana()&&!nana.classList.contains('playing')&&Math.random()<.25){nana.classList.add('playing');speech.textContent='يلا يا مشمش، امسكي الريشة!';setTimeout(()=>nana.classList.remove('playing'),2800)}},20000);
+/* Watering is handled by game.js: the cat walks to the bowl and hydration rises after drinking. */
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script><script id="gameRulesScript">(function(){
+const open=document.getElementById('gameRulesOpen'),dialog=document.getElementById('gameRulesDialog'),sheet=document.getElementById('gameRulesSheet');
+if(!open||!dialog||!sheet)return;
+const arabic="<div id=\"gameRulesSheet\" dir=\"rtl\" lang=\"ar\" tabindex=\"-1\"><button type=\"button\" id=\"gameRulesClose\" aria-label=\"إغلاق القواعد\">✕ إغلاق</button><h2 id=\"gameRulesHeading\">📖 قواعد حديقة السعادة</h2><p>دليل مختصر لقواعد اللعبة. افتح القسم اللي بدك تعرف عنه.</p><details><summary>🌱 الزراعة والبيع</summary><p>ازرع البذور واعتنِ بالنبتة حتى تزهر، وبعدين بيعها لتحصل على عملات. جودة النبتة بتتأثر بالعناية فيها.</p><p>أبو وردة بيساعد بالسقاية والتسميد وإزالة الدود إذا كان موظف وعم يشتغل.</p></details><details><summary>👩🏻‍🌾 الموظفون</summary><details class=\"employee-rule\"><summary>👩🏻‍🌾 ياسمين — مديرة المشتل</summary><p>بتتابع مخزون السماد وطعام القطة. لما المخزون ينزل تحت 5، بتطلب موافقتك على الشراء، وما في خصم تلقائي.</p><p>بتساعدك بالمهمات والمساعدة المالية عند انخفاض الرصيد.</p></details><details class=\"employee-rule\"><summary>👵 نانا — مربّية القطط</summary><p>بتنفتح بعد 12 مبيعة، وتوظيفها بكلفة 120 عملة، وراتبها 20 عملة كل 3 مبيعات.</p><p>بتسقي القطة وبتطعمها تلقائياً عند 25%، وبتساعد بالتمشيط واللعب. كل إطعام أو سقاية بيرفع المؤشر 25 نقطة، متل اللاعب.</p><p>إذا الطعام خلص ووصل الشبع إلى 10%، بتشتري 5 حصص بالطوارئ، وبتسجّل فاتورة 20 عملة تشمل أجرة النقل. ما بتشتري لمجرد إن المخزون خلص.</p><p>إذا عليها راتب مستحق وما اندفع، ممكن تتوقف عن العمل.</p></details><details class=\"employee-rule\"><summary>👨‍🌾 أبو وردة — عامل المشتل</summary><p>بينفتح بعد 6 مبيعات، وتوظيفه بكلفة 80 عملة، وراتبه 15 عملة كل 3 مبيعات.</p><p>بيساعد بالسقاية والتسميد وإزالة الدود. ممكن يتوقف إذا كان راتبه مستحقاً.</p></details></details><details><summary>🐱 القطة والعناية اليومية</summary><p>الشبع بينخفض تدريجياً من 100% إلى 20% خلال 3 دقائق تقريباً، والارتواء والمزاج خلال دقيقتين تقريباً.</p><p>بتقدر تطعمي القطة وتسقيها وتمشّطيها وتلعبي معها. الأكل والشرب بيرفعوا المؤشر 25 نقطة لكل عملية، وما في عمليتين عناية بنفس الوقت.</p><p>قبل توظيف نانا، بيطلع تنبيه إذا القطة جاعت أو عطشت. بعد توظيفها، نانا بتتدخل عند 25% وبتعطي الأولوية للعطش، طالما عم تشتغل.</p></details><details><summary>🚨 طوارئ الطعام وجمعية الحيوانات</summary><p>ياسمين بتطلب موافقتك لما مخزون طعام القطة ينزل تحت 5. نانا ما بتشتري لمجرد نفاد المخزون.</p><p>إذا خلص الطعام ووصل شبع القطة إلى 10%، نانا الموظفة بتشتري 5 حصص طارئة: 15 عملة للطعام و5 عملات للنقل.</p><p>فاتورة نانا 20 عملة، وما بتنخصم إلا بموافقتك. إذا الفاتورة السابقة ما اندفعت، ما بتعمل شراء طارئ جديد تلقائياً.</p><p>إذا ما معك مال والطعام خلص والقطة جاعت كتير، جمعية أصدقاء الحيوانات بتقدّم 3 حصص إسعافية مجانية.</p><p>إذا نانا مو موظفة ومعك مال، بيطلع تنبيه طوارئ لتشتري الطعام بنفسك.</p></details><details><summary>🎮 مهمات ياسمين والمساعدة المالية</summary><p>إذا نزل رصيدك لأقل من 20 عملة، بتنفتح مهمات ياسمين وبيظهر إشعار أحمر. كل مهمة ناجحة بتعطيك 5 عملات.</p><p>إذا صار معك 20 إلى 29 عملة، بتضل المهمات مفتوحة إذا كانت انفتحت. عند 30 عملة أو أكثر بتختفي، وما بترجع إلا إذا نزل الرصيد تحت 20.</p><p>الألعاب: تنظيف المشتل، الذاكرة، إنقاذ النباتات، وكراج السيارات.</p></details><details><summary>🕵️ مهمات القطة</summary><p>القطة بتقدر تتجسس على أبو وردة وتطلع بجولة لصيد الفأرة.</p><p>بعد المهمة، الزر بيصير رمادي مع عدّاد انتظار دقيقتين، وبعدها بيتفعّل مجدداً. تقارير القطة بتخبرك بالنتيجة.</p></details><details><summary>💾 حفظ التقدم والإعدادات</summary><p>تقدمك محفوظ تلقائياً ببيانات المتصفح على جهازك. لا تمسح بيانات الموقع إذا بدك تحافظ على مبيعاتك ومصاريك وموظفينك.</p><p>زر «إعادة اللعبة من البداية» بيبدأ لعبة جديدة وبيمسح التقدم المحفوظ.</p></details></div>",english="<div id=\"gameRulesSheet\" dir=\"ltr\" lang=\"en\" tabindex=\"-1\"><button type=\"button\" id=\"gameRulesClose\" aria-label=\"Close rules\">✕ Close</button><h2 id=\"gameRulesHeading\">📖 Garden of Happiness — Game Rules</h2><p>A quick guide to the game rules. Open any section to learn more.</p><details><summary>🌱 Planting and selling</summary><p>Plant seeds, care for your plant until it blooms, then sell it to earn coins. Plant quality depends on your care.</p><p>When employed and active, Abu Warda helps with watering, fertilizing and removing worms.</p></details><details><summary>👩🏻‍🌾 Employees</summary><details class=\"employee-rule\"><summary>👩🏻‍🌾 Yasmin — Nursery manager</summary><p>Yasmin monitors fertilizer and cat food. When either stock drops below 5, she requests your approval to restock. No automatic charge is made.</p><p>She also offers financial assistance missions when your balance is low.</p></details><details class=\"employee-rule\"><summary>👵 Nana — Cat caretaker</summary><p>Unlocks after 12 sales. Hiring costs 120 coins, and salary is 20 coins every 3 sales.</p><p>Nana feeds and waters your cat at 25%, and also helps with brushing and playing. Feeding or watering restores 25 points, just as when you do it yourself.</p><p>Only when food runs out and fullness falls to 10% does Nana buy 5 emergency portions and issue a 20-coin invoice including transport. She does not shop merely because stock is empty.</p><p>Nana may pause work if her salary is overdue.</p></details><details class=\"employee-rule\"><summary>👨‍🌾 Abu Warda — Nursery worker</summary><p>Unlocks after 6 sales. Hiring costs 80 coins, and salary is 15 coins every 3 sales.</p><p>He helps water and fertilize plants and remove worms. He may pause work if his salary is overdue.</p></details></details><details><summary>🐱 Daily cat care</summary><p>Fullness gradually falls from 100% to 20% in about 3 minutes; hydration and mood take about 2 minutes.</p><p>You can feed, water, brush and play with your cat. Feeding and watering each restore 25 points. Only one care activity can happen at a time.</p><p>Before hiring Nana, hunger and thirst warnings appear. Once Nana is employed and active, she steps in at 25%, prioritizing thirst.</p></details><details><summary>🚨 Food emergencies and animal charity</summary><p>Yasmin asks for your approval when cat food stock falls below 5. Nana does not buy food merely because stock runs out.</p><p>If food runs out and fullness falls to 10%, an active Nana buys 5 emergency portions: 15 coins for food plus 5 for transport.</p><p>Nana's 20-coin invoice is payable only with your approval. While an earlier invoice is unpaid, she will not make another automatic emergency purchase.</p><p>If you cannot afford food, stock is empty and the cat is severely hungry, Animal Friends Charity supplies 3 free emergency portions.</p><p>If Nana is not employed and you have enough coins, an emergency alert lets you buy food yourself.</p></details><details><summary>🎮 Yasmin's missions and financial assistance</summary><p>When your balance drops below 20 coins, Yasmin's missions unlock and a red notification appears. Each successful mission earns 5 coins.</p><p>Missions remain available at 20–29 coins if already unlocked. They disappear at 30 coins or more, reopening only when the balance drops below 20.</p><p>Minigames: Nursery Cleanup, Memory Match, Plant Rescue and Parking Garage.</p></details><details><summary>🕵️ Cat missions</summary><p>Your cat can spy on Abu Warda and go mouse hunting.</p><p>After a mission, its button turns gray with a two-minute countdown. The cat's report shows the result.</p></details><details><summary>💾 Saving progress and settings</summary><p>Progress is automatically saved in this device's browser. Do not clear site data if you want to keep your sales, coins and employees.</p><p>Restarting the game clears saved game progress.</p></details></div>";
+function isEnglish(){return document.documentElement.lang==='en'}
+function syncRules(){
+ const en=isEnglish(),template=document.createElement('template');
+ template.innerHTML=en?english:arabic;
+ const updated=template.content.firstElementChild;if(!updated)return;
+ sheet.innerHTML=updated.innerHTML;sheet.dir=en?'ltr':'rtl';sheet.lang=en?'en':'ar';
+ open.textContent=en?'📖 Game Rules':'📖 قواعد اللعبة';
+}
+function hide(){dialog.hidden=true;document.body.style.overflow='';open.focus()}
+open.addEventListener('click',()=>{syncRules();dialog.hidden=false;document.body.style.overflow='hidden';sheet.focus()});
+sheet.addEventListener('click',e=>{if(e.target.closest('#gameRulesClose'))hide()});
+dialog.addEventListener('click',e=>{if(e.target===dialog)hide()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!dialog.hidden)hide()});
+document.getElementById('lang')?.addEventListener('click',()=>{setTimeout(syncRules,0)});
+new MutationObserver(()=>{const en=isEnglish();if(sheet.lang!==(en?'en':'ar'))syncRules()}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+syncRules();
+})();</script><script id="levelScript">(function(){
+'use strict';
+var limits=[0,10,25,50,80,120,170,230,300,400];
+var salesEl=document.getElementById('sales'),badge=document.getElementById('levelBadge'),track=document.getElementById('levelTrack'),fill=document.getElementById('levelFill'),caption=document.getElementById('levelCaption'),toast=document.getElementById('levelToast');
+if(!salesEl||!badge||!track||!fill||!caption)return;
+var lastLevel=null,toastTimer=null;
+function update(){
+var sales=Math.max(0,Number((salesEl.textContent||'0').replace(/[^0-9]/g,''))||0),level=1;
+for(var i=1;i<limits.length;i++)if(sales>=limits[i])level=i+1;
+var start=limits[level-1],next=limits[level],maxed=level===10;
+badge.textContent='Level '+level;
+var progress=maxed?100:Math.max(0,Math.min(100,(sales-start)/(next-start)*100));
+fill.style.width=progress+'%';
+track.setAttribute('aria-valuemin',String(start));track.setAttribute('aria-valuemax',String(maxed?400:next));track.setAttribute('aria-valuenow',String(sales));
+var english=document.documentElement.lang==='en';
+caption.textContent=maxed?(english?'Maximum level reached':'وصلت لأعلى مستوى'):(english?(sales-start)+' / '+(next-start)+' sales to Level '+(level+1):(sales-start)+' / '+(next-start)+' مبيعات للوصول إلى Level '+(level+1));
+if(lastLevel!==null&&level>lastLevel){toast.textContent='🎉 '+(english?'Congratulations! Level ':'مبروك! وصلت للمستوى ')+level;toast.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(function(){toast.hidden=true},3500)}
+lastLevel=level;
+}
+new MutationObserver(update).observe(salesEl,{childList:true,characterData:true,subtree:true});
+update();
+document.getElementById('lang')?.addEventListener('click',function(){setTimeout(update,0)});
+})();</script></body></html>
