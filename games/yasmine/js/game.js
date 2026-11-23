@@ -184,9 +184,9 @@ function giveCatWater(source){
 $('catWater').onclick=function(){giveCatWater('player')};
 function tickCat(delta){
   state.cat.hydrationSeconds+=delta;
-  if(state.cat.hydrationSeconds>=15){
-    var thirstSteps=Math.floor(state.cat.hydrationSeconds/15);
-    state.cat.hydrationSeconds-=thirstSteps*15;
+  if(state.cat.hydrationSeconds>=4.5){
+    var thirstSteps=Math.floor(state.cat.hydrationSeconds/4.5);
+    state.cat.hydrationSeconds-=thirstSteps*4.5;
     state.cat.hydration=Math.max(0,state.cat.hydration-thirstSteps);
     if(state.cat.hydration<20&&!catThirstWarned&&(!state.nana.hired||state.nana.paused)){catThirstWarned=true;msg(state.lang==='ar'?'💧 '+state.catName+' عطشانة، اسقيها!':'💧 '+state.catName+' is thirsty! Give her water!')}
     save();
