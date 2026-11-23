@@ -13,12 +13,18 @@
 .mish-notice strong{display:block;font-size:18px;color:#684027;margin-bottom:6px}.mish-notice p{margin:0;font-size:18px;line-height:1.6;font-weight:700;color:#473525}
 .mish-close{position:absolute;right:7px;top:7px;border:0;border-radius:50%;background:#f1ded0;color:#59392a;width:29px;height:29px;font-size:21px;cursor:pointer}
 @keyframes mishPop{from{opacity:0;transform:translateY(9px) scale(.96)}to{opacity:1;transform:none}}
-#nanaUpper:not([hidden]){position:relative;display:flex;align-items:center;gap:12px;background:#f6ecfa;border-radius:16px;padding:10px;margin:8px 0 12px;min-height:65px}
-#nanaUpperArt{font-size:38px}#nanaUpperSpeech{background:white;border-radius:13px;padding:8px 12px;font-weight:700;flex:1}
-#nanaFeather{display:none;position:absolute;top:100%;right:25%;z-index:4;font-size:32px;transform-origin:top}
-#nanaUpper.playing #nanaFeather{display:block;animation:featherSwing 2.6s ease-in-out}
-@keyframes featherSwing{0%{transform:translateY(-20px) rotate(-20deg)}45%{transform:translateY(80px) rotate(28deg)}80%{transform:translateY(45px) rotate(-25deg)}100%{transform:translateY(-20px)}}
-#catScene .nana-character,#catScene [id*=nanaSprite]{display:none}#nanaCatAction,#nanaCatWater{display:none!important}#nanaUpperSpeech{color:#18263a!important;font-size:18px;line-height:1.5}#catTreatCount{display:none!important}/* Keep Mishmish's four stat bars aligned on identical rows. */
+#catArea .cat-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:12px}
+#catArea .cat-heading>div{min-width:0;overflow-wrap:anywhere}
+#nanaCatPortrait:not([hidden]){display:block;width:clamp(52px,16vw,82px);height:clamp(110px,30vw,146px);object-fit:contain;flex:none}
+#nanaCatPortrait[hidden],#nanaCatNews[hidden]{display:none!important}
+#nanaCatNews{margin-top:8px;padding-inline-start:10px;border-inline-start:3px solid #c799ac}
+#nanaNewsLabel{display:block;color:#774653;font-size:14px}
+body.night-ui #nanaNewsLabel{color:#f2ccdc}
+#nanaNewsText{margin:3px 0 0;font-size:17px;line-height:1.5}
+#catShopMount{margin-top:10px}#catShopMount button{width:100%}
+#catArea .nana-care-busy{visibility:hidden}
+#catTreatCount{display:none!important}
+/* Keep Mishmish's four stat bars aligned on identical rows. */
 #catArea .cat-stats>div{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:minmax(44px,auto) 14px;align-items:center;column-gap:5px;min-width:0}
 #catArea .cat-stats>div>span{grid-column:1;grid-row:1;min-width:0}
 #catArea .cat-stats>div>b{grid-column:2;grid-row:1;white-space:nowrap}
@@ -193,8 +199,12 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 <div class="panel" id="missionPanel" hidden><div class="row"><b id="missionTitle">🎯 مهمة المشتل</b><span id="mission">بيع 3 نباتات</span></div><p class="info" id="missionInfo">كل عملية بيع بتزيد مصاريك وبتقرّبك من توسيع المشتل.</p><button id="reset">إعادة التجربة</button></div>
 </section>
 <section id="catArea" class="panel" aria-labelledby="catTitle" hidden>
-<div class="cat-heading"><h2 id="catTitle">قطة المشتل</h2><div id="catShopMount"></div></div>
-<div id="nanaUpper" hidden><div id="nanaUpperArt">👩‍🍳</div><div id="nanaUpperSpeech" aria-live="polite">أنا هون لاعتني بمشمش!</div><span id="nanaFeather">🪶</span></div><div class="cat-scene" id="catScene">
+<div class="cat-heading">
+<div><h2 id="catTitle">قطة المشتل</h2>
+<div id="nanaCatNews" hidden><strong id="nanaNewsLabel">أخبار نانا</strong><p id="nanaNewsText" aria-live="polite"></p></div></div>
+<img id="nanaCatPortrait" alt="" width="67" height="126" hidden>
+</div>
+<div class="cat-scene" id="catScene">
 <svg viewBox="0 0 360 180" aria-hidden="true">
   <defs>
     <linearGradient id="catFur" x2="0" y2="1" gradientUnits="objectBoundingBox">
@@ -279,12 +289,12 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 <button id="catPlay" type="button">🪶 العب معها</button>
 <button id="catBrush" type="button">🪮 مشّطها</button>
 </div>
-<section id="catEmergencyPanel" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d66d55;background:#fff0e8;color:#64362a;border-radius:16px" aria-live="polite"><strong id="catEmergencyText"></strong><div class="grid" style="margin-top:10px"><button id="catEmergencyBuy" type="button">🍲 اشتري 5 حصص · 15 عملة</button><button id="catEmergencyAid" type="button">❤️ اطلب مساعدة جمعية الحيوانات</button></div></section><section id="catEmergencyBill" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d2a35a;background:#fff4dc;color:#61482c;border-radius:16px"><strong id="catEmergencyBillText">🧾 فاتورة نانا</strong><button id="catEmergencyPay" type="button" style="display:block;width:100%;margin-top:10px">💰 وافق على دفع الفاتورة · 20 عملة</button></section><div id="mishmishNotices" aria-live="polite"></div><p id="catMessage" class="message" aria-live="polite"></p><p id="nanaCatAction" class="info" aria-live="polite" hidden></p><div id="nanaCatWater" class="nana-water" hidden><span aria-hidden="true">💧🥣</span><span id="nanaCatWaterText">نانا حطّت مي نظيفة لمشمش.</span></div><div id="catHuntStage" hidden aria-live="polite"><div id="huntCat"><svg viewBox="0 0 120 100" aria-label="cat"><path d="M13 60Q8 31 31 24L28 4L52 22Q71 15 89 23L111 4L108 43Q117 73 94 88Q68 105 37 88Q18 82 13 60Z" fill="#eba45f" stroke="#995b32" stroke-width="3"/><path d="M30 28L32 15L46 26M92 27L106 14L103 36" fill="#efb2a7"/><ellipse cx="46" cy="55" rx="5" ry="7" fill="#382b28"/><ellipse cx="82" cy="55" rx="5" ry="7" fill="#382b28"/><path d="M58 68L70 68L64 74Z" fill="#d78383"/><path d="M64 74Q55 83 47 75M64 74Q73 83 81 75" stroke="#895b3d" stroke-width="2" fill="none"/><path d="M39 69L14 65M39 76L14 81M89 69L113 65M89 76L113 81" stroke="#895b3d" stroke-width="2"/></svg><span id="huntBang">!</span></div><svg id="huntMouseArt" viewBox="0 0 120 90" aria-label="mouse"><path d="M20 58Q0 46 9 30" stroke="#b7aeb8" stroke-width="5" fill="none"/><circle cx="41" cy="29" r="18" fill="#f1a7b8"/><circle cx="83" cy="28" r="18" fill="#f1a7b8"/><ellipse cx="62" cy="53" rx="42" ry="29" fill="#a6a8b2"/><circle cx="48" cy="47" r="4" fill="#393846"/><circle cx="76" cy="47" r="4" fill="#393846"/><circle cx="62" cy="59" r="5" fill="#eaa2b2"/><path d="M62 63q-8 8-15 0m15 0q8 8 15 0" stroke="#58535e" stroke-width="2" fill="none"/></svg></div>
+<section id="catEmergencyPanel" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d66d55;background:#fff0e8;color:#64362a;border-radius:16px" aria-live="polite"><strong id="catEmergencyText"></strong><div class="grid" style="margin-top:10px"><button id="catEmergencyBuy" type="button">🍲 اشتري 5 حصص · 15 عملة</button><button id="catEmergencyAid" type="button">❤️ اطلب مساعدة جمعية الحيوانات</button></div></section><section id="catEmergencyBill" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d2a35a;background:#fff4dc;color:#61482c;border-radius:16px"><strong id="catEmergencyBillText">🧾 فاتورة نانا</strong><button id="catEmergencyPay" type="button" style="display:block;width:100%;margin-top:10px">💰 وافق على دفع الفاتورة · 20 عملة</button></section><div id="mishmishNotices" aria-live="polite"></div><p id="catMessage" class="message" aria-live="polite"></p><div id="catHuntStage" hidden aria-live="polite"><div id="huntCat"><svg viewBox="0 0 120 100" aria-label="cat"><path d="M13 60Q8 31 31 24L28 4L52 22Q71 15 89 23L111 4L108 43Q117 73 94 88Q68 105 37 88Q18 82 13 60Z" fill="#eba45f" stroke="#995b32" stroke-width="3"/><path d="M30 28L32 15L46 26M92 27L106 14L103 36" fill="#efb2a7"/><ellipse cx="46" cy="55" rx="5" ry="7" fill="#382b28"/><ellipse cx="82" cy="55" rx="5" ry="7" fill="#382b28"/><path d="M58 68L70 68L64 74Z" fill="#d78383"/><path d="M64 74Q55 83 47 75M64 74Q73 83 81 75" stroke="#895b3d" stroke-width="2" fill="none"/><path d="M39 69L14 65M39 76L14 81M89 69L113 65M89 76L113 81" stroke="#895b3d" stroke-width="2"/></svg><span id="huntBang">!</span></div><svg id="huntMouseArt" viewBox="0 0 120 90" aria-label="mouse"><path d="M20 58Q0 46 9 30" stroke="#b7aeb8" stroke-width="5" fill="none"/><circle cx="41" cy="29" r="18" fill="#f1a7b8"/><circle cx="83" cy="28" r="18" fill="#f1a7b8"/><ellipse cx="62" cy="53" rx="42" ry="29" fill="#a6a8b2"/><circle cx="48" cy="47" r="4" fill="#393846"/><circle cx="76" cy="47" r="4" fill="#393846"/><circle cx="62" cy="59" r="5" fill="#eaa2b2"/><path d="M62 63q-8 8-15 0m15 0q8 8 15 0" stroke="#58535e" stroke-width="2" fill="none"/></svg></div>
 <button id="catToy" type="button">🪶 اشتري لعبة ريشة · 💰 20</button>
 <div id="catExtras" style="display:grid;gap:12px;margin-top:18px">
 <button id="catTreatBuy" type="button" hidden></button>
 <div id="catTreatCount" class="info"></div>
-<div class="mission-row"><button id="catSpy" type="button"></button><span id="catSpyTimer" class="mission-timer" hidden></span></div><div id="catBoutique" class="panel" style="padding:12px;margin:8px 0"><div id="catBoutiqueItems" hidden style="grid-template-columns:repeat(2,minmax(0,1fr));gap:8px"></div></div><div class="mission-row"><button id="catMouseHunt" type="button">🐭 جولة صيد الفأرة</button><span id="catHuntTimer" class="mission-timer" hidden></span></div><p id="catMouseReport" class="message" aria-live="polite"></p><button id="catMouseReward" type="button" hidden></button>
+<div class="mission-row"><button id="catSpy" type="button"></button><span id="catSpyTimer" class="mission-timer" hidden></span></div><div id="catBoutique" class="panel" style="padding:12px;margin:8px 0"><div id="catBoutiqueItems" hidden style="grid-template-columns:repeat(2,minmax(0,1fr));gap:8px"></div></div><div class="mission-row"><button id="catMouseHunt" type="button">🐭 جولة صيد الفأرة</button><span id="catHuntTimer" class="mission-timer" hidden></span></div><div id="catShopMount"></div><p id="catMouseReport" class="message" aria-live="polite"></p><button id="catMouseReward" type="button" hidden></button>
 <p id="catSpyReport" class="message" aria-live="polite"></p>
 <button id="catTreatReward" type="button" hidden></button>
 </div></section>
@@ -294,7 +304,7 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 <script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/garden.js?v=20261122-mishmish10"></script>
-<script src="yasmine/js/game.js?v=thermal-fix-20261123"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/game.js?v=nana-care-news-20261123"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
@@ -311,7 +321,7 @@ if(old&&old.dataset.message===msg)return;
 if(old)old.remove();
 const card=document.createElement('div');card.className='mish-notice';card.dataset.kind=type;card.dataset.message=msg;
 const close=document.createElement('button');close.className='mish-close';close.textContent='×';close.setAttribute('aria-label','إغلاق');close.onclick=()=>{closed[type]=msg;card.remove()};
-const title=document.createElement('strong');title.textContent=document.documentElement.lang==='en'?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير مشمش السرّي':'🐱🐭 نتيجة المطاردة');
+const title=document.createElement('strong');title.textContent=document.documentElement.lang==='en'?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير التجسس السرّي':'🐱🐭 نتيجة المطاردة');
 const p=document.createElement('p');p.textContent=msg;card.append(close,title,p);notices.append(card);syncNoticeLanguage();
 }
 function syncNoticeLanguage(){
@@ -319,7 +329,7 @@ const en=document.documentElement.lang==='en';
 const cat=$('catArea');if(cat)cat.lang=en?'en':'ar';
 for(const card of notices.querySelectorAll('.mish-notice')){
 const type=card.dataset.kind,title=card.querySelector('strong'),close=card.querySelector('.mish-close');
-if(title)title.textContent=en?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير مشمش السرّي':'🐱🐭 نتيجة المطاردة');
+if(title)title.textContent=en?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير التجسس السرّي':'🐱🐭 نتيجة المطاردة');
 if(close)close.setAttribute('aria-label',en?'Close':'إغلاق');
 }
 const treats=$('catTreatStatValue'),count=$('catTreatCount');
@@ -333,12 +343,7 @@ const update=()=>{if(!missionStarted[type])return;const msg=node.textContent.tri
 new MutationObserver(update).observe(node,{childList:true,characterData:true,subtree:true});update();
 }
 const treatCount=$('catTreatCount'),treatValue=$('catTreatStatValue'),treatBar=$('catTreatStatBar');if(treatCount&&treatValue){const syncTreat=()=>{const value=(treatCount.textContent.match(/\d+/)||['0'])[0];treatValue.textContent=document.documentElement.lang==='en'?value+' treats':value+' حبة';if(treatBar)treatBar.style.width=Math.min(100,Number(value)*20)+'%'};new MutationObserver(syncTreat).observe(treatCount,{childList:true,characterData:true,subtree:true});syncTreat()}
-const scene=$('catScene'),nana=$('nanaUpper'),speech=$('nanaUpperSpeech'),action=$('nanaCatAction');
-if(scene&&nana){const original=scene.querySelector('[id*=nana],.nana-character');if(original&&original.tagName.toLowerCase()==='svg'){const clone=original.cloneNode(true);clone.removeAttribute('id');clone.style.cssText='height:55px;width:55px';$('nanaUpperArt').replaceChildren(clone);original.style.display='none'}}
-function showNana(){const hired=!!($('hireNana')&&/إلغاء|موظّفة|تم التوظيف|hired/i.test($('hireNana').textContent||''));nana.hidden=!hired;return hired}
-if(action){new MutationObserver(()=>{if(action.textContent.trim()&&showNana())speech.textContent=action.textContent.trim()}).observe(action,{childList:true,characterData:true,subtree:true})}
-setInterval(()=>{if(showNana()&&!nana.classList.contains('playing')&&Math.random()<.25){nana.classList.add('playing');speech.textContent='يلا يا مشمش، امسكي الريشة!';setTimeout(()=>nana.classList.remove('playing'),2800)}},20000);
-/* Watering is handled by game.js: the cat walks to the bowl and hydration rises after drinking. */
+
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
