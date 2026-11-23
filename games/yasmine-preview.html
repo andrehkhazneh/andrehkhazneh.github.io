@@ -118,6 +118,11 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 #catArea[lang="en"] .cat-stats{direction:ltr!important}
 #catArea[lang="en"] .cat-stats>div{direction:ltr!important}
 #catArea[lang="en"] #catMessage{direction:ltr!important;text-align:center!important}
+/* Compact cat care layout: remove the purring message and its reserved gap. */
+#catArea #catMessage{display:none!important}
+#catArea #mishmishNotices:empty{display:none!important}
+#catArea #catExtras{margin-top:8px!important;gap:10px!important}
+#catArea #catBoutique:has(#catBoutiqueItems[hidden]){display:none!important}
 </style><style id="catHydrationAnimation">
 #catScene .cat-water-bowl{display:none}
 #catScene.cat-drinking .cat-bowl{display:none!important}
@@ -257,7 +262,7 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 <script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/garden.js?v=20261122-mishmish10"></script>
-<script src="yasmine/js/game.js?v=hydration-fast15-bluebowl"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/game.js?v=hydration-6min-compact-cat"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
