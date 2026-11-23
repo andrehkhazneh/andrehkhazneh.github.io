@@ -71,6 +71,17 @@
 #gameRulesDialog #gameRulesSheet :is(h2,h3,p,summary,strong,details){color:#24452e!important;opacity:1!important;-webkit-text-fill-color:#24452e!important;text-shadow:none!important}
 #gameRulesDialog #gameRulesClose{background:#e9f3dd!important;color:#24452e!important;-webkit-text-fill-color:#24452e!important;opacity:1!important}
 #gameRulesClose{float:left;background:#e9f3dd;color:#24452e;border:1px solid #8eaa86;border-radius:13px;padding:8px 16px;font-weight:800;cursor:pointer}
+</style>
+<style id="desktopSettingsLayout">
+/* Keep settings labels separate from their controls in both languages. */
+#daySettings{display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+#daySettings>label{display:block;margin:0;font-weight:700;line-height:1.5}
+#daySettings>label[for="weatherMode"]{margin-block-start:8px}
+#daySettings>select{display:block;width:100%;min-width:0;max-width:100%;min-height:48px;padding:10px 12px;border:1px solid #9bab8e;border-radius:10px;background:#fff;color:inherit;font:inherit}
+#daySettings>.info{margin:0;line-height:1.6}
+@media(min-width:900px){
+  main{width:calc(100% - 48px);max-width:1200px;padding:24px 24px 65px}
+}
 </style></head><body><main>
 <header><a class="btn" id="siteBack" href="/#games">← الموقع</a><button type="button" id="gameRulesOpen" aria-haspopup="dialog">📖 قواعد اللعبة</button><button type="button" id="topEditNames" aria-expanded="false" aria-controls="settingsPanel">⚙️ الإعدادات</button><button id="lang">English</button></header>
 <div id="gameRulesDialog" role="dialog" aria-modal="true" aria-labelledby="gameRulesHeading" hidden>
