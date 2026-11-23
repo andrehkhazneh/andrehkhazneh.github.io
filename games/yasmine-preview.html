@@ -119,13 +119,16 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 #catArea[lang="en"] .cat-stats>div{direction:ltr!important}
 #catArea[lang="en"] #catMessage{direction:ltr!important;text-align:center!important}
 </style><style id="catHydrationAnimation">
+#catScene .cat-water-bowl{display:none}
+#catScene.cat-drinking .cat-bowl{display:none!important}
+#catScene.cat-drinking .cat-water-bowl{display:inline!important}
 #catScene.cat-drinking svg .cat-walk{animation:mishmishWalkDrink 4.1s ease-in-out 1 both;transform-box:fill-box;transform-origin:center bottom}
 #catScene.cat-drinking svg .cat-head{animation:mishmishHeadDrink 4.1s ease-in-out 1 both;transform-box:fill-box;transform-origin:center 75%}
-#catScene.cat-drinking svg .cat-water-surface{opacity:1}
-#catScene svg .cat-water-surface{opacity:0;transition:opacity .2s}
-@keyframes mishmishWalkDrink{0%,100%{transform:translateX(0)}22%,69%{transform:translateX(45px)}}
-@keyframes mishmishHeadDrink{0%,20%,75%,100%{transform:translateY(0) rotate(0)}36%,63%{transform:translateY(11px) rotate(9deg)}}
-@media(prefers-reduced-motion:reduce){#catScene.cat-drinking svg .cat-walk,#catScene.cat-drinking svg .cat-head{animation-duration:4.1s}}
+#catScene.cat-drinking svg .water-ripples{animation:mishmishWaterRipple .7s ease-in-out infinite alternate}
+@keyframes mishmishWalkDrink{0%,100%{transform:translateX(0)}25%,72%{transform:translateX(45px)}}
+@keyframes mishmishHeadDrink{0%,23%,75%,100%{transform:translateY(0) rotate(0)}35%,65%{transform:translateY(10px) rotate(8deg)}}
+@keyframes mishmishWaterRipple{from{opacity:.25;transform:scale(.86)}to{opacity:1;transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){#catScene.cat-drinking svg .cat-walk,#catScene.cat-drinking svg .cat-head,#catScene.cat-drinking svg .water-ripples{animation:none}}
 </style></head><body><main>
 <header><a class="btn" id="siteBack" href="/#games">رجوع ←</a><button type="button" id="topEditNames" aria-expanded="false" aria-controls="settingsPanel">⚙️ الإعدادات</button></header>
 <div id="gameRulesDialog" role="dialog" aria-modal="true" aria-labelledby="gameRulesHeading" hidden>
@@ -194,12 +197,21 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
     </g>
   </g>
   <g class="cat-tool cat-bowl">
-    <ellipse class="cat-water-surface" cx="279.5" cy="130" rx="19" ry="4" fill="#8cdbf3" stroke="#d7f9ff" stroke-width="1.2"/>
     <ellipse cx="280" cy="147" rx="23" ry="4" fill="#94634a" opacity=".22"/>
     <path d="M258 131h43l-6 14q-15 6-31 0z" fill="url(#catBowlShade)" stroke="#a84340" stroke-width="2"/>
     <ellipse cx="279.5" cy="131" rx="21.5" ry="5.5" fill="#f3a694" stroke="#a84340" stroke-width="2"/>
     <path d="M265 131q5-9 10-5 5-8 10 0 5-3 9 5-14 5-29 0z" fill="#99592d"/>
     <circle cx="277" cy="127" r="1.6" fill="#e1a35b"/><circle cx="286" cy="129" r="1.7" fill="#e1a35b"/>
+  </g>
+  <g class="cat-water-bowl">
+    <ellipse cx="280" cy="147" rx="23" ry="4" fill="#94634a" opacity=".22"/>
+    <path d="M258 131h43l-6 14q-15 6-31 0z" fill="#65a8d9" stroke="#3b7ea8" stroke-width="2"/>
+    <ellipse cx="279.5" cy="131" rx="21.5" ry="5.5" fill="#a4d5ef" stroke="#3b7ea8" stroke-width="2"/>
+    <ellipse cx="279.5" cy="130" rx="17.5" ry="3.5" fill="#4dbbe6"/>
+    <g class="water-ripples" fill="none" stroke="#e8fbff" stroke-width="1.5" style="transform-origin:280px 130px">
+      <ellipse cx="280" cy="130" rx="10" ry="2"/>
+      <path d="M272 127q8-4 16 0"/>
+    </g>
   </g>
   <g class="cat-tool cat-play-tool">
     <g class="cat-yarn" fill="none" stroke="#a54e6e" stroke-width="2">
@@ -245,7 +257,7 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 <script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/garden.js?v=20261122-mishmish10"></script>
-<script src="yasmine/js/game.js?v=hydration-65468b0"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/game.js?v=hydration-fast15-bluebowl"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
