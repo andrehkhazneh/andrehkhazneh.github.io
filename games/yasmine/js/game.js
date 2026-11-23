@@ -106,6 +106,11 @@ function renderCat(){
     $('cat'+stat).textContent=value+'%';
     $('cat'+stat+'Bar').style.width=value+'%';
   });
+  $('catHydrationLabel').textContent=state.lang==='ar'?'الارتواء':'Hydration';
+  $('catMoodLabel').textContent=words.mood;
+  $('catWater').textContent=state.lang==='ar'?'💧 اسقيها':'💧 Give water';
+  var treatLabel=document.querySelector('#catTreatStat > span');
+  if(treatLabel)treatLabel.textContent=state.lang==='ar'?'🍬 المكافآت':'🍬 Treats';
   $('catFeed').textContent=words.feed;
   $('catPlay').textContent=cat.toy?words.feather:words.play;
   $('catBrush').textContent=words.brush;
