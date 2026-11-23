@@ -288,6 +288,12 @@ function rescueCatFood(){
   state.nana.action=state.lang==='ar'?'❤️ جمعية أصدقاء الحيوانات قدّمت 3 حصص إسعافية لـ'+state.catName:'❤️ Animal friends charity donated 3 emergency portions';
   msg(state.nana.action);save();render();return true;
 }
+function tickCatEmergency(){
+  if(state.nana.hired&&!state.nana.paused)return;
+  if(state.stock.catfood===0&&state.cat.fullness<=10&&state.money<15){
+    rescueCatFood();
+  }
+}
 function tickNana(){
   var n=state.nana;if(!n.hired||n.paused)return;
   var now=Date.now();
@@ -578,6 +584,6 @@ setInterval(function(){
 var previousRenderCat=renderCat;
 renderCat=function(){previousRenderCat();renderCatExtras();var n=state.nana;$('nanaCatAction').hidden=!n.action;$('nanaCatAction').textContent=n.action||'';if(n.hired&&!n.paused){$('nanaDialogue').textContent=(state.lang==='ar'?nanaLinesAr:nanaLinesEn)[n.dialogueIndex%10].replace('{cat}',state.catName)}};
 
-var lastNotificationCount=notificationCount();var lastTick=Date.now(),wasReady=state.active&&state.progress>=100;setInterval(function(){updateClock();updateSky();if(state.weatherMode==='auto')updateWeather();var now=Date.now(),delta=Math.min(2,(now-lastTick)/1000);lastTick=now;if(document.hidden)return;tickCat(delta);tickStaff();tickAbu();tickNana();var n=notificationCount();if(n>lastNotificationCount&&state.staff.hired)sound('notify');lastNotificationCount=n;if(state.active&&state.progress<100){state.progress=Math.min(100,state.progress+100*delta/crops[state.kind].time);if(state.progress>=100&&!wasReady){sound('bloom');wasReady=true}render()}else render();if(!state.active||state.progress<100)wasReady=false},1000);setInterval(function(){if(Date.now()>=eventNext){scheduleEvent();if(!document.hidden&&activeArea==='nursery')eventSpawn()}},1000);render();msg(state.lang==='ar'?'بلّش اعتني بالياسمينة!':'Start caring for your jasmine!');
+var lastNotificationCount=notificationCount();var lastTick=Date.now(),wasReady=state.active&&state.progress>=100;setInterval(function(){updateClock();updateSky();if(state.weatherMode==='auto')updateWeather();var now=Date.now(),delta=Math.min(2,(now-lastTick)/1000);lastTick=now;if(document.hidden)return;tickCat(delta);tickStaff();tickAbu();tickNana();tickCatEmergency();var n=notificationCount();if(n>lastNotificationCount&&state.staff.hired)sound('notify');lastNotificationCount=n;if(state.active&&state.progress<100){state.progress=Math.min(100,state.progress+100*delta/crops[state.kind].time);if(state.progress>=100&&!wasReady){sound('bloom');wasReady=true}render()}else render();if(!state.active||state.progress<100)wasReady=false},1000);setInterval(function(){if(Date.now()>=eventNext){scheduleEvent();if(!document.hidden&&activeArea==='nursery')eventSpawn()}},1000);render();msg(state.lang==='ar'?'بلّش اعتني بالياسمينة!':'Start caring for your jasmine!');
 if(audioSettings.music)tryPlayMusic();
 })();
