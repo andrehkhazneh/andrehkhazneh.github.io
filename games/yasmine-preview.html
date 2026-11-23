@@ -254,7 +254,7 @@ if(old)old.remove();
 const card=document.createElement('div');card.className='mish-notice';card.dataset.kind=type;card.dataset.message=msg;
 const close=document.createElement('button');close.className='mish-close';close.textContent='×';close.setAttribute('aria-label','إغلاق');close.onclick=()=>{closed[type]=msg;card.remove()};
 const title=document.createElement('strong');title.textContent=document.documentElement.lang==='en'?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير مشمش السرّي':'🐱🐭 نتيجة المطاردة');
-const p=document.createElement('p');p.textContent=msg;card.append(close,title,p);notices.append(card);
+const p=document.createElement('p');p.textContent=msg;card.append(close,title,p);notices.append(card);syncNoticeLanguage();
 }
 function syncNoticeLanguage(){
 const en=document.documentElement.lang==='en';
@@ -265,7 +265,7 @@ if(title)title.textContent=en?(type==='spy'?'🐱 Secret spy report':'🐱🐭 M
 if(close)close.setAttribute('aria-label',en?'Close':'إغلاق');
 }
 const treats=$('catTreatStatValue'),count=$('catTreatCount');
-if(treats&&count){const value=(count.textContent.match(/\\d+/)||['0'])[0];const next=en?value+' treats':value+' حبة';if(treats.textContent!==next)treats.textContent=next}
+if(treats&&count){const value=(count.textContent.match(/[0-9]+/)||['0'])[0];const next=en?value+' treats':value+' حبة';if(treats.textContent!==next)treats.textContent=next}
 }
 new MutationObserver(syncNoticeLanguage).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
 syncNoticeLanguage();
