@@ -45,7 +45,7 @@ function normalizeGameState(s){
   if(!s.stock||typeof s.stock!=='object'||Array.isArray(s.stock))s.stock={fertilizer:4,catfood:3};
   s.stock.fertilizer=safeNumber(s.stock.fertilizer,4,0,1000000);s.stock.catfood=safeNumber(s.stock.catfood,3,0,1000000);
   if(!s.staff||typeof s.staff!=='object'||Array.isArray(s.staff))s.staff={hired:false,mood:60,request:null,nextRequest:Date.now()+45000,dialogue:''};
-  s.staff.mood=safeNumber(s.staff.mood,60,0,100);
+  s.staff.mood=safeNumber(s.staff.mood,60,0,100);s.catEmergencyBill=safeNumber(s.catEmergencyBill,0,0,1000000);s.catRescueCooldown=safeNumber(s.catRescueCooldown,0,0,Number.MAX_SAFE_INTEGER);s.catFoodEmergencyNotice=!!s.catFoodEmergencyNotice;
   if(!s.abu||typeof s.abu!=='object'||Array.isArray(s.abu))s.abu={hired:false,paidSales:0,paused:false,lastCare:0};
   if(!s.nana||typeof s.nana!=='object'||Array.isArray(s.nana))s.nana={hired:false,paidSales:0,paused:false,lastCare:0,lastWarn:0,dialogueIndex:0,action:''};
   s.abu.paidSales=safeNumber(s.abu.paidSales,0,0,3);s.nana.paidSales=safeNumber(s.nana.paidSales,0,0,3);
@@ -63,7 +63,7 @@ if(!Number.isFinite(Number(state.gameEpoch)))state.gameEpoch=Date.now();else sta
 if(!state.abu||typeof state.abu!=='object')state.abu={hired:false,paidSales:0,paused:false,lastCare:0};if(!state.nana||typeof state.nana!=='object')state.nana={hired:false,paidSales:0,paused:false,lastCare:0,lastWarn:0,dialogueIndex:0,action:''};
 if(!Number.isFinite(state.eventEarned))state.eventEarned=0;if(!Number.isFinite(state.eventCycleSales))state.eventCycleSales=state.sales;if(!Number.isFinite(state.extraEarned))state.extraEarned=0;if(!Number.isFinite(state.catHuntLast))state.catHuntLast=0;if(!Array.isArray(state.catCoinTimes))state.catCoinTimes=[];
 var $=function(id){return document.getElementById(id)},last={water:0,feed:0,sun:0},ev=null,evTimer=0,evTimeout=0;
-var workersSection=document.getElementById('workersArea');document.getElementById('staffArea').after(workersSection);var jokeQueue=[];var activeArea='nursery', catMessage=null, catLast={}, catSeconds=0, catAnimationTimer, catDrinking=false,catDrinkTimer=null,catThirstWarned=false;
+var workersSection=document.getElementById('workersArea');document.getElementById('staffArea').after(workersSection);var jokeQueue=[];var activeArea='nursery', catMessage=null, catLast={}, catSeconds=0, catAnimationTimer, catDrinking=false,catDrinkTimer=null,catThirstWarned=false,catHungryWarned=false,catBusyUntil=0,catCareTimer=null;
 var catTxt={
   ar:{
     nav:'التنقّل داخل اللعبة',nursery:'🌱 المشتل',ready:'🌼 النبتة جاهزة للبيع',cat:'🐱 القطة',
@@ -108,7 +108,7 @@ function renderCat(){
   });
   $('catHydration').textContent=Math.floor(cat.hydration)+'%';
   $('catHydrationBar').style.width=cat.hydration+'%';
-  $('catWater').disabled=catDrinking||cat.hydration>=100;
+  $('catWater').disabled=Date.now()<catBusyUntil||cat.hydration>=100;
   $('catHydrationLabel').textContent=state.lang==='ar'?'الارتواء':'Hydration';
   $('catMoodLabel').textContent=words.mood;
   $('catWater').textContent=state.lang==='ar'?'💧 اسقيها':'💧 Give water';
@@ -121,18 +121,19 @@ function renderCat(){
   $('catToy').hidden=cat.toy;
   $('catToy').disabled=state.money<20;
   ['Feed','Play','Brush'].forEach(function(action){
-    $('cat'+action).disabled=Date.now()<(catLast[action]||0);
+    $('cat'+action).disabled=Date.now()<catBusyUntil||Date.now()<(catLast[action]||0)||(action==='Feed'&&state.stock.catfood<=0);
   });
+  catEmergencyAlert();
   var message=words[catMessage||'hello'];
   if($('catMessage').textContent!==message)$('catMessage').textContent=message;
 }
 function visitCat(action){
   var cat=state.cat;
-  if(Date.now()<(catLast[action]||0))return;
+  if(Date.now()<catBusyUntil||Date.now()<(catLast[action]||0))return;
   catLast[action]=Date.now()+5000;
   if(action==='Feed'){
-    if(state.stock.catfood<=0){catMessage=null;state.staff.dialogue=state.lang==='ar'?'ما ضل أكل للقطة! افتح قسم ياسمين لتشتري أكل.':'No cat food left! Ask Jasmine to restock.';if(state.staff.hired){state.staff.rejectedStock={};state.staff.request='catfood'}activeArea='staff';render();return}state.stock.catfood--;
-    cat.fullness=Math.min(100,cat.fullness+24);
+    if(state.stock.catfood<=0)return;state.stock.catfood--;catHungryWarned=false;
+    cat.fullness=Math.min(100,cat.fullness+25);
     catMessage='fed';
   }else if(action==='Play'){
     cat.mood=Math.min(100,cat.mood+(cat.toy?24:18));
@@ -142,11 +143,12 @@ function visitCat(action){
     cat.mood=Math.min(100,cat.mood+12);
     catMessage='brushed';
   }
+  catBusyUntil=Date.now()+4300;
   var scene=$('catScene');
   clearTimeout(catAnimationTimer);
   scene.dataset.toy=cat.toy?'feather':'yarn';
   scene.dataset.action=action;
-  catAnimationTimer=setTimeout(function(){delete scene.dataset.action},4300);
+  catAnimationTimer=setTimeout(function(){delete scene.dataset.action;render()},4300);
   render();
 }
 $('nurseryTab').onclick=function(){activeArea='nursery';renderCat();renderNurseryNotice()};
@@ -162,7 +164,8 @@ $('catToy').onclick=function(){
   render();
 };
 function giveCatWater(source){
-  if(catDrinking||state.cat.hydration>=100)return false;
+  if(Date.now()<catBusyUntil||catDrinking||state.cat.hydration>=100)return false;
+  catBusyUntil=Date.now()+4100;
   catDrinking=true;
   var scene=$('catScene');
   if(scene){scene.classList.remove('cat-drinking');void scene.offsetWidth;scene.classList.add('cat-drinking')}
@@ -183,19 +186,24 @@ function giveCatWater(source){
 }
 $('catWater').onclick=function(){giveCatWater('player')};
 function tickCat(delta){
+  var nanaOn=state.nana.hired&&!state.nana.paused;
   state.cat.hydrationSeconds+=delta;
-  if(state.cat.hydrationSeconds>=4.5){
-    var thirstSteps=Math.floor(state.cat.hydrationSeconds/4.5);
-    state.cat.hydrationSeconds-=thirstSteps*4.5;
-    state.cat.hydration=Math.max(0,state.cat.hydration-thirstSteps);
-    if(state.cat.hydration<20&&!catThirstWarned&&(!state.nana.hired||state.nana.paused)){catThirstWarned=true;msg(state.lang==='ar'?'💧 '+state.catName+' عطشانة، اسقيها!':'💧 '+state.catName+' is thirsty! Give her water!')}
+  if(state.cat.hydrationSeconds>=1.5){
+    var steps=Math.floor(state.cat.hydrationSeconds/1.5);
+    state.cat.hydrationSeconds-=steps*1.5;
+    state.cat.hydration=Math.max(nanaOn?1:0,state.cat.hydration-steps);
+    if(state.cat.hydration<=40&&!catThirstWarned&&!nanaOn){catThirstWarned=true;msg(state.lang==='ar'?'💧 '+state.catName+' عطشانة، اسقيها!':'💧 '+state.catName+' is thirsty!')}
     save();
   }
   catSeconds+=delta;
-  if(catSeconds<15)return;
-  catSeconds-=15;
-  state.cat.fullness=Math.max(0,state.cat.fullness-2);
-  state.cat.mood=Math.max(0,state.cat.mood-1);
+  if(catSeconds>=2.25){
+    var foodSteps=Math.floor(catSeconds/2.25);catSeconds-=foodSteps*2.25;
+    state.cat.fullness=Math.max(nanaOn?1:0,state.cat.fullness-foodSteps);
+    if(state.cat.fullness<=40&&!catHungryWarned&&!nanaOn){catHungryWarned=true;msg(state.lang==='ar'?'🍲 '+state.catName+' جوعانة، طعميها!':'🍲 '+state.catName+' is hungry!')}
+    save();
+  }
+  if(state.cat.hydration>40)catThirstWarned=false;
+  if(state.cat.fullness>40)catHungryWarned=false;
 }
 // Five distinct Jasmine mini-games; reward is granted exactly once per completed round.
 (function(){
@@ -249,15 +257,76 @@ function staffWords(){return state.lang==='ar'?{nursery:'اسم المشتل',ca
 $('settingsNamesPanel').appendChild($('identityPanel'));var editingNames=false,settingsOpen=false,audioPanelOpen=false,jokeAwaitingRating=false;$('topEditNames').onclick=function(){settingsOpen=!settingsOpen;if(!settingsOpen){editingNames=false;audioPanelOpen=false}render();$('settingsPanel').hidden=!settingsOpen};$('settingsNames').onclick=function(){settingsOpen=true;editingNames=!editingNames;render();if(editingNames){$('settingsNamesPanel').hidden=false;$('identityPanel').hidden=false;$('gardenNameInput').focus()}};$('settingsAudio').onclick=function(){audioPanelOpen=!audioPanelOpen;render()};$('restartGame').onclick=function(){$('reset').click()};$('saveGardenName').onclick=function(){commitNames()};$('gardenNameInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();commitNames()}});function commitNames(){state.gardenName=($('gardenNameInput').value||'').trim().slice(0,24)||'حديقة السعادة';state.nurseryName=($('nurseryNameInput').value||'').trim().slice(0,12)||'مشتل الياسمينة';state.catName=($('catNameInput').value||'').trim().slice(0,10)||'مشمش';state.namesSet=true;editingNames=false;save();render()}
 $('editNames').onclick=function(){editingNames=!editingNames;render();if(editingNames)$('nurseryNameInput').focus()};$('saveNurseryName').onclick=commitNames;$('saveCatName').onclick=commitNames;['nurseryNameInput','catNameInput'].forEach(function(id){$(id).addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();commitNames();this.blur()}})});
 function notificationCount(){return state.staff.hired&&state.staff.request?1:0}
-function renderStaff(){var w=staffWords(),st=state.staff;var buyDirect=$('buyFertilizerDirect');buyDirect.hidden=!!st.hired;buyDirect.textContent=state.lang==='ar'?'🌱 شراء 5 سماد · 💰 10':'🌱 Buy 5 fertilizer · 💰 10';buyDirect.disabled=state.money<10;if(st.hired&&st.request&&st.request!=='bonus'&&state.stock[st.request]>=5){st.request=null;save()}var face=$('yasminFace');if(face)face.textContent=state.yasminFace==='happy'?'😄':state.yasminFace==='sad'?'😢':'';var mouth=$('yasminMouth');if(mouth)mouth.setAttribute('d',state.yasminFace==='sad'?'M80 112Q91 98 102 112':state.yasminFace==='happy'?'M79 102Q91 120 103 102':'M80 103Q90 115 102 103');renderAbu();renderNana();$('settingsNamesPanel').hidden=!settingsOpen||!editingNames;$('identityPanel').hidden=!settingsOpen||!editingNames;$('gardenNameLabel').textContent=state.lang==='ar'?'اسم الحديقة':'Garden name';if(document.activeElement!==$('gardenNameInput'))$('gardenNameInput').value=state.gardenName;$('jokeRating').hidden=!jokeAwaitingRating;$('jokeGood').textContent=state.lang==='ar'?'😂 حلوة!':'😂 Funny!';$('jokeBad').textContent=state.lang==='ar'?'😐 مش كتير':'😐 Not really';$('nurseryAlert').hidden=true;$('nurseryAlertTitle').textContent=state.lang==='ar'?'🌱 تنبيه المشتل':'🌱 Nursery alert';$('nurseryAlertText').textContent=state.lang==='ar'?'المشتل فاضي! حان وقت زراعة بذرة جديدة.':'Your garden is empty! Time to plant a new seed.';$('nurseryAlertAction').textContent=state.lang==='ar'?'🌱 سأزرع':'🌱 I’ll plant';$('nurseryAlertDismiss').textContent=state.lang==='ar'?'تجاهل':'Dismiss';var n=notificationCount();$('staffBadge').hidden=!n;$('staffBadge').textContent=n;$('settingsPanel').hidden=!settingsOpen;$('settingsAudioPanel').hidden=!audioPanelOpen;$('topEditNames').setAttribute('aria-expanded',String(settingsOpen));$('identityPanel').hidden=!settingsOpen||!editingNames;$('editNames').textContent=state.lang==='ar'?(editingNames?'✕ إغلاق التعديل':'✏️ تعديل الأسماء'):(editingNames?'✕ Close editing':'✏️ Edit names');$('staffRole').textContent=state.lang==='ar'?'مديرة المشتل':'Nursery manager';$('nurseryNameLabel').textContent=w.nursery;$('catNameLabel').textContent=w.cat;$('nurseryEdit').hidden=state.namesSet&&!editingNames;$('catEdit').hidden=state.namesSet&&!editingNames;$('nurseryNameDone').hidden=!state.namesSet||editingNames;$('catNameDone').hidden=!state.namesSet||editingNames;$('nurseryNameDone').textContent=state.nurseryName;$('catNameDone').textContent=state.catName;if(document.activeElement!==$('nurseryNameInput'))$('nurseryNameInput').value=state.nurseryName;if(document.activeElement!==$('catNameInput'))$('catNameInput').value=state.catName;$('fertilizerStockLabel').textContent=state.lang==='ar'?'🌱 مخزون السماد':'🌱 Fertilizer stock';$('catFoodStockLabel').textContent=state.lang==='ar'?'🍲 مخزون أكل القطة':'🍲 Cat food stock';$('fertilizerStock').textContent=state.stock.fertilizer;$('catFoodStock').textContent=state.stock.catfood;$('stockHint').hidden=true;$('staffTitle').textContent=state.lang==='ar'?'ياسمين':'Yasmin';$('staffMood').textContent=w.mood+': '+st.mood+'%';$('staffDialogue').textContent=jokeAwaitingRating?st.dialogue:(!state.active&&!state.dismissedEmpty?(state.lang==='ar'?'يا مدير، المشتل فاضي! ازرع بذرة جديدة من دكّان البذور.':'Boss, the nursery is empty! Plant a new seed from the seed shop.'):st.request?w.request[st.request]:(state.stock.fertilizer<=1?(state.lang==='ar'?'يا مدير، السماد قرب يخلص! ضل '+state.stock.fertilizer+' بس.':'Boss, fertilizer is running low!') :state.stock.catfood<=1?(state.lang==='ar'?'يا مدير، أكل '+state.catName+' قرب يخلص!':'Boss, cat food is running low!'):state.cat.fullness<35?w.needCat:state.active&&state.quality<55?w.needWater:(jokeAwaitingRating?st.dialogue:st.dialogue||w.hello)));$('hireStaff').textContent=st.hired?(state.lang==='ar'?'✓ تم توظيف ياسمين':'✓ Jasmine hired'):w.hire;$('hireStaff').hidden=st.hired;$('hireStaff').disabled=st.hired||state.money<50;$('staffJoke').textContent=w.joke;$('staffJoke').disabled=!st.hired;$('staffRequest').hidden=!st.hired||!st.request;if(st.request){var req=requests.find(function(x){return x.type===st.request});if(req){$('requestTitle').textContent=state.lang==='ar'?'طلب من ياسمين':'Jasmine’s request';$('requestText').textContent=w.request[req.type];$('acceptRequest').textContent=w.yes+' 💰 '+req.cost;$('acceptRequest').disabled=state.money<req.cost;$('rejectRequest').textContent=w.no}}}
+function renderStaff(){var w=staffWords(),st=state.staff;catEmergencyAlert();var buyDirect=$('buyFertilizerDirect');buyDirect.hidden=!!st.hired;buyDirect.textContent=state.lang==='ar'?'🌱 شراء 5 سماد · 💰 10':'🌱 Buy 5 fertilizer · 💰 10';buyDirect.disabled=state.money<10;if(st.hired&&st.request&&st.request!=='bonus'&&state.stock[st.request]>=5){st.request=null;save()}var face=$('yasminFace');if(face)face.textContent=state.yasminFace==='happy'?'😄':state.yasminFace==='sad'?'😢':'';var mouth=$('yasminMouth');if(mouth)mouth.setAttribute('d',state.yasminFace==='sad'?'M80 112Q91 98 102 112':state.yasminFace==='happy'?'M79 102Q91 120 103 102':'M80 103Q90 115 102 103');renderAbu();renderNana();$('settingsNamesPanel').hidden=!settingsOpen||!editingNames;$('identityPanel').hidden=!settingsOpen||!editingNames;$('gardenNameLabel').textContent=state.lang==='ar'?'اسم الحديقة':'Garden name';if(document.activeElement!==$('gardenNameInput'))$('gardenNameInput').value=state.gardenName;$('jokeRating').hidden=!jokeAwaitingRating;$('jokeGood').textContent=state.lang==='ar'?'😂 حلوة!':'😂 Funny!';$('jokeBad').textContent=state.lang==='ar'?'😐 مش كتير':'😐 Not really';$('nurseryAlert').hidden=true;$('nurseryAlertTitle').textContent=state.lang==='ar'?'🌱 تنبيه المشتل':'🌱 Nursery alert';$('nurseryAlertText').textContent=state.lang==='ar'?'المشتل فاضي! حان وقت زراعة بذرة جديدة.':'Your garden is empty! Time to plant a new seed.';$('nurseryAlertAction').textContent=state.lang==='ar'?'🌱 سأزرع':'🌱 I’ll plant';$('nurseryAlertDismiss').textContent=state.lang==='ar'?'تجاهل':'Dismiss';var n=notificationCount();$('staffBadge').hidden=!n;$('staffBadge').textContent=n;$('settingsPanel').hidden=!settingsOpen;$('settingsAudioPanel').hidden=!audioPanelOpen;$('topEditNames').setAttribute('aria-expanded',String(settingsOpen));$('identityPanel').hidden=!settingsOpen||!editingNames;$('editNames').textContent=state.lang==='ar'?(editingNames?'✕ إغلاق التعديل':'✏️ تعديل الأسماء'):(editingNames?'✕ Close editing':'✏️ Edit names');$('staffRole').textContent=state.lang==='ar'?'مديرة المشتل':'Nursery manager';$('nurseryNameLabel').textContent=w.nursery;$('catNameLabel').textContent=w.cat;$('nurseryEdit').hidden=state.namesSet&&!editingNames;$('catEdit').hidden=state.namesSet&&!editingNames;$('nurseryNameDone').hidden=!state.namesSet||editingNames;$('catNameDone').hidden=!state.namesSet||editingNames;$('nurseryNameDone').textContent=state.nurseryName;$('catNameDone').textContent=state.catName;if(document.activeElement!==$('nurseryNameInput'))$('nurseryNameInput').value=state.nurseryName;if(document.activeElement!==$('catNameInput'))$('catNameInput').value=state.catName;$('fertilizerStockLabel').textContent=state.lang==='ar'?'🌱 مخزون السماد':'🌱 Fertilizer stock';$('catFoodStockLabel').textContent=state.lang==='ar'?'🍲 مخزون أكل القطة':'🍲 Cat food stock';$('fertilizerStock').textContent=state.stock.fertilizer;$('catFoodStock').textContent=state.stock.catfood;$('stockHint').hidden=true;$('staffTitle').textContent=state.lang==='ar'?'ياسمين':'Yasmin';$('staffMood').textContent=w.mood+': '+st.mood+'%';$('staffDialogue').textContent=jokeAwaitingRating?st.dialogue:(!state.active&&!state.dismissedEmpty?(state.lang==='ar'?'يا مدير، المشتل فاضي! ازرع بذرة جديدة من دكّان البذور.':'Boss, the nursery is empty! Plant a new seed from the seed shop.'):st.request?w.request[st.request]:(state.stock.fertilizer<=1?(state.lang==='ar'?'يا مدير، السماد قرب يخلص! ضل '+state.stock.fertilizer+' بس.':'Boss, fertilizer is running low!') :state.stock.catfood<=1?(state.lang==='ar'?'يا مدير، أكل '+state.catName+' قرب يخلص!':'Boss, cat food is running low!'):state.cat.fullness<35&&(!state.nana.hired||state.nana.paused)?w.needCat:state.active&&state.quality<55?w.needWater:(jokeAwaitingRating?st.dialogue:st.dialogue||w.hello)));$('hireStaff').textContent=st.hired?(state.lang==='ar'?'✓ تم توظيف ياسمين':'✓ Jasmine hired'):w.hire;$('hireStaff').hidden=st.hired;$('hireStaff').disabled=st.hired||state.money<50;$('staffJoke').textContent=w.joke;$('staffJoke').disabled=!st.hired;$('staffRequest').hidden=!st.hired||!st.request;if(st.request){var req=requests.find(function(x){return x.type===st.request});if(req){$('requestTitle').textContent=state.lang==='ar'?'طلب من ياسمين':'Jasmine’s request';$('requestText').textContent=w.request[req.type];$('acceptRequest').textContent=w.yes+' 💰 '+req.cost;$('acceptRequest').disabled=state.money<req.cost;$('rejectRequest').textContent=w.no}}}
 /* Names are confirmed with Enter or the check button, not on every keystroke. */
 $('nurseryAlertDismiss').onclick=function(){state.dismissedEmpty=true;render()};$('nurseryAlertAction').onclick=function(){state.dismissedEmpty=true;activeArea='nursery';render();$('shop').scrollIntoView({behavior:'smooth',block:'center'})};$('staffTab').onclick=function(){activeArea='staff';render()};$('workersTab').onclick=function(){activeArea='workers';render()};$('hireStaff').onclick=function(){if(state.staff.hired||state.money<50)return;state.money-=50;sound('purchase');state.staff.hired=true;state.staff.dialogue=staffWords().hello;state.staff.nextRequest=Date.now()+30000;render()};$('staffJoke').onclick=function(){if(!state.staff.hired)return;var jokes=Array.from(new Set(staffWords().jokes.concat(state.lang==='ar'&&Array.isArray(window.YASMIN_JOKES)?window.YASMIN_JOKES.filter(function(j){return typeof j==='string'&&j.trim()}):[])));if(!jokeQueue.length||jokeQueue.some(function(j){return !jokes.includes(j)})){jokeQueue=jokes.slice();for(var i=jokeQueue.length-1;i>0;i--){var k=Math.floor(Math.random()*(i+1)),tmp=jokeQueue[i];jokeQueue[i]=jokeQueue[k];jokeQueue[k]=tmp}}state.staff.dialogue=jokeQueue.pop();jokeAwaitingRating=true;state.yasminFace='happy';sound('laugh');render()};$('jokeGood').onclick=function(){if(!jokeAwaitingRating)return;jokeAwaitingRating=false;state.staff.mood=Math.min(100,state.staff.mood+8);state.yasminFace='happy';state.staff.dialogue=state.lang==='ar'?'يا سلام! ضحكتك أحلى من البونص! 😂':'Yay! Your laugh is better than a bonus! 😂';sound('cheer');save();render()};$('jokeClose').onclick=function(){jokeAwaitingRating=false;render()};$('jokeBad').onclick=function(){if(!jokeAwaitingRating)return;jokeAwaitingRating=false;state.staff.mood=Math.max(0,state.staff.mood-7);state.yasminFace='sad';state.staff.dialogue=state.lang==='ar'?'آخ يا مدير! خلص رح جرّب نكتة أحسن المرة الجاية.':'Ouch, boss! I’ll try a better joke next time.';sound('sad');save();render()};$('acceptRequest').onclick=function(){var st=state.staff,req=requests.find(function(x){return x.type===st.request});if(!st.hired||!req||state.money<req.cost)return;state.money-=req.cost;sound(req.type==='bonus'?'cheer':'purchase');st.mood=Math.min(100,st.mood+(req.type==='bonus'?20:7));if(req.type==='fertilizer')state.stock.fertilizer+=5;if(req.type==='catfood')state.stock.catfood+=5;if(req.type!=='bonus'&&st.rejectedStock)delete st.rejectedStock[req.type];st.dialogue=staffWords().thanks;st.request=null;st.nextRequest=Date.now()+65000;render()};$('rejectRequest').onclick=function(){var st=state.staff;if(!st.request)return;var isBonus=st.request==='bonus';sound(isBonus?'sad':'reject');if(isBonus){st.mood=Math.max(0,st.mood-8);state.yasminFace='sad'}else{if(!st.rejectedStock)st.rejectedStock={};st.rejectedStock[st.request]=Date.now()+65000}st.dialogue=isBonus?staffWords().refused:(state.lang==='ar'?'تمام يا مدير، منأجل الشراء شوي.':'Okay boss, we can postpone this purchase.');st.request=null;st.nextRequest=Date.now()+65000;render()};
 function renderAbu(){var a=state.abu,en=state.lang==='en';$('abuPanel').hidden=false;var worker=$('abuWorker');$('abuWagePay').hidden=!a.hired||!a.paused;$('abuWorkStatus').hidden=!a.hired;$('abuWorkStatus').textContent=a.paused?(en?'John is waiting for wages.':'أبو وردة متوقف بانتظار راتبه.'):(en?'John waters, fertilizes and removes pests automatically.':'أبو وردة يسقي ويسمّد ويكافح الدود تلقائياً.');if(worker){worker.hidden=!a.hired;worker.classList.toggle('paused',!!a.paused);worker.title=en?'John — nursery worker':'أبو وردة — عامل المشتل';}$('abuName').textContent=en?'John':'أبو وردة';$('abuStatus').textContent=!a.hired?(en?'Available after 6 sales':'بيفتح بعد 6 مبيعات'):a.paused?(en?'On break — wages due':'متوقف مؤقتاً — الراتب ناقص'):(en?'Working in the nursery':'عم يعتني بالنبتة');$('abuDialogue').textContent=!a.hired?(en?'Hire for 80 coins after 6 sales.':'بعد 6 مبيعات فيك توظفني بـ80 عملة، وبساعدك بالسقاية والحشرات.'):(a.paused?(en?'Pay 15 coins to resume work.':'يا مدير، في 15 عملة راتب مستحقة. ادفعلي وبرجع للشغل.'):(en?'I water the plant and remove harmful worms. I leave bees alone.':'أنا بسقي النبتة وبشيل الدود المؤذي، والنحل بخليه بحاله!'));$('hireAbu').hidden=a.hired&&!a.paused;$('hireAbu').disabled=state.money<(a.paused?15:80)||(!a.hired&&state.sales<ECONOMY_CONFIG.abuSales);$('hireAbu').textContent=a.paused?(en?'Pay wages · 15 coins':'💰 دفع الراتب · 15 عملة'):(en?'Hire John · 80 coins':'👨‍🌾 وظّف أبو وردة · 80 عملة');$('abuWage').textContent=en?'Wages: 15 coins every 3 sales after hiring.':'الراتب: 15 عملة كل 3 مبيعات بعد التوظيف. عدم الدفع بيوقف الشغل مؤقتاً.'}
 $('hireAbu').onclick=function(){var a=state.abu;if(a.paused){if(state.money<15)return;state.money-=15;a.paused=false;render();return}if(a.hired||state.sales<ECONOMY_CONFIG.abuSales||state.money<80)return;state.money-=80;a.hired=true;a.paidSales=0;a.lastCare=Date.now();sound('purchase');render()};
 function renderNana(){var n=state.nana,en=state.lang==='en';$('nanaTitle').textContent=en?'Nana':'نانا';$('nanaRole').textContent=en?'Cat caretaker':'مربّية القطط';$('nanaStatus').textContent=!n.hired?(en?'Unlocks after 12 sales':'بيفتح بعد 12 مبيعة'):n.paused?(en?'Paused — wages due':'متوقفة بانتظار الراتب'):(en?'Caring for '+state.catName:'عم تهتم بـ'+state.catName);$('nanaDialogue').textContent=n.hired?(n.paused?(en?'Please pay my wages so I can help again.':'يا حبيبي، ادفعلي راتبي وبرجع دلّع القطة!'):(en?'I feed, brush and play with '+state.catName+'.':'أنا بطعمي '+state.catName+' وبمشّطها وبلعب معها.')):(en?'Hire me after 12 sales to care for your cat.':'بعد 12 مبيعة وظّفني، وأنا بدير بالي على القطة بحنية.');$('hireNana').hidden=n.hired&&!n.paused;$('hireNana').disabled=n.paused?state.money<20:n.hired||state.sales<12||state.money<120;$('hireNana').textContent=n.paused?(en?'Pay wages · 20 coins':'💰 دفع الراتب · 20 عملة'):(en?'Hire Nana · 120 coins':'👵 وظّف نانا · 120 عملة');$('nanaWage').textContent=en?'Wages: 20 coins every 3 sales. Unpaid wages pause her work.':'الراتب: 20 عملة كل 3 مبيعات، وعدم الدفع بيوقف شغلها مؤقتاً.'}
 $('hireNana').onclick=function(){var n=state.nana;if(n.paused){if(state.money<20)return;state.money-=20;n.paused=false}else{if(n.hired||state.sales<12||state.money<120)return;state.money-=120;n.hired=true;n.paidSales=0;n.lastCare=0}sound('purchase');save();render()};
-var nanaLinesAr=['يا حبيبتي يا {cat}، بدك تاكلي؟','تعالي لعندي يا {cat}، بدي مشّطلك فروك!','يا روحي يا {cat}، شو هالعيون الحلوة!','تعالي نلعب بالريشة يا {cat}!','يا عيوني، ما بدي ياكي تجوعي!','إيه يا {cat}، شو هالدلال كله!','يا قمر، تعالي لعند نانا!','حبيبتي، فروك بدّه شوية ترتيب!','يا {cat}، خلّينا نلعب شوي!','الله يحميكي يا روح نانا!'];var nanaLinesEn=['Sweet {cat}, are you hungry?','Come here, {cat}, let me brush your fur!','Look at those lovely eyes, {cat}!','Let’s play with the feather, {cat}!','My darling, I won’t let you go hungry!','Oh {cat}, you are so spoiled!','Come to Nana, little sweetheart!','Your fur needs a little brushing!','Let’s play a bit, {cat}!','Stay safe, Nana’s little darling!'];function tickNana(){var n=state.nana;if(!n.hired||n.paused)return;var now=Date.now();if(state.cat.hydration<=50&&!catDrinking){if(giveCatWater('nana')){n.lastWater=now;return}}if(now-n.lastCare<30000)return;var action='';if(state.cat.fullness<40){if(state.stock.catfood>0){state.stock.catfood--;state.cat.fullness=Math.min(100,state.cat.fullness+25);action='feed'}else if(now-n.lastWarn>=60000){n.lastWarn=now;n.action=state.lang==='ar'?'خلص أكل القطة، قول لياسمين!':'Cat food ran out. Tell Jasmine!';save();return}}else if(state.cat.mood<50){state.cat.mood=Math.min(100,state.cat.mood+15);action='brush'}else if(state.cat.toy&&state.cat.mood<80){state.cat.mood=Math.min(100,state.cat.mood+10);action='play'}if(!action)return;n.lastCare=now;n.dialogueIndex=(n.dialogueIndex+1)%10;n.action=(state.lang==='ar'?({feed:'نانا أطعمت ',brush:'نانا مشّطت ',play:'نانا لعبت مع '}[action]):({feed:'Nana fed ',brush:'Nana brushed ',play:'Nana played with '}[action]))+state.catName;save()}
+var nanaLinesAr=['يا حبيبتي يا {cat}، بدك تاكلي؟','تعالي لعندي يا {cat}، بدي مشّطلك فروك!','يا روحي يا {cat}، شو هالعيون الحلوة!','تعالي نلعب بالريشة يا {cat}!','يا عيوني، ما بدي ياكي تجوعي!','إيه يا {cat}، شو هالدلال كله!','يا قمر، تعالي لعند نانا!','حبيبتي، فروك بدّه شوية ترتيب!','يا {cat}، خلّينا نلعب شوي!','الله يحميكي يا روح نانا!'];var nanaLinesEn=['Sweet {cat}, are you hungry?','Come here, {cat}, let me brush your fur!','Look at those lovely eyes, {cat}!','Let’s play with the feather, {cat}!','My darling, I won’t let you go hungry!','Oh {cat}, you are so spoiled!','Come to Nana, little sweetheart!','Your fur needs a little brushing!','Let’s play a bit, {cat}!','Stay safe, Nana’s little darling!'];function catEmergencyAlert(){
+  var el=$('catEmergencyPanel');if(!el)return;
+  var en=state.lang==='en',nanaOn=state.nana.hired&&!state.nana.paused;
+  var emergency=state.stock.catfood===0&&state.cat.fullness<=10;
+  el.hidden=!emergency||nanaOn;
+  $('catEmergencyText').textContent=en?'Emergency: no food and your cat is very hungry!':'🚨 طوارئ! '+state.catName+' جوعانة كتير وما في أكل.';
+  $('catEmergencyBuy').hidden=state.money<15;
+  $('catEmergencyBuy').textContent=en?'Buy 5 portions · 15 coins':'🍲 اشتري 5 حصص · 15 عملة';
+  $('catEmergencyAid').hidden=state.money>=15;
+  $('catEmergencyAid').textContent=en?'Request animal rescue food':'❤️ اطلب مساعدة جمعية الحيوانات';
+  var bill=$('catEmergencyBill');bill.hidden=!(state.catEmergencyBill>0);
+  if(state.catEmergencyBill>0){
+    $('catEmergencyBillText').textContent=en?'Nana emergency invoice: 15 coins food + 5 transport = 20 coins.':'🧾 فاتورة نانا: 15 عملة للطعام + 5 أجرة نقل = 20 عملة.';
+    $('catEmergencyPay').disabled=state.money<state.catEmergencyBill;
+    $('catEmergencyPay').textContent=en?'Approve invoice payment · 20 coins':'💰 وافق على دفع الفاتورة · 20 عملة';
+  }
+}
+function rescueCatFood(){
+  if(state.stock.catfood!==0||state.cat.fullness>10||state.money>=15)return false;
+  state.stock.catfood+=3;
+  state.catFoodEmergencyNotice=false;
+  state.nana.action=state.lang==='ar'?'❤️ جمعية أصدقاء الحيوانات قدّمت 3 حصص إسعافية لـ'+state.catName:'❤️ Animal friends charity donated 3 emergency portions';
+  msg(state.nana.action);save();render();return true;
+}
+function tickNana(){
+  var n=state.nana;if(!n.hired||n.paused)return;
+  var now=Date.now();
+  if(now<catBusyUntil)return;
+  // Emergency purchases are ONLY allowed after the cat becomes severely hungry with zero stock.
+  if(state.stock.catfood===0&&state.cat.fullness<=10){
+    if(state.catEmergencyBill===0){
+      state.stock.catfood+=5;state.catEmergencyBill=20;
+      n.action=state.lang==='ar'?'🚨 نانا اشترت 5 حصص بالطوارئ، والفاتورة 20 عملة بانتظار موافقتك.':'🚨 Nana bought 5 emergency portions. Invoice: 20 coins, awaiting approval.';
+      msg(n.action);save();
+    }else if(state.money<15){
+      rescueCatFood();
+    }else if(!state.catFoodEmergencyNotice){
+      state.catFoodEmergencyNotice=true;
+      msg(state.lang==='ar'?'🚨 فاتورة نانا السابقة ما اندفعت! اشتري طعام للقطة.':'🚨 Nana invoice is unpaid! Buy cat food.');
+    }
+  }
+  // Water takes priority when both needs are low; all care actions share one busy window.
+  if(state.cat.hydration<=25){if(giveCatWater('nana')){n.lastWater=now;return}}
+  if(state.cat.fullness<=25&&state.stock.catfood>0){
+    state.stock.catfood--;state.cat.fullness=Math.min(100,state.cat.fullness+25);
+    catBusyUntil=now+4300;
+    var scene=$('catScene');scene.dataset.toy=state.cat.toy?'feather':'yarn';scene.dataset.action='Feed';
+    clearTimeout(catAnimationTimer);catAnimationTimer=setTimeout(function(){delete scene.dataset.action;render()},4300);
+    n.lastCare=now;n.action=(state.lang==='ar'?'نانا أطعمت ':'Nana fed ')+state.catName;
+    save();return;
+  }
+  if(now-n.lastCare<30000)return;
+  var action='';
+  if(state.cat.mood<50){state.cat.mood=Math.min(100,state.cat.mood+15);action='brush'}
+  else if(state.cat.toy&&state.cat.mood<80){state.cat.mood=Math.min(100,state.cat.mood+10);action='play'}
+  if(!action)return;
+  n.lastCare=now;n.dialogueIndex=(n.dialogueIndex+1)%10;
+  n.action=(state.lang==='ar'?({brush:'نانا مشّطت ',play:'نانا لعبت مع '}[action]):({brush:'Nana brushed ',play:'Nana played with '}[action]))+state.catName;save();
+}
 function tickAbu(){var a=state.abu;if(!a.hired||a.paused||!state.active||state.progress>=100)return;var now=Date.now();if(ev==='pest'){clearTimeout(evTimeout);ev=null;$('event').hidden=true;msg(state.lang==='en'?'John removed the worm!':'أبو وردة شال الدودة وحمى النبتة!');a.lastCare=now;return}if(now-a.lastCare<5000)return;a.lastCare=now;state.progress=Math.min(100,state.progress+3.2);if(state.stock.fertilizer>0&&Math.random()<.45){state.stock.fertilizer--;state.progress=Math.min(100,state.progress+3);msg(state.lang==='en'?'John fertilized the plant.':'أبو وردة سمّد النبتة تلقائياً.')}else{msg(state.lang==='en'?'John watered the plant.':'أبو وردة سقى النبتة تلقائياً.')}state.quality=Math.min(100,state.quality+1)}
+$('catEmergencyBuy').onclick=function(){if(state.stock.catfood!==0||state.cat.fullness>10||state.money<15)return;state.money-=15;state.stock.catfood+=5;state.catFoodEmergencyNotice=false;save();render()};
+$('catEmergencyAid').onclick=function(){rescueCatFood()};
+$('catEmergencyPay').onclick=function(){if(!state.catEmergencyBill||state.money<state.catEmergencyBill)return;state.money-=state.catEmergencyBill;state.catEmergencyBill=0;state.catFoodEmergencyNotice=false;save();render()};
 function tickStaff(){var st=state.staff;if(!st.hired)return;if(st.request&&st.request!=='bonus'&&state.stock[st.request]>=5)st.request=null;if(st.request)return;var needs=stockRequests();if(needs.length){st.request=needs[0];st.dialogue='';save();return}if(Date.now()<st.nextRequest)return;st.request='bonus';st.dialogue='';save()}
 
 function updateSky(){var mode=state.dayMode||'auto',hour=gameHour(),phase=mode==='day'?'day':mode==='night'?'night':hour<5?'night':hour<6?'dawn':hour<8?'sunrise':hour<11?'morning':hour<17?'day':hour<19?'sunset':hour<21?'dusk':'night';$('scene').dataset.sky=phase;document.body.dataset.sky=phase;document.body.classList.toggle('night-ui',phase==='night'||phase==='dusk');var ar={night:'ليل',dawn:'فجر',sunrise:'شروق',morning:'ضحى',day:'نهار',sunset:'غروب',dusk:'غسق'},en={night:'Night',dawn:'Dawn',sunrise:'Sunrise',morning:'Morning',day:'Day',sunset:'Sunset',dusk:'Dusk'};$('skyPhase').textContent=(state.lang==='ar'?'السماء الآن: ':'Sky: ')+(state.lang==='ar'?ar[phase]:en[phase]);$('dayMode').value=mode;updateWeather();updateClock()}function tr(s){return txt[state.lang][s]}function msg(s){$('message').textContent=s}
@@ -302,7 +371,7 @@ var eventNext=Date.now()+ECONOMY_CONFIG.eventMinMs,eventTaps=0;
 function scheduleEvent(){eventNext=Date.now()+ECONOMY_CONFIG.eventMinMs+Math.random()*(ECONOMY_CONFIG.eventMaxMs-ECONOMY_CONFIG.eventMinMs)}
 function eventSpawn(){if(!state.active||state.progress>=100||ev||activeArea!=='nursery'||document.hidden||document.querySelector('dialog[open],#catSheetOverlay:not([hidden])')||settingsOpen)return;ev=['bee','dew','pest'][Math.floor(Math.random()*3)];eventTaps=0;var b=$('event');b.hidden=false;b.textContent=ev==='bee'?'🐝':ev==='dew'?'💧':'🐛';b.setAttribute('aria-label',ev==='bee'?'Bee':ev==='dew'?'Dew':'Worm');b.style.left=ev==='dew'?'54%':'15%';b.style.top=ev==='dew'?'48%':'32%';evTimeout=setTimeout(function(){if(!ev)return;if(ev==='pest'){state.quality=Math.max(30,state.quality-ECONOMY_CONFIG.pestQualityLoss);state.qualityCause=state.lang==='ar'?'دودة: ناقص 2%':'Worm: -2%'}ev=null;b.hidden=true;render()},ECONOMY_CONFIG.eventDurationMs)}
 $('event').onclick=function(){if(!ev)return;var type=ev;if(type==='pest'&&++eventTaps<ECONOMY_CONFIG.pestTaps){$('event').textContent='🐛 '+(ECONOMY_CONFIG.pestTaps-eventTaps);return}clearTimeout(evTimeout);var reward=awardEvent(ECONOMY_CONFIG.eventRewards[type]);msg((state.lang==='ar'?'مكافأة الحدث: +':'Event reward: +')+reward);sound(type==='pest'?'pest':'bee');ev=null;$('event').hidden=true;render()};
-['water','feed','sun'].forEach(function(k){$(k).onclick=function(){care(k)}});$('sell').onclick=sell;$('lang').onclick=function(){state.lang=state.lang==='ar'?'en':'ar';history.replaceState(null,'',location.pathname+(state.lang==='en'?'?lang=en':''));render()};$('reset').onclick=function(){if(confirm(state.lang==='ar'?'متأكد بدك تعيد اللعبة من البداية؟ رح تنمسح كل المصاري والمبيعات والأسماء والقطة وتوظيف ياسمين.':'Restart from scratch? All coins, sales, names, cat and Jasmine progress will be erased.')){state={gameEpoch:Date.now(),dayMode:'auto',weatherMode:'auto',catTreats:0,catSpy:{status:'idle',report:'',end:0},catHunt:{status:'idle',end:0},catItems:{},catEquipped:{},gardenName:'حديقة السعادة',dismissedEmpty:false,money:50,sales:0,kind:'jasmine',progress:0,quality:100,care:0,active:true,lang:state.lang,cat:freshCat(),nurseryName:'مشتل الياسمينة',catName:'مشمش',namesSet:false,stock:{fertilizer:4,catfood:3},staff:{hired:false,mood:60,request:null,nextRequest:Date.now()+45000,dialogue:''},abu:{hired:false,paidSales:0,paused:false,lastCare:0},nana:{hired:false,paidSales:0,paused:false,lastCare:0,lastWarn:0,dialogueIndex:0,action:''},eventEarned:0,eventCycleSales:0,extraEarned:0,catHuntLast:0,catCoinTimes:[]};catLast={};catMessage=null;catSeconds=0;editingNames=false;settingsOpen=false;audioPanelOpen=false;jokeAwaitingRating=false;activeArea='nursery';lastNotificationCount=0;wasReady=false;lastTick=Date.now();last={water:0,feed:0,sun:0};clearTimeout(catAnimationTimer);clearTimeout(evTimeout);ev=null;$('event').hidden=true;delete $('catScene').dataset.action;$('catScene').classList.remove('is-napping');try{localStorage.removeItem(key)}catch(e){}msg('');render()}};
+['water','feed','sun'].forEach(function(k){$(k).onclick=function(){care(k)}});$('sell').onclick=sell;$('lang').onclick=function(){state.lang=state.lang==='ar'?'en':'ar';history.replaceState(null,'',location.pathname+(state.lang==='en'?'?lang=en':''));render()};$('reset').onclick=function(){if(confirm(state.lang==='ar'?'متأكد بدك تعيد اللعبة من البداية؟ رح تنمسح كل المصاري والمبيعات والأسماء والقطة وتوظيف ياسمين.':'Restart from scratch? All coins, sales, names, cat and Jasmine progress will be erased.')){state={gameEpoch:Date.now(),dayMode:'auto',weatherMode:'auto',catTreats:0,catSpy:{status:'idle',report:'',end:0},catHunt:{status:'idle',end:0},catItems:{},catEquipped:{},gardenName:'حديقة السعادة',dismissedEmpty:false,money:50,sales:0,kind:'jasmine',progress:0,quality:100,care:0,active:true,lang:state.lang,cat:freshCat(),nurseryName:'مشتل الياسمينة',catName:'مشمش',namesSet:false,stock:{fertilizer:4,catfood:3},staff:{hired:false,mood:60,request:null,nextRequest:Date.now()+45000,dialogue:''},abu:{hired:false,paidSales:0,paused:false,lastCare:0},nana:{hired:false,paidSales:0,paused:false,lastCare:0,lastWarn:0,dialogueIndex:0,action:''},eventEarned:0,eventCycleSales:0,extraEarned:0,catHuntLast:0,catCoinTimes:[],catEmergencyBill:0,catFoodEmergencyNotice:false};catLast={};catMessage=null;catSeconds=0;catBusyUntil=0;catDrinking=false;catHungryWarned=false;catThirstWarned=false;clearTimeout(catDrinkTimer);clearTimeout(catCareTimer);editingNames=false;settingsOpen=false;audioPanelOpen=false;jokeAwaitingRating=false;activeArea='nursery';lastNotificationCount=0;wasReady=false;lastTick=Date.now();last={water:0,feed:0,sun:0};clearTimeout(catAnimationTimer);clearTimeout(evTimeout);ev=null;$('event').hidden=true;delete $('catScene').dataset.action;$('catScene').classList.remove('is-napping');try{localStorage.removeItem(key)}catch(e){}msg('');render()}};
 
 /* Mimi: petting, treats and playful inspection of John's nursery work. */
 if(typeof state.catTreats!=='number')state.catTreats=0;
