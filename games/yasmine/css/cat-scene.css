@@ -1,0 +1,68 @@
+#catScene.cat-art-ready {
+  aspect-ratio: 520/290 !important;
+}
+#catScene.cat-art-ready > svg:first-of-type {
+  visibility: hidden !important;
+  display: none !important;
+}
+#catScene.cat-art-ready::before,
+#catScene.cat-art-ready::after {
+  display: none;
+}
+#catCareRoom,
+#catCareActor,
+#catCareCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+#catCareRoom {
+  z-index: 1;
+}
+#catCareActor {
+  z-index: 3;
+}
+#catCareRoom[hidden],
+#catCareActor[hidden] {
+  display: none;
+}
+/* Animate the resting bitmap on the compositor. Canvas paints stop between actions. */
+#catCareActor.strolling {
+  animation: nursery-cat-stroll 12s linear infinite;
+}
+#catCareActor.strolling canvas {
+  transform-origin: var(--cat-center, 43%) 88%;
+  animation: nursery-cat-turn 12s steps(1, end) infinite;
+}
+@keyframes nursery-cat-stroll {
+  0%,
+  12%,
+  100% {
+    transform: translateX(0);
+  }
+  43%,
+  60% {
+    transform: translateX(7%);
+  }
+  91% {
+    transform: translateX(0);
+  }
+}
+@keyframes nursery-cat-turn {
+  0%,
+  94%,
+  100% {
+    transform: scaleX(1);
+  }
+  56% {
+    transform: scaleX(-1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  #catCareActor.strolling,
+  #catCareActor.strolling canvas {
+    animation: none;
+  }
+}

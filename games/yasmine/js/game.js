@@ -581,13 +581,17 @@ function renderBoutique(){
  var root=$('catBoutiqueItems');root.replaceChildren();
  catBoutiqueCatalog.concat([{id:'treat',ar:'🍬 3 حبات مكافأة',en:'🍬 3 reward treats',cost:10}]).forEach(function(item){
   var owned=item.id!=='treat'&&!!state.catItems[item.id],b=document.createElement('button');
-  b.textContent=(ar?item.ar:item.en).replace('{cat}',state.catName)+(owned?(item.id==='bed'?(ar?' ✓ موجود':' ✓ Owned'):(state.catEquipped&&state.catEquipped[item.id]!==false?(ar?' ✓ لابستها — اضغط لتشيلها':' ✓ Wearing — tap to remove'):(ar?' — اضغط لتلبسها':' — Tap to wear'))):' · 💰 '+item.cost);
+  b.textContent=(ar?item.ar:item.en).replace('{cat}',state.catName)+(owned?(item.id==='bed'?(ar?' ✓ موجود':' ✓ Owned'):((!state.catEquipped||state.catEquipped[item.id]!==false)?(ar?' ✓ لابستها — اضغط لتشيلها':' ✓ Wearing — tap to remove'):(ar?' — اضغط لتلبسها':' — Tap to wear'))):' · 💰 '+item.cost);
   b.disabled=!owned&&state.money<item.cost;
   b.onclick=function(){if(owned){if(item.id!=='bed'){state.catEquipped=state.catEquipped||{};state.catEquipped[item.id]=state.catEquipped[item.id]===false;save();render()}return}if(state.money<item.cost)return;state.money-=item.cost;if(item.id==='treat')state.catTreats+=3;else state.catItems[item.id]=true;sound('purchase');save();render()};
   root.appendChild(b);
  });
 
  var napping=!!state.catItems.bed&&Math.floor(Date.now()/45000)%5===0;
+ var scene=$('catScene');
+ var equipped=state.catEquipped||{};
+ var outfit=['hat','glasses'].filter(function(id){return state.catItems[id]&&equipped[id]!==false}).join(' ');
+ if(scene.dataset.outfit!==outfit)scene.dataset.outfit=outfit;
  var worn='';
  if(state.catItems.hat&&(!state.catEquipped||state.catEquipped.hat!==false))worn+='<g><path d="M88 18Q89 -10 114 -12Q139 -10 140 18Z" fill="#dfc49a" stroke="#9d7452" stroke-width="2"/><path d="M80 18Q113 27 148 18" stroke="#d0ae7c" stroke-width="8" fill="none"/><path d="M108 -1q-16 -16 -15 -3q3 10 15 3m0 0q16 -16 15 -3q-3 10 -15 3" fill="#4b9b50"/><circle cx="108" cy="-2" r="6" fill="#e84e65"/></g>';
  if(state.catItems.glasses&&(!state.catEquipped||state.catEquipped.glasses!==false))worn+='<g stroke="#46372d" stroke-width="2"><ellipse cx="104" cy="45" rx="12" ry="8" fill="#303b4a"/><ellipse cx="124" cy="45" rx="12" ry="8" fill="#303b4a"/><path d="M114 43h1M92 43l-8 -4M136 43l8 -4" fill="none"/></g>';
