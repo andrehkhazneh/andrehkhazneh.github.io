@@ -118,6 +118,14 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 #catArea[lang="en"] .cat-stats{direction:ltr!important}
 #catArea[lang="en"] .cat-stats>div{direction:ltr!important}
 #catArea[lang="en"] #catMessage{direction:ltr!important;text-align:center!important}
+</style><style id="catHydrationAnimation">
+#catScene.cat-drinking svg .cat-walk{animation:mishmishWalkDrink 4.1s ease-in-out 1 both;transform-box:fill-box;transform-origin:center bottom}
+#catScene.cat-drinking svg .cat-head{animation:mishmishHeadDrink 4.1s ease-in-out 1 both;transform-box:fill-box;transform-origin:center 75%}
+#catScene.cat-drinking svg .cat-water-surface{opacity:1}
+#catScene svg .cat-water-surface{opacity:0;transition:opacity .2s}
+@keyframes mishmishWalkDrink{0%,100%{transform:translateX(0)}22%,69%{transform:translateX(45px)}}
+@keyframes mishmishHeadDrink{0%,20%,75%,100%{transform:translateY(0) rotate(0)}36%,63%{transform:translateY(11px) rotate(9deg)}}
+@media(prefers-reduced-motion:reduce){#catScene.cat-drinking svg .cat-walk,#catScene.cat-drinking svg .cat-head{animation-duration:4.1s}}
 </style></head><body><main>
 <header><a class="btn" id="siteBack" href="/#games">رجوع ←</a><button type="button" id="topEditNames" aria-expanded="false" aria-controls="settingsPanel">⚙️ الإعدادات</button></header>
 <div id="gameRulesDialog" role="dialog" aria-modal="true" aria-labelledby="gameRulesHeading" hidden>
@@ -186,6 +194,7 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
     </g>
   </g>
   <g class="cat-tool cat-bowl">
+    <ellipse class="cat-water-surface" cx="279.5" cy="130" rx="19" ry="4" fill="#8cdbf3" stroke="#d7f9ff" stroke-width="1.2"/>
     <ellipse cx="280" cy="147" rx="23" ry="4" fill="#94634a" opacity=".22"/>
     <path d="M258 131h43l-6 14q-15 6-31 0z" fill="url(#catBowlShade)" stroke="#a84340" stroke-width="2"/>
     <ellipse cx="279.5" cy="131" rx="21.5" ry="5.5" fill="#f3a694" stroke="#a84340" stroke-width="2"/>
@@ -236,7 +245,7 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 <script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/garden.js?v=20261122-mishmish10"></script>
-<script src="yasmine/js/game.js?v=cat-en-2c6b23f"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/game.js?v=hydration-65468b0"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
@@ -280,7 +289,7 @@ if(scene&&nana){const original=scene.querySelector('[id*=nana],.nana-character')
 function showNana(){const hired=!!($('hireNana')&&/إلغاء|موظّفة|تم التوظيف|hired/i.test($('hireNana').textContent||''));nana.hidden=!hired;return hired}
 if(action){new MutationObserver(()=>{if(action.textContent.trim()&&showNana())speech.textContent=action.textContent.trim()}).observe(action,{childList:true,characterData:true,subtree:true})}
 setInterval(()=>{if(showNana()&&!nana.classList.contains('playing')&&Math.random()<.25){nana.classList.add('playing');speech.textContent='يلا يا مشمش، امسكي الريشة!';setTimeout(()=>nana.classList.remove('playing'),2800)}},20000);
-const water=$('catWater'),bowl=$('catScene');if(water&&bowl)water.addEventListener('click',()=>{let el=$('mishWaterBowl');if(!el){el=document.createElement('div');el.id='mishWaterBowl';el.textContent='🥣💧';el.style.cssText='position:absolute;bottom:5%;left:20%;font-size:30px;z-index:3';bowl.style.position='relative';bowl.append(el)}el.hidden=false;setTimeout(()=>el.hidden=true,2800)});
+/* Watering is handled by game.js: the cat walks to the bowl and hydration rises after drinking. */
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
