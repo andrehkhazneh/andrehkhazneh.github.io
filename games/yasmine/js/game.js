@@ -188,7 +188,7 @@ function tickCat(delta){
     var thirstSteps=Math.floor(state.cat.hydrationSeconds/30);
     state.cat.hydrationSeconds-=thirstSteps*30;
     state.cat.hydration=Math.max(0,state.cat.hydration-thirstSteps);
-    if(state.cat.hydration<20&&!catThirstWarned&&!state.nana.hired){catThirstWarned=true;msg(state.lang==='ar'?'💧 '+state.catName+' عطشانة، اسقيها!':'💧 '+state.catName+' is thirsty! Give her water!')}
+    if(state.cat.hydration<20&&!catThirstWarned&&(!state.nana.hired||state.nana.paused)){catThirstWarned=true;msg(state.lang==='ar'?'💧 '+state.catName+' عطشانة، اسقيها!':'💧 '+state.catName+' is thirsty! Give her water!')}
     save();
   }
   catSeconds+=delta;
