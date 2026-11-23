@@ -105,6 +105,19 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 #settingsQuickActions{margin-bottom:12px;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 #settingsQuickActions button{min-width:0;white-space:normal}
 @media(max-width:380px){header #siteBack,header #topEditNames{padding:10px 12px!important}}
+</style><style id="bilingualCatRulesLayout">
+#gameRulesSheet[lang="en"]{direction:ltr!important;text-align:left!important}
+#gameRulesSheet[lang="en"] #gameRulesClose{float:right!important;margin-left:14px;margin-right:0}
+#gameRulesSheet[lang="en"] :is(h2,p,summary,details){text-align:left!important;direction:ltr!important}
+#gameRulesSheet[lang="en"] summary{list-style-position:inside}
+#gameRulesSheet[lang="ar"]{direction:rtl!important;text-align:right!important}
+#gameRulesSheet[lang="ar"] #gameRulesClose{float:left!important;margin-right:14px;margin-left:0}
+#catArea[lang="en"] .mish-notice{direction:ltr!important;text-align:left!important}
+#catArea[lang="en"] .mish-notice .mish-close{float:right!important}
+#catArea[lang="en"] .mish-notice strong,#catArea[lang="en"] .mish-notice p{direction:ltr!important;text-align:left!important}
+#catArea[lang="en"] .cat-stats{direction:ltr!important}
+#catArea[lang="en"] .cat-stats>div{direction:ltr!important}
+#catArea[lang="en"] #catMessage{direction:ltr!important;text-align:center!important}
 </style></head><body><main>
 <header><a class="btn" id="siteBack" href="/#games">رجوع ←</a><button type="button" id="topEditNames" aria-expanded="false" aria-controls="settingsPanel">⚙️ الإعدادات</button></header>
 <div id="gameRulesDialog" role="dialog" aria-modal="true" aria-labelledby="gameRulesHeading" hidden>
@@ -223,7 +236,7 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 <script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/garden.js?v=20261122-mishmish10"></script>
-<script src="yasmine/js/game.js?v=back-polish-50086fc"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/game.js?v=cat-en-2c6b23f"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
@@ -240,15 +253,28 @@ if(old&&old.dataset.message===msg)return;
 if(old)old.remove();
 const card=document.createElement('div');card.className='mish-notice';card.dataset.kind=type;card.dataset.message=msg;
 const close=document.createElement('button');close.className='mish-close';close.textContent='×';close.setAttribute('aria-label','إغلاق');close.onclick=()=>{closed[type]=msg;card.remove()};
-const title=document.createElement('strong');title.textContent=type==='spy'?'🐱 تقرير مشمش السرّي':'🐱🐭 نتيجة المطاردة';
+const title=document.createElement('strong');title.textContent=document.documentElement.lang==='en'?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير مشمش السرّي':'🐱🐭 نتيجة المطاردة');
 const p=document.createElement('p');p.textContent=msg;card.append(close,title,p);notices.append(card);
 }
+function syncNoticeLanguage(){
+const en=document.documentElement.lang==='en';
+const cat=$('catArea');if(cat)cat.lang=en?'en':'ar';
+for(const card of notices.querySelectorAll('.mish-notice')){
+const type=card.dataset.kind,title=card.querySelector('strong'),close=card.querySelector('.mish-close');
+if(title)title.textContent=en?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير مشمش السرّي':'🐱🐭 نتيجة المطاردة');
+if(close)close.setAttribute('aria-label',en?'Close':'إغلاق');
+}
+const treats=$('catTreatStatValue'),count=$('catTreatCount');
+if(treats&&count){const value=(count.textContent.match(/\\d+/)||['0'])[0];const next=en?value+' treats':value+' حبة';if(treats.textContent!==next)treats.textContent=next}
+}
+new MutationObserver(syncNoticeLanguage).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+syncNoticeLanguage();
 for(const [id,type] of [['catSpyReport','spy'],['catMouseReport','mouse']]){
 const node=$(id);if(!node)continue;
 const update=()=>{if(!missionStarted[type])return;const msg=node.textContent.trim();if(type==='mouse'&&(/دقايق بين الصيدات|minutes? between hunts|needs a .*rest|بدها ترتاح|عم تفتش عن الفأرة|looking for the mouse/i.test(msg))){const previous=notices.querySelector('[data-kind="mouse"]');if(previous&&/دقايق بين الصيدات|minutes? between hunts|needs a .*rest|بدها ترتاح|عم تفتش عن الفأرة|looking for the mouse/i.test(previous.dataset.message||''))previous.remove();return;}if(type==='spy'&&(/تتفقد المشتل|checking the nursery|عم تتجسس|is spying/i.test(msg))){const previous=notices.querySelector('[data-kind="spy"]');if(previous)previous.remove();return;}add(type,msg)};
 new MutationObserver(update).observe(node,{childList:true,characterData:true,subtree:true});update();
 }
-const treatCount=$('catTreatCount'),treatValue=$('catTreatStatValue'),treatBar=$('catTreatStatBar');if(treatCount&&treatValue){const syncTreat=()=>{const value=(treatCount.textContent.match(/\d+/)||['0'])[0];treatValue.textContent=value+' حبة';if(treatBar)treatBar.style.width=Math.min(100,Number(value)*20)+'%'};new MutationObserver(syncTreat).observe(treatCount,{childList:true,characterData:true,subtree:true});syncTreat()}
+const treatCount=$('catTreatCount'),treatValue=$('catTreatStatValue'),treatBar=$('catTreatStatBar');if(treatCount&&treatValue){const syncTreat=()=>{const value=(treatCount.textContent.match(/\d+/)||['0'])[0];treatValue.textContent=document.documentElement.lang==='en'?value+' treats':value+' حبة';if(treatBar)treatBar.style.width=Math.min(100,Number(value)*20)+'%'};new MutationObserver(syncTreat).observe(treatCount,{childList:true,characterData:true,subtree:true});syncTreat()}
 const scene=$('catScene'),nana=$('nanaUpper'),speech=$('nanaUpperSpeech'),action=$('nanaCatAction');
 if(scene&&nana){const original=scene.querySelector('[id*=nana],.nana-character');if(original&&original.tagName.toLowerCase()==='svg'){const clone=original.cloneNode(true);clone.removeAttribute('id');clone.style.cssText='height:55px;width:55px';$('nanaUpperArt').replaceChildren(clone);original.style.display='none'}}
 function showNana(){const hired=!!($('hireNana')&&/إلغاء|موظّفة|تم التوظيف|hired/i.test($('hireNana').textContent||''));nana.hidden=!hired;return hired}
