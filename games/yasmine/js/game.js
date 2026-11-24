@@ -83,7 +83,7 @@ var catTxt={
   ar:{
     nav:'التنقّل داخل اللعبة',nursery:'🌱 المشتل',ready:'🌼 النبتة جاهزة للبيع',cat:'🐱 القطة',
     title:'قطة المشتل',fullness:'الشبع',mood:'المزاج',feed:'🍲 طعميها',
-    play:'🧶 العب معها',feather:'🪶 العب معها بالريشة',brush:'🪮 مشّطها',
+    play:'🧶 العب معها',feather:'🪶 العب معها',brush:'🪮 مشّطها',
     buy:'🪶 اشتري لعبة ريشة · 💰 20',hello:'قطتك عم تستنّاك!',
     fed:'أكلت ورجعت تخرخر.',played:'ركضت ورا كرة الخيط ومسكِتها!',sleepy:'شدّت كرة الخيط لعندها ونامت فوقها.',
     brushed:'تمدّدت وخرخرت وإنت عم تمشّطها.',bought:'الريشة صارت جاهزة للعب!',caught:'نطّت ومسكت الريشة بكفّيها!'
@@ -91,7 +91,7 @@ var catTxt={
   en:{
     nav:'Game areas',nursery:'🌱 Nursery',ready:'🌼 Plant ready to sell',cat:'🐱 Cat',
     title:'Nursery cat',fullness:'Fullness',mood:'Mood',feed:'🍲 Feed',
-    play:'🧶 Play',feather:'🪶 Play with feather',brush:'🪮 Brush',
+    play:'🧶 Play',feather:'🪶 Play',brush:'🪮 Brush',
     buy:'🪶 Buy a feather toy · 💰 20',hello:'Your cat is waiting for you!',
     fed:'She ate and started purring.',played:'She chased the ball of yarn and caught it!',sleepy:'She pulled the yarn close and fell asleep on it.',
     brushed:'She stretched out and purred as you brushed her.',bought:'The feather toy is ready!',caught:'She pounced and caught the feather in her paws!'
@@ -500,6 +500,7 @@ $('catTreatBuy').onclick=function(){
 };
 $('catSpy').onclick=function(){
  if(state.catSpy.status==='running'||!state.abu.hired||Date.now()<(Number(state.catSpy.cooldownUntil)||0))return;
+ $('catMissions').open=false;
  state.catSpy={status:'running',report:'',end:Date.now()+8000,cooldownUntil:Date.now()+8000+120000};
  activeArea='nursery';sound('notify');save();render();
  $('nurseryArea').scrollIntoView({behavior:'smooth',block:'center'});
@@ -509,7 +510,21 @@ $('catTreatReward').onclick=function(){
  state.catTreats--;state.cat.mood=Math.min(100,state.cat.mood+18);
  state.catSpy.status='rewarded';sound('feed');save();render();
 };
+function updateCatMissionTime(){
+ var ar=state.lang==='ar', now=Date.now(), parts=[];
+ function add(mission,label){
+  if(!mission||mission.status!=='running'||mission.end<=now)return;
+  var seconds=Math.ceil((mission.end-now)/1000);
+  parts.push(label+' '+Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0'));
+ }
+ add(state.catSpy,ar?'التجسّس':'Spying');
+ add(state.catHunt,ar?'الصيد':'Hunting');
+ var timer=$('catMissionTime'),text=parts.join(' · ');
+ if(timer.textContent!==text)timer.textContent=text;
+}
 function renderCatExtras(){
+ $('catMissionsLabel').textContent=state.lang==='ar'?'مهمّات القطة':'Cat missions';
+ updateCatMissionTime();
  var ar=state.lang==='ar',spy=state.catSpy;
  $('catTreatBuy').textContent=ar?'🍬 اشتري 3 حبة مكافأة لـ'+state.catName+' · 💰 10':'🍬 Buy 3 treats · 💰 10';
  $('catTreatBuy').disabled=state.money<10;
@@ -570,7 +585,7 @@ setInterval(function(){
 /* Mimi boutique and occasional naps */
 if(!state.catItems)state.catItems={};
 var catBoutiqueCatalog=[{id:'bed',ar:'🛏️ تخت {cat}',en:'🛏️ {cat} bed',cost:25},{id:'glasses',ar:'🕶️ نظارات شمسية',en:'🕶️ Sunglasses',cost:15},{id:'hat',ar:'👒 طاقية',en:'👒 Hat',cost:15}];
-var shopOpen=false;var shopButton=document.createElement('button');shopButton.id='catBoutiqueTitle';shopButton.type='button';shopButton.setAttribute('aria-expanded','false');$('catShopMount').appendChild(shopButton);$('catMouseReport').after($('catSpyReport'));$('catSpyReport').after($('catMouseReward'));$('catMouseReward').after($('catTreatReward'));
+var shopOpen=false;var shopButton=document.createElement('button');shopButton.id='catBoutiqueTitle';shopButton.type='button';shopButton.setAttribute('aria-expanded','false');$('catShopMount').appendChild(shopButton);
 var sheetOverlay=document.createElement('div');sheetOverlay.id='catSheetOverlay';sheetOverlay.hidden=true;sheetOverlay.innerHTML='<div id="catSheet" role="dialog" aria-modal="true" aria-labelledby="catSheetHeading"><div class="sheet-grip"></div><div class="sheet-head"><b id="catSheetHeading"></b><button type="button" id="catSheetClose" aria-label="Close">✕</button></div><p id="catSheetBalance"></p></div>';document.body.appendChild(sheetOverlay);$('catSheet').appendChild($('catBoutique'));function setShopOpen(open){shopOpen=open;sheetOverlay.hidden=!open;$('catBoutiqueItems').hidden=!open;$('catBoutiqueItems').style.display=open?'grid':'none';$('catBoutiqueTitle').setAttribute('aria-expanded',String(open));document.body.classList.toggle('cat-shop-open',open);if(open){$('catSheetClose').focus();renderBoutique()}}$('catBoutiqueTitle').onclick=function(){setShopOpen(!shopOpen)};$('catSheetClose').onclick=function(){setShopOpen(false);$('catBoutiqueTitle').focus()};sheetOverlay.addEventListener('click',function(e){if(e.target===sheetOverlay)setShopOpen(false)});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&shopOpen)setShopOpen(false)});
 var boutiqueStyle=document.createElement('style');boutiqueStyle.textContent='.cat-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.cat-heading{margin-bottom:16px!important}.cat-heading h2{margin:0!important}.cat-heading button{width:auto!important;flex-shrink:0;padding:10px 13px;font-size:clamp(13px,3vw,18px)}#catBoutique{padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important}#catBoutiqueItems:not([hidden]){margin:12px 0;padding:12px;border:1px solid #8295a4;border-radius:18px}#catScene{position:relative}#catAccessories{position:absolute;inset:0;pointer-events:none;z-index:4}#catAccessories svg{width:100%;height:100%}#catBed{position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.95}#catScene:not(.is-napping) #catBed{transform:none;opacity:1}#catScene:not(.is-napping) .mimi-sleeping-cat{display:none}#catScene.is-napping #catBed{z-index:3}#catBed svg{width:100%;height:100%}#catSleep{position:absolute;left:58%;top:16%;font-size:28px;pointer-events:none;z-index:5;animation:cat-snooze 2s ease-in-out infinite alternate}@keyframes cat-snooze{to{transform:translateY(-12px);opacity:.3}}#catScene.is-napping>svg{visibility:hidden}#catScene.is-napping #catBed{z-index:3}#catScene.is-napping #catAccessories{display:none}#catBoutiqueItems[hidden]{display:none!important} #catBed .mimi-sleeping-cat{transform-box:fill-box;transform-origin:center 65%;animation:mimi-breathe 3.8s ease-in-out infinite alternate}@keyframes mimi-breathe{from{transform:scale(1)}to{transform:scale(1.03)}}@media(prefers-reduced-motion:reduce){#catBed .mimi-sleeping-cat,#catSleep{animation:none!important}}';document.head.appendChild(boutiqueStyle);
 var catAccessories=document.createElement('div');catAccessories.id='catAccessories';$('catScene').appendChild(catAccessories);
@@ -622,11 +637,6 @@ function renderBoutique(){
 </svg>`:'';
  catBed.hidden=!state.catItems.bed;catSleep.hidden=!napping;$('catScene').classList.toggle('is-napping',napping);
 }
-/* Put the reward action directly below both mission buttons, with reports below it. */
-$('catMouseHunt').after($('catMouseReward'));
-$('catMouseReward').after($('catTreatReward'));
-$('catTreatReward').after($('catMouseReport'));
-$('catMouseReport').after($('catSpyReport'));
 /* Mimi's mouse patrol uses the same nursery camera as the spy mission. */
 if(!state.catHunt||typeof state.catHunt!=='object')state.catHunt={status:'idle',end:0};
 var mouse=document.createElement('div');mouse.id='huntMouse';mouse.innerHTML='<svg viewBox="0 0 120 90" width="55" height="45"><path d="M20 58Q0 46 9 30" stroke="#b7aeb8" stroke-width="5" fill="none"/><circle cx="41" cy="29" r="18" fill="#f1a7b8"/><circle cx="83" cy="28" r="18" fill="#f1a7b8"/><ellipse cx="62" cy="53" rx="42" ry="29" fill="#a6a8b2"/><circle cx="48" cy="47" r="4"/><circle cx="76" cy="47" r="4"/><circle cx="62" cy="59" r="5" fill="#eaa2b2"/></svg>';mouse.hidden=true;
@@ -634,6 +644,7 @@ mouse.style.cssText='position:absolute;bottom:9%;right:8%;font-size:45px;z-index
 $('scene').appendChild(mouse);
 $('catMouseHunt').onclick=function(){
  if(state.catHunt.status==='running'||Date.now()<(Number(state.catHunt.cooldownUntil)||0))return;
+ $('catMissions').open=false;
  var now=Date.now();state.catHuntLast=now;var eligible=state.cat.fullness>ECONOMY_CONFIG.catMinFullness&&state.cat.mood>ECONOMY_CONFIG.catMinMood;state.cat.fullness=Math.max(0,state.cat.fullness-ECONOMY_CONFIG.catFullnessCost);state.catHunt={status:'running',end:now+4800,cooldownUntil:now+4800+120000,variant:Math.floor(Math.random()*3),coinEligible:eligible};
  activeArea='cat';save();render();
 };
@@ -659,6 +670,7 @@ renderCatExtras=function(){
 };
 setInterval(function(){
  if(document.hidden||activeArea!=='cat')return;
+ updateCatMissionTime();
  var hunt=state.catHunt;
  if(hunt.status!=='running'){
   mouse.hidden=true;$('catHuntStage').hidden=true;

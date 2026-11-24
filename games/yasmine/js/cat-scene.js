@@ -273,15 +273,15 @@
   }
   function labels() {
     const en = document.documentElement.lang === "en";
-    walkButton.textContent = en ? "Walk" : "مشّيها";
+    walkButton.textContent = en ? "Walk" : "🐾 مشّيها";
     const inBed = phase === "sleep" || phase === "settle";
     napButton.textContent = inBed
       ? en
         ? "Wake up"
-        : "صحّيها"
+        : "☀️ صحّيها"
       : en
         ? "Take a nap"
-        : "خلّيها تنام";
+        : "💤 خلّيها تنام";
     napButton.hidden = !hasBed;
     walkButton.disabled =
       !!active || !["rest", "sleep", "walk"].includes(phase);

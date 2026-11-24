@@ -33,14 +33,30 @@
   display: none !important;
 }
 #catMotionControls:not([hidden]) {
-  display: flex;
-  gap: 8px;
-  margin-block: 10px;
+  display: contents;
 }
-#catMotionControls button {
-  flex: 1;
+#catCareControls #catFeed, #catCareControls #catWater { grid-row: 1; }
+#catCareControls #catPlay, #catCareControls #catBrush { grid-row: 2; }
+#catCareControls #catWalkButton, #catCareControls #catNapButton { grid-row: 3; }
+#catCareControls :is(#catFeed, #catPlay, #catWalkButton) { grid-column: 1; }
+#catCareControls :is(#catWater, #catBrush, #catNapButton) { grid-column: 2; }
+#catCareControls #catMotionControls button {
+  font-size: clamp(16px,4vw,21px);
+  font-weight: 800;
+  padding: 7px 8px;
+  min-width: 0;
+  min-height: 46px;
+  line-height: 1.4;
+  box-shadow: 0 3px 0 #53704566;
+}
+#catMissions summary {
+  cursor: pointer;
+  padding: 10px 14px;
   min-height: 44px;
+  border: 1px solid currentColor;
+  border-radius: 14px;
+  font-weight: 700;
 }
-#catMotionControls button[hidden] {
-  display: none !important;
-}
+#catMissionTime { font-variant-numeric: tabular-nums; }
+#catMissions .mission-row { margin-top: 8px; }
+#catMotionControls[hidden], #catMotionControls button[hidden] { display: none !important; }
