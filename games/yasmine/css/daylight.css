@@ -1,0 +1,41 @@
+/* Shared clock-driven colors. Weather remains layered above the sky. */
+body[data-sky] {
+  --cycle-ink: #17251e;
+  --cycle-edge: color-mix(in srgb,var(--cycle-panel) 72%,#688071);
+  background: var(--cycle-page) !important;
+  color: var(--cycle-ink) !important;
+}
+body[data-sky].night-ui { --cycle-ink: #fffdfa; }
+body[data-sky] main {
+  background: linear-gradient(160deg,var(--cycle-page),color-mix(in srgb,var(--cycle-page) 92%,#729270)) !important;
+  color: var(--cycle-ink) !important;
+}
+body[data-sky] :is(.panel:not(.hud),#staffArea,#settingsPanel,#daySettings,#employeesPanel,.staff-request,.staff-dialogue,.abu-notice),
+body[data-sky] .hud.hud-3d > div,
+body[data-sky] #gameNav :is(#workersTab,#staffTab,#achievementsTab,#encyclopediaTab) {
+  background: var(--cycle-panel) !important;
+  border-color: var(--cycle-edge) !important;
+  color: var(--cycle-ink) !important;
+}
+body[data-sky] .panel.hud {background:transparent !important}
+body[data-sky] .hud.hud-3d > div :is(span,b),
+body[data-sky] .hud.hud-3d :is(#money,#sales,#quality),
+body[data-sky] :is(#levelHeadingRow,#levelCaption,#title,#levelBadge,.abu-notice) {
+  color: var(--cycle-ink) !important;
+}
+body[data-sky] #levelHeadingRow :is(#gameDate,#gameTime,#siteBack,#topEditNames) {
+  color: var(--cycle-ink) !important;
+  background: color-mix(in srgb,var(--cycle-panel) 83%,#839c87) !important;
+}
+body[data-sky] #scene[data-sky] {
+  background: linear-gradient(var(--sky-top),var(--sky-horizon) 77%) !important;
+}
+body[data-sky] #scene .sun {
+  background: var(--cycle-disc) !important;
+  box-shadow: 0 0 28px color-mix(in srgb,var(--cycle-disc) 65%,transparent) !important;
+}
+body[data-sky] #scene .potting-bench,
+body[data-sky] #scene #abuWorker img,
+body[data-sky] #scene .nursery-plot {
+  filter: brightness(var(--cycle-light));
+}
