@@ -230,7 +230,7 @@ body.night-ui #levelHeadingRow #topEditNames,body.night-ui #levelHeadingRow #sit
 <div class="panel" id="sellPanel" hidden><div class="row"><b id="buyerTitle">🧑‍🌾 زبون المشتل</b><b id="offer" hidden></b></div><p id="buyerText">لما تزهر النبتة، بيجي زبون ليشتريها.</p><div class="orders"><button id="sell" disabled>بيع النبتة</button></div></div>
 <div class="panel" id="seedPanel" hidden><h2 id="shopTitle">🛒 متجر البذور</h2><p class="info" id="shopInfo">اشتري بذرة جديدة بعد البيع، وجرّب أنواع مختلفة.</p><div class="shop" id="shop"></div><button id="emergencySeedBtn" type="button" hidden>🌱 بذرة إسعافية مجانية</button><p id="emergencySeedHint" class="info" hidden></p></div>
 <div class="panel" id="missionPanel" hidden><div class="row"><b id="missionTitle">🎯 مهمة المشتل</b><span id="mission">بيع 3 نباتات</span></div><p class="info" id="missionInfo">كل عملية بيع بتزيد مصاريك وبتقرّبك من توسيع المشتل.</p><button id="reset">إعادة التجربة</button></div>
-<div id="abuGeoPanel" class="panel" hidden><h2 id="abuGeoTitle">🌍 حول العالم مع أبو وردة</h2><p id="abuGeoScore" class="info"></p><p id="abuGeoQuestion" class="staff-dialogue"></p><div id="abuGeoOptions" hidden><button type="button"></button><button type="button"></button><button type="button"></button></div><p id="abuGeoFeedback" class="staff-dialogue" aria-live="polite" hidden></p><button id="abuGeoNext" type="button">ابدأ المسابقة</button></div></section>
+<details id="abuGeoPanel" class="panel" hidden><summary id="abuGeoTitle" style="cursor:pointer;min-height:44px;align-content:center;font-size:1.2em;font-weight:bold">🌍 حول العالم مع أبو وردة</summary><p id="abuGeoScore" class="info"></p><p id="abuGeoQuestion" class="staff-dialogue"></p><div id="abuGeoOptions" hidden><button type="button"></button><button type="button"></button><button type="button"></button></div><p id="abuGeoFeedback" class="staff-dialogue" aria-live="polite" hidden></p><button id="abuGeoNext" type="button">ابدأ المسابقة</button></details></section>
 <section id="catArea" class="panel" aria-labelledby="catTitle" hidden>
 <div class="cat-heading">
 <div><h2 id="catTitle">قطة المشتل</h2>
@@ -353,7 +353,7 @@ body.night-ui #levelHeadingRow #topEditNames,body.night-ui #levelHeadingRow #sit
 <script src="yasmine/js/garden.js?v=plots1"></script>
 <script src="yasmine/js/cat-scene.js?v=yasmin-chase-1"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/game.js?v=daylight1"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/game.js?v=geo-tour2"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
