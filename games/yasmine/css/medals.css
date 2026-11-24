@@ -1,0 +1,16 @@
+#achievementsArea .medal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,225px),1fr));gap:9px}
+#achievementsArea h3{margin:20px 0 8px}
+#achievementsArea .medal-tile{display:flex;align-items:center;gap:8px;text-align:start;width:100%;min-width:0;padding:9px;border-radius:14px;color:var(--cycle-ink)!important;background:color-mix(in srgb,var(--cycle-panel) 90%,#aa9569)!important;box-shadow:none!important;border:1px solid var(--cycle-edge)!important}
+.medal-tile img{width:clamp(55px,16vw,76px);height:auto}
+.medal-tile small,.medal-tile strong{display:block;line-height:1.5;color:inherit}
+.medal-tile small{font-weight:normal}
+.pending .medal-tile img{filter:saturate(.48)}
+dialog.medal-dialog{box-sizing:border-box;width:min(92vw,420px);max-height:90dvh;overflow:auto;text-align:center;border:1px solid #a99466;border-radius:22px;padding:20px;background:linear-gradient(145deg,#243c36,#172925);color:#fff7dd;box-shadow:0 20px 60px #12251e66}
+.medal-dialog::backdrop{background:#101e1acf}
+.medal-dialog .medal-close{display:block;margin-inline-start:auto}
+.medal-dialog .medal-large{display:block;width:min(75%,240px);margin:auto}
+.medal-dialog h2,.medal-dialog p{color:#fff7dd!important;margin:10px 0}
+.medal-dialog .medal-share{margin-top:10px;width:100%}
+.medal-notice{position:fixed;z-index:90;bottom:max(16px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:92vw}
+.medal-notice button{display:flex;align-items:center;gap:8px;padding:7px 16px;background:#28443a!important;color:#fff5d4!important;border:1px solid #c9af74!important;box-shadow:0 5px 20px #1115!important}
+.medal-notice img{width:48px}
