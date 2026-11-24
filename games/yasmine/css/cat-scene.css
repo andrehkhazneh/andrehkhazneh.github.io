@@ -60,3 +60,31 @@
 #catMissionTime { font-variant-numeric: tabular-nums; }
 #catMissions .mission-row { margin-top: 8px; }
 #catMotionControls[hidden], #catMotionControls button[hidden] { display: none !important; }
+
+#catEmergencyPanel:not([hidden]) {
+  display: block;
+  position: sticky;
+  top: 4px;
+  z-index: 25;
+  background: #fff4d9;
+  color: #503a22;
+  border: 1px solid #c6a068;
+  border-inline-start-width: 6px;
+  border-radius: 14px;
+  padding: 9px 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 9px #0002;
+}
+#catEmergencyPanel[data-level="danger"] { background: #ffebe8; color: #652c35; border-color: #bd4452; }
+#catEmergencyPanel[data-level="news"] { background: #e7f3e9; color: #254b30; border-color: #52835f; }
+body.night-ui #catEmergencyPanel { background: #423823; color: #fff4d4; }
+body.night-ui #catEmergencyPanel[data-level="danger"] { background: #512e3a; color: #ffebec; border-color: #f48a96; }
+body.night-ui #catEmergencyPanel[data-level="news"] { background: #243e32; color: #d6f3db; }
+.welfare-heading { display: flex; justify-content: space-between; gap: 8px; }
+#welfareTime { font-variant-numeric: tabular-nums; }
+#catEmergencyText { margin: 4px 0; font-size: 15px; line-height: 1.4; }
+#welfareActions { display: flex; gap: 5px; flex-wrap: wrap; }
+#welfareActions button { font-size: 14px; min-height: 44px; padding: 5px 10px; }
+#catArea.cat-in-shelter > :not(.cat-heading):not(#catEmergencyBill),
+#catArea.cat-in-shelter :is(#nanaCatPortrait,#nanaCatNews),
+#catEmergencyPanel [hidden] { display: none !important; }

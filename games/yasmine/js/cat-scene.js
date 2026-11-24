@@ -649,7 +649,7 @@
         next === "Feed" || next === "Water" ? home + careFacing * 57 : home;
       facing = careFacing;
     }
-    visible = !area.hidden && !document.hidden;
+    visible = !area.hidden && !area.classList.contains("cat-in-shelter") && !document.hidden;
     if (visible && !ready && !loading) {
       loadArt();
       return;
@@ -688,7 +688,7 @@
   });
   observer.observe(area, {
     attributes: true,
-    attributeFilter: ["hidden", "lang"],
+    attributeFilter: ["hidden", "lang", "class"],
   });
   document.addEventListener("visibilitychange", sync);
   motion.addEventListener("change", sync);
