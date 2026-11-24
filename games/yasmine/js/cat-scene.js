@@ -272,22 +272,9 @@
     labels();
   }
   function labels() {
-    const en = document.documentElement.lang === "en";
-    walkButton.textContent = en ? "Walk" : "🐾 مشّيها";
-    const inBed = phase === "sleep" || phase === "settle";
-    napButton.textContent = inBed
-      ? en
-        ? "Wake up"
-        : "☀️ صحّيها"
-      : en
-        ? "Take a nap"
-        : "💤 خلّيها تنام";
-    napButton.hidden = !hasBed;
-    walkButton.disabled =
-      !!active || !["rest", "sleep", "walk"].includes(phase);
-    napButton.disabled =
-      !!active || (!inBed && !["rest", "walk"].includes(phase));
+    // The game owns button labels and availability.
   }
+
   function bedPicture(key) {
     g.drawImage(art[key], bed.x, bed.y, bed.w, bed.h);
   }
@@ -373,19 +360,14 @@
     if (visible && ready) draw(performance.now());
   }
   walkButton.onclick = () => {
+    if (!window.YasmineCatActions?.walk()) return;
     const now = performance.now();
     autoMuted = autoWindow;
     if (phase === "sleep") beginWake("walk", now);
     else move(home > 310 ? doorstep + 18 : 405, "rest", now);
     redraw();
   };
-  napButton.onclick = () => {
-    if (!hasBed || active) return;
-    const now = performance.now();
-    if (phase === "sleep" || phase === "settle") beginWake("rest", now);
-    else beginNap(true, now);
-    redraw();
-  };
+  napButton.onclick = () => { window.YasmineCatActions?.nap(); sync(); };
   function schedule(delay) {
     timer = setTimeout(() => {
       frame = requestAnimationFrame(draw);
@@ -394,10 +376,13 @@
   function ambience(now) {
     const reduced = motion.matches,
       age = now - phaseAt;
-    if (phase === "rest" && autoWindow && !autoMuted) beginNap(false, now);
+    if (["rest", "walk"].includes(phase) && autoWindow && !autoMuted && afterWalk !== "enter") beginNap(false, now);
     else if (phase === "rest" && !reduced && age >= 5500)
       move(home > 310 ? (hasBed ? doorstep + 18 : 133) : 405, "rest", now);
     const elapsed = now - phaseAt;
+    if (Number(scene.dataset.walkUntil)>Date.now()) {
+      g.font="30px sans-serif";g.fillText("🌿",445,248);g.font="20px sans-serif";g.fillText("🐾",home-40,273);
+    }
     if (phase === "walk") {
       const delta = goal - walkStart,
         distance = Math.min(Math.abs(delta), elapsed * 0.085);
@@ -442,6 +427,9 @@
           walkFrame(home, floorY, facing, Math.abs(home - walkStart));
         else upright(home, facing);
       }
+    }
+    if (scene.dataset.tired === "true" && phase === "rest") {
+      g.font="24px sans-serif";g.fillStyle="#725434";g.fillText("🥱",home,95);
     }
     if (phase === "rest") {
       if (!reduced) schedule(Math.max(80, phaseAt + 5500 - now));
@@ -504,6 +492,9 @@
         }
       }
       progress = ease((dt - 0.2) / 2.7);
+    } else if (active === "Treat") {
+      pose = elapsed < .8 ? "sniff" : elapsed < 3.2 ? "eat" : "idle";
+      angle = reduced ? 0 : .008 * Math.sin(elapsed * 17);
     } else if (active === "Play") {
       const a = reduced ? 0.8 : elapsed,
         cycle = (a % 1.65) / 1.65;
@@ -554,6 +545,17 @@
       if (scene.dataset.toy === "feather")
         feather(fx, fy, reduced ? 0 : 0.15 * Math.sin(elapsed * 5.3));
       else yarn(fx, fy);
+    }
+    if (active === "Treat") {
+      if (elapsed < 2.5) {
+        const t = clamp(elapsed / 1.3);
+        const tx = 440 - 55 * ease(t), ty = 240 + 3 * ease(t);
+        const radius = elapsed < 1.8 ? 8 : Math.max(0, 8 * (2.5-elapsed)/.7);
+        paintEllipse(tx, ty, radius, radius*.7, "#ac6a32");
+        paintEllipse(tx-2, ty-2, radius*.22, radius*.18, "#f7d99e");
+      } else {
+        g.font = "26px sans-serif";g.fillText("♥", 370, 180-(elapsed-2.5)*16);
+      }
     }
     if (active === "Brush") brush(brx, bry, brAngle);
     g.restore();
@@ -665,6 +667,7 @@
       scene.dataset.outfit,
       scene.dataset.toy,
       motion.matches,
+      scene.dataset.tired,
     ].join("|");
     if (view === lastView) return;
     lastView = view;
@@ -684,6 +687,7 @@
       "class",
       "data-outfit",
       "data-bed",
+      "data-tired",
     ],
   });
   observer.observe(area, {

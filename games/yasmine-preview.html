@@ -317,13 +317,13 @@ body.night-ui #levelHeadingRow #topEditNames,body.night-ui #levelHeadingRow #sit
 </div>
 <div class="cat-stats">
 <div><span id="catFullnessLabel">الشبع</span> <b id="catFullness"></b><div class="bar" aria-hidden="true"><div id="catFullnessBar" class="fill"></div></div></div>
-<div><span id="catHydrationLabel">الارتواء</span> <b id="catHydration">75%</b><div class="bar"><div id="catHydrationBar" class="fill" style="width:75%"></div></div></div><div><span id="catMoodLabel">المزاج</span> <b id="catMood"></b><div class="bar" aria-hidden="true"><div id="catMoodBar" class="fill"></div></div></div><div id="catTreatStat"><span>🍬 المكافآت</span> <b id="catTreatStatValue">0 حبة</b></div>
+<div><span id="catHydrationLabel">الارتواء</span> <b id="catHydration">75%</b><div class="bar"><div id="catHydrationBar" class="fill" style="width:75%"></div></div></div><div><span id="catMoodLabel">المزاج</span> <b id="catMood"></b><div class="bar" aria-hidden="true"><div id="catMoodBar" class="fill"></div></div></div><div id="catEnergyStat"><span id="catEnergyLabel">الطاقة</span> <b id="catEnergy">100%</b><div class="bar"><div id="catEnergyBar" class="fill"></div></div></div>
 </div>
-<div class="grid" id="catCareControls">
+<p id="catRestStatus" role="status" style="text-align:center;font-weight:700;min-height:1.5em"></p><div class="grid" id="catCareControls">
 <button id="catFeed" type="button">🍲 طعميها</button><button id="catWater" type="button">💧 اسقيها</button>
 <button id="catPlay" type="button">🪶 العب معها</button>
 <button id="catBrush" type="button">🪮 مشّطها</button>
-<div id="catMotionControls" hidden><button type="button" id="catWalkButton">مشّيها</button><button type="button" id="catNapButton" hidden>خلّيها تنام</button></div>
+<button type="button" style="grid-column:1/-1;grid-row:4" id="catGiveTreat"></button><div id="catMotionControls" hidden><button type="button" id="catWalkButton">مشّيها</button><button type="button" id="catNapButton" hidden>خلّيها تنام</button></div>
 </div>
 <section id="catEmergencyBill" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d2a35a;background:#fff4dc;color:#61482c;border-radius:16px"><strong id="catEmergencyBillText">🧾 فاتورة نانا</strong><button id="catEmergencyPay" type="button" style="display:block;width:100%;margin-top:10px">💰 وافق على دفع الفاتورة · 20 عملة</button></section><div id="mishmishNotices" aria-live="polite"></div><p id="catMessage" class="message" aria-live="polite"></p>
 <button id="catToy" type="button">🪶 اشتري لعبة ريشة · 💰 20</button>
@@ -351,9 +351,9 @@ body.night-ui #levelHeadingRow #topEditNames,body.night-ui #levelHeadingRow #sit
 <script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/garden.js?v=plots1"></script>
-<script src="yasmine/js/cat-scene.js?v=yasmin-chase-1"></script>
+<script src="yasmine/js/cat-scene.js?v=energy-1"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/medals.js?v=1"></script><script src="yasmine/js/game.js?v=medals1"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/medals.js?v=1"></script><script src="yasmine/js/game.js?v=cat-energy-1"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
