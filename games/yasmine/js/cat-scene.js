@@ -361,6 +361,7 @@
   }
   walkButton.onclick = () => {
     if (!window.YasmineCatActions?.walk()) return;
+    scene.scrollIntoView({behavior:motion.matches?"instant":"smooth",block:"center"});
     const now = performance.now();
     autoMuted = autoWindow;
     if (phase === "sleep") beginWake("walk", now);
@@ -373,7 +374,22 @@
       frame = requestAnimationFrame(draw);
     }, delay);
   }
+  const garden = new Image();
+  garden.src = new URL("../potting-bench.webp",assetRoot).href;
   function ambience(now) {
+    const remaining=Number(scene.dataset.walkUntil)-Date.now();
+    if(remaining>0){
+      if(garden.complete && garden.naturalWidth) g.drawImage(garden,0,0,520,290);
+      else {g.fillStyle="#b8d6ae";g.fillRect(0,0,520,290);}
+      const t=1-remaining/7000;
+      const fraction=t<.4?t/.4:t<.63?1:(1-t)/.37;
+      const x=90+300*ease(fraction);
+      if(t>=.4 && t<.63){
+        g.save();g.translate(x,255);g.scale(.55,.55);character("sniff",-180,-248,0,false,0);g.restore();
+        g.font="32px sans-serif";g.fillText("🌿",x+64,254);
+      } else walkFrame(x,255,t<.4?1:-1,300*fraction);
+      schedule(motion.matches?180:45);return;
+    }
     const reduced = motion.matches,
       age = now - phaseAt;
     if (["rest", "walk"].includes(phase) && autoWindow && !autoMuted && afterWalk !== "enter") beginNap(false, now);
