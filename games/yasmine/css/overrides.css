@@ -196,3 +196,24 @@ body.night-ui #nanaCatWater{background:#34495c;color:#eff8ff}
 
 /* Mishmish care and independent mission timers */
 .mission-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.mission-row button{flex:1;min-width:210px}.mission-timer{font-variant-numeric:tabular-nums;font-weight:800;background:#eee;border-radius:9px;padding:9px;color:#454545}.mission-row button:disabled{background:#aaa!important;color:#fff!important;opacity:.8}#catScene[data-action='drink']>svg{animation:mishmishSip .45s ease-in-out 4} @keyframes mishmishSip{50%{transform:translateY(7px) rotate(2deg)}}
+
+html[dir="ltr"] #staffArea #stockPanel .stock-row {
+  direction: ltr;
+  text-align: left;
+}
+html[dir="rtl"] #staffArea #stockPanel .stock-row {
+  direction: rtl;
+  text-align: right;
+}
+#staffArea #stockPanel .stock-row b { font-variant-numeric: tabular-nums; }
+
+#mouseChase[hidden] { display: none !important; }
+#mouseChase { scroll-margin-block: 16vh; }
+#mouseChase canvas { display: block; width: 100%; height: auto; border-radius: 15px; background: #eddfb9; }
+#mouseChase .hunt-attempt { display: block; margin-block-end: 6px; font-weight: bold; }
+#mouseChase .hunt-hint { margin: 8px 0; }
+#mouseChase button { width: 100%; min-height: 46px; touch-action: manipulation; }
+
+#mouseChaseResult:not([hidden]) { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
+#mouseChaseResult p { margin: 0; font-weight: bold; }
+#mouseChaseResult button { min-height: 44px; min-width: 44px; }
