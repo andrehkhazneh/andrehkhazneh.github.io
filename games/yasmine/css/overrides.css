@@ -217,3 +217,86 @@ html[dir="rtl"] #staffArea #stockPanel .stock-row {
 #mouseChaseResult:not([hidden]) { display: flex; align-items: center; gap: 10px; justify-content: space-between; }
 #mouseChaseResult p { margin: 0; font-weight: bold; }
 #mouseChaseResult button { min-height: 44px; min-width: 44px; }
+
+/* Illustrated dashboard navigation. Physical right keeps the illustrations
+   aligned while the game switches between Arabic and English. */
+#gameNav button {
+  --art-width: clamp(32px, 8vw, 48px);
+  position: relative;
+  min-height: 51px;
+  padding: 9px calc(var(--art-width) + 9px) 9px 10px;
+  border-radius: 14px;
+  border: 1px solid #a0b2a2;
+  background: linear-gradient(145deg,#f4f7ec,#dce8d8);
+  box-shadow: 0 2px 5px #10233721 !important;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+body.night-ui #gameNav button {
+  background: linear-gradient(135deg,#354d65,#263d52) !important;
+  border-color: #526a80 !important;
+}
+#gameNav button::before {
+  content: "";
+  position: absolute;
+  right: 4px;
+  bottom: 1px;
+  width: var(--art-width);
+  height: calc(100% - 4px);
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+#gameNav #catTab, #gameNav #nurseryTab {
+  --art-width: clamp(42px, 13vw, 78px);
+  min-height: 74px;
+  color: #fffaf0 !important;
+  font-weight: 800;
+}
+#gameNav #catTab {
+  background: linear-gradient(120deg,#683c29,#985a36) !important;
+  border-color: #ad764d !important;
+}
+#gameNav #catTab::before {
+  background-image: url(../images/cat-care/idle.webp);
+  background-size: auto 170%;
+  background-position: 86% 15%;
+}
+#gameNav #nurseryTab {
+  background: linear-gradient(120deg,#264e3b,#3d6846) !important;
+  border-color: #71906b !important;
+}
+#gameNav #nurseryTab::before, #gameNav #achievementsTab::before, #gameNav #encyclopediaTab::before {
+  display: grid;
+  place-items: center;
+  font-size: clamp(24px,6vw,34px);
+}
+#gameNav #nurseryTab::before { content: "🪴" / ""; font-size: clamp(36px,10vw,55px); }
+#gameNav #achievementsTab::before { content: "🏆" / ""; }
+#gameNav #encyclopediaTab::before { content: "📖" / ""; }
+#gameNav #staffTab::before {
+  background-image: url(../images/yasmin-happy.webp);
+  background-size: 120% auto;
+  background-position: center top;
+}
+#gameNav #workersTab::before {
+  background-image: url(../images/abu-warda-portrait.webp);
+  background-size: contain;
+  background-position: center bottom;
+}
+#gameNav button[aria-pressed="true"] { box-shadow: inset 0 0 0 2px #a3c998,0 2px 5px #10233721 !important; }
+#gameNav button:focus-visible { outline: 3px solid #efb957; outline-offset: 2px; }
+#gameNav button:active { transform: translateY(1px); }
+#gameNav :is(.staff-badge,.nursery-badge,.collection-unread) {
+  position: absolute;
+  left: 3px;
+  right: auto;
+  top: 2px;
+  margin: 0;
+  pointer-events: none;
+  font-size: 11px;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  padding: 0 3px;
+}
+body .hud.hud-3d > div { box-shadow: none !important; }
