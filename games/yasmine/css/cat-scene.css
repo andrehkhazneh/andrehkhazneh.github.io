@@ -28,41 +28,19 @@
 #catCareActor[hidden] {
   display: none;
 }
-/* Animate the resting bitmap on the compositor. Canvas paints stop between actions. */
-#catCareActor.strolling {
-  animation: nursery-cat-stroll 12s linear infinite;
+#catScene.cat-art-ready #catBed,
+#catScene.cat-art-ready #catSleep {
+  display: none !important;
 }
-#catCareActor.strolling canvas {
-  transform-origin: var(--cat-center, 43%) 88%;
-  animation: nursery-cat-turn 12s steps(1, end) infinite;
+#catMotionControls:not([hidden]) {
+  display: flex;
+  gap: 8px;
+  margin-block: 10px;
 }
-@keyframes nursery-cat-stroll {
-  0%,
-  12%,
-  100% {
-    transform: translateX(0);
-  }
-  43%,
-  60% {
-    transform: translateX(7%);
-  }
-  91% {
-    transform: translateX(0);
-  }
+#catMotionControls button {
+  flex: 1;
+  min-height: 44px;
 }
-@keyframes nursery-cat-turn {
-  0%,
-  94%,
-  100% {
-    transform: scaleX(1);
-  }
-  56% {
-    transform: scaleX(-1);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  #catCareActor.strolling,
-  #catCareActor.strolling canvas {
-    animation: none;
-  }
+#catMotionControls button[hidden] {
+  display: none !important;
 }

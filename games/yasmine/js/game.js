@@ -589,6 +589,8 @@ function renderBoutique(){
 
  var napping=!!state.catItems.bed&&Math.floor(Date.now()/45000)%5===0;
  var scene=$('catScene');
+ var ownsBed=String(!!state.catItems.bed);
+ if(scene.dataset.bed!==ownsBed)scene.dataset.bed=ownsBed;
  var equipped=state.catEquipped||{};
  var outfit=['hat','glasses'].filter(function(id){return state.catItems[id]&&equipped[id]!==false}).join(' ');
  if(scene.dataset.outfit!==outfit)scene.dataset.outfit=outfit;

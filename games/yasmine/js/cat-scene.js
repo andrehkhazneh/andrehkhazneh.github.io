@@ -18,7 +18,7 @@
     active = "",
     started = 0,
     from = 34,
-    home = 34,
+    home = 374,
     timer = 0,
     frame = 0,
     visible = false;
@@ -244,18 +244,240 @@
     g.stroke();
     g.restore();
   }
+  const walkButton = document.getElementById("catWalkButton"),
+    napButton = document.getElementById("catNapButton");
+  const controls = document.getElementById("catMotionControls");
+  const floorY = 255,
+    bed = { x: 12, y: 138, w: 224, h: 110 },
+    pillow = 129,
+    doorstep = 221;
+  const stride = [0, 6, 2, 7, 3, 5, 1, 4];
+  let phase = "rest",
+    phaseAt = 0,
+    walkStart = 374,
+    goal = 374,
+    facing = -1,
+    afterWalk = "rest",
+    manualNap = false;
+  let autoMuted = false,
+    autoWindow = false,
+    hasBed = false,
+    careGoal = 374,
+    careFacing = 1,
+    wakeForCare = false;
+  function setPhase(value, now) {
+    phase = value;
+    phaseAt = now;
+    scene.dataset.catPose = value;
+    labels();
+  }
+  function labels() {
+    const en = document.documentElement.lang === "en";
+    walkButton.textContent = en ? "Walk" : "مشّيها";
+    const inBed = phase === "sleep" || phase === "settle";
+    napButton.textContent = inBed
+      ? en
+        ? "Wake up"
+        : "صحّيها"
+      : en
+        ? "Take a nap"
+        : "خلّيها تنام";
+    napButton.hidden = !hasBed;
+    walkButton.disabled =
+      !!active || !["rest", "sleep", "walk"].includes(phase);
+    napButton.disabled =
+      !!active || (!inBed && !["rest", "walk"].includes(phase));
+  }
+  function bedPicture(key) {
+    g.drawImage(art[key], bed.x, bed.y, bed.w, bed.h);
+  }
+  function bedFront() {
+    g.save();
+    g.translate(bed.x, bed.y);
+    g.scale(bed.w, bed.h);
+    g.beginPath();
+    g.moveTo(0.009, 0.335);
+    g.bezierCurveTo(0.025, 0.5, 0.12, 0.51, 0.23, 0.565);
+    g.bezierCurveTo(0.3, 0.6, 0.3, 0.735, 0.41, 0.748);
+    g.bezierCurveTo(0.52, 0.77, 0.66, 0.75, 0.7, 0.665);
+    g.bezierCurveTo(0.74, 0.535, 0.94, 0.54, 0.992, 0.36);
+    g.lineTo(1, 1);
+    g.lineTo(0, 1);
+    g.closePath();
+    g.clip();
+    g.drawImage(art.empty, 0, 0, 1, 1);
+    g.restore();
+  }
+  function smallOutfit(hat, glasses) {
+    if (worn.hat) mount(art.hat, hat, [824, 287], [552, 110, 883, 506]);
+    if (worn.glasses)
+      mount(art.glasses, glasses, [952, 412], [681, 275, 660, 265]);
+  }
+  function occupiedBed(key) {
+    bedPicture(key);
+    g.save();
+    g.translate(bed.x, bed.y);
+    if (key === "asleep")
+      smallOutfit([129, 15, 0.119, 0.38], [136, 47, 0.074, 0.37]);
+    else smallOutfit([125, 18, 0.095, -0.1], [143, 41, 0.068, -0.13]);
+    g.restore();
+  }
+  function walkFrame(cx, foot, dir, distance, scale = 1) {
+    const im = art.walk,
+      i = stride[Math.floor((Math.abs(distance) / 62) * 8) % 8],
+      w = im.width / 4,
+      h = im.height / 2;
+    g.save();
+    g.translate(cx, foot);
+    g.scale(dir * scale, scale);
+    g.drawImage(
+      im,
+      (i % 4) * w,
+      Math.floor(i / 4) * h,
+      w,
+      h,
+      -80,
+      -177,
+      160,
+      213,
+    );
+    smallOutfit([20, -117, 0.11, -0.12], [40, -98, 0.094, -0.05]);
+    g.restore();
+  }
+  function upright(cx, dir) {
+    g.save();
+    g.translate(cx, floorY);
+    g.scale(0.55 * dir, 0.55);
+    character("idle", -180, -248, 0, false, 0);
+    g.restore();
+  }
+  function move(to, then, now) {
+    walkStart = home;
+    goal = to;
+    afterWalk = then;
+    facing = to >= home ? 1 : -1;
+    setPhase("walk", now);
+  }
+  function beginNap(manual, now) {
+    manualNap = manual;
+    move(doorstep, "enter", now);
+  }
+  function beginWake(then, now) {
+    manualNap = false;
+    autoMuted = autoWindow;
+    afterWalk = then;
+    setPhase("rise", now);
+  }
+  function redraw() {
+    stopFrames();
+    if (visible && ready) draw(performance.now());
+  }
+  walkButton.onclick = () => {
+    const now = performance.now();
+    autoMuted = autoWindow;
+    if (phase === "sleep") beginWake("walk", now);
+    else move(home > 310 ? doorstep + 18 : 405, "rest", now);
+    redraw();
+  };
+  napButton.onclick = () => {
+    if (!hasBed || active) return;
+    const now = performance.now();
+    if (phase === "sleep" || phase === "settle") beginWake("rest", now);
+    else beginNap(true, now);
+    redraw();
+  };
+  function schedule(delay) {
+    timer = setTimeout(() => {
+      frame = requestAnimationFrame(draw);
+    }, delay);
+  }
+  function ambience(now) {
+    const reduced = motion.matches,
+      age = now - phaseAt;
+    if (phase === "rest" && autoWindow && !autoMuted) beginNap(false, now);
+    else if (phase === "rest" && !reduced && age >= 5500)
+      move(home > 310 ? (hasBed ? doorstep + 18 : 133) : 405, "rest", now);
+    const elapsed = now - phaseAt;
+    if (phase === "walk") {
+      const delta = goal - walkStart,
+        distance = Math.min(Math.abs(delta), elapsed * 0.085);
+      home = reduced ? goal : walkStart + Math.sign(delta) * distance;
+      if (reduced || distance >= Math.abs(delta)) setPhase(afterWalk, now);
+    } else if (phase === "enter" && (reduced || elapsed >= 580)) {
+      home = pillow;
+      setPhase("settle", now);
+    } else if (phase === "settle" && (reduced || elapsed >= 730))
+      setPhase("sleep", now);
+    else if (phase === "rise" && (reduced || elapsed >= 460))
+      setPhase("exit", now);
+    else if (phase === "exit" && (reduced || elapsed >= 550)) {
+      home = doorstep + 18;
+      facing = 1;
+      if (afterWalk === "walk") move(405, "rest", now);
+      else setPhase("rest", now);
+    }
+    if (phase === "settle" || phase === "sleep" || phase === "rise") {
+      occupiedBed(phase === "sleep" ? "asleep" : "settle");
+    } else {
+      if (hasBed) bedPicture("empty");
+      if (phase === "enter" || phase === "exit") {
+        const entering = phase === "enter",
+          t = clamp((now - phaseAt) / (entering ? 580 : 550)),
+          u = ease(t);
+        home = entering
+          ? doorstep + (pillow - doorstep) * u
+          : pillow + (doorstep + 18 - pillow) * u;
+        const height = entering ? u : 1 - u;
+        walkFrame(
+          home,
+          floorY - 46 * height - 23 * Math.sin(t * Math.PI),
+          entering ? -1 : 1,
+          44 * u,
+          1 - 0.13 * height,
+        );
+        if (entering ? t > 0.14 : t < 0.86) bedFront();
+      } else {
+        paintEllipse(home, floorY, 62, 5, "rgba(115,76,40,.15)");
+        if (phase === "walk")
+          walkFrame(home, floorY, facing, Math.abs(home - walkStart));
+        else upright(home, facing);
+      }
+    }
+    if (phase === "rest") {
+      if (!reduced) schedule(Math.max(80, phaseAt + 5500 - now));
+    } else if (phase !== "sleep") schedule(reduced ? 0 : 50);
+  }
   function stopFrames() {
     clearTimeout(timer);
     cancelAnimationFrame(frame);
   }
   function draw(now) {
     if (!ready || !visible) return;
+    g.setTransform(2, 0, 0, 2, 0, 0);
+    g.clearRect(0, 0, 520, 290);
+    if (!active) {
+      ambience(now);
+      return;
+    }
+    if (hasBed) bedPicture("empty");
     const reduced = motion.matches;
-    const elapsed = (now - started) / 1000,
+    const wakeDuration = wakeForCare && !reduced ? 0.55 : 0;
+    const elapsed = (now - started) / 1000 - wakeDuration,
       dish = active === "Feed" || active === "Water";
+    if (elapsed < 0) {
+      const u = (elapsed + wakeDuration) / wakeDuration;
+      if (u < .25) occupiedBed("settle");
+      else {
+        const hop = clamp((u - .25) / .75);
+        walkFrame(pillow + (from - pillow) * ease(hop), floorY - 46 * (1 - hop) - 22 * Math.sin(Math.PI * hop), 1, 44 * hop, .87 + .13 * hop);
+        if (hop < .86) bedFront();
+      }
+      schedule(40);
+      return;
+    }
     const approach = reduced ? 0 : 0.72,
       dt = elapsed - approach;
-    let x = home,
+    let x = 82,
       y = 10,
       angle = 0,
       lap = 0,
@@ -268,9 +490,8 @@
       bry = 0,
       brAngle = 0;
     if (dish) {
-      x = from + (82 - from) * (approach ? ease(elapsed / approach) : 1);
-      home = x;
-      if (!reduced && dt < 0) y -= Math.abs(Math.sin(elapsed * 14)) * 1.9;
+      home =
+        from + (careGoal - from) * (approach ? ease(elapsed / approach) : 1);
       if (dt >= 0 && dt < 3.18) {
         pose = dt < 0.2 || dt > 2.96 ? "sniff" : "eat";
         if (pose === "eat") {
@@ -289,7 +510,7 @@
       const swat = cycle > 0.26 && cycle < 0.79,
         reach = swat ? Math.sin((Math.PI * (cycle - 0.26)) / 0.53) : 0;
       pose = swat ? "bat" : "idle";
-      x = from + reach * 5;
+      x = 82 + reach * 5;
       y -= reach * 9;
       angle = swat ? -reach * 0.018 : 0;
       fx = x + 340 + (1 - reach) * 19;
@@ -307,11 +528,27 @@
       bry = y + (pose === "groom" ? 104 : 110) + 13 * pass;
       brAngle = -0.3 + 0.16 * pass;
     }
-    g.setTransform(2, 0, 0, 2, 0, 0);
-    g.clearRect(0, 0, 520, 290);
-    paintEllipse(x + 180, 259, 126, 9, "rgba(131,86,43,.13)");
+    g.save();
+    g.translate(careGoal, floorY);
+    g.scale(0.55 * careFacing, 0.55);
+    g.translate(-262, -258);
     if (dish) bowl(active === "Water", progress, ring, false);
-    character(pose, x, y, angle, active === "Water" && pose === "eat", lap);
+    g.restore();
+    paintEllipse(home, floorY, 63, 5, "rgba(115,76,40,.15)");
+    if (dish && dt < 0 && Math.abs(careGoal - from) > 2) {
+      walkFrame(home, floorY, careFacing, Math.abs(home - from));
+    } else {
+      g.save();
+      g.translate(home, floorY);
+      g.scale(0.55 * careFacing, 0.55);
+      g.translate(-262, -258);
+      character(pose, x, y, angle, active === "Water" && pose === "eat", lap);
+      g.restore();
+    }
+    g.save();
+    g.translate(careGoal, floorY);
+    g.scale(0.55 * careFacing, 0.55);
+    g.translate(-262, -258);
     if (dish) bowl(active === "Water", progress, -1, true);
     if (active === "Play") {
       if (scene.dataset.toy === "feather")
@@ -319,7 +556,7 @@
       else yarn(fx, fy);
     }
     if (active === "Brush") brush(brx, bry, brAngle);
-    actor.style.setProperty("--cat-center", ((x + 180) / 520) * 100 + "%");
+    g.restore();
     if (active)
       timer = setTimeout(
         () => {
@@ -332,7 +569,19 @@
     loading = true;
     try {
       await Promise.all(
-        ["idle", "sniff", "eat", "bat", "groom", "hat", "glasses"].map(
+        [
+          "idle",
+          "sniff",
+          "eat",
+          "bat",
+          "groom",
+          "hat",
+          "glasses",
+          "walk",
+          "empty",
+          "settle",
+          "asleep",
+        ].map(
           (name) =>
             new Promise((ok, fail) => {
               const img = new Image();
@@ -349,6 +598,7 @@
       bg.scale(2, 2);
       room(bg);
       ready = true;
+      controls.hidden = false;
       scene.classList.add("cat-art-ready");
       actor.hidden = false;
       backdrop.hidden = false;
@@ -363,17 +613,41 @@
     const next = scene.classList.contains("cat-drinking")
       ? "Water"
       : scene.dataset.action || "";
+    const now = performance.now();
+    const owns = scene.dataset.bed === "true";
+    const period = owns && scene.classList.contains("is-napping");
+    if (period !== autoWindow) {
+      autoMuted = false;
+      autoWindow = period;
+    }
+    if (hasBed && !owns) {
+      home = 374;
+      manualNap = false;
+      setPhase("rest", now);
+    }
+    hasBed = owns;
+    if (
+      !manualNap &&
+      !autoWindow &&
+      ["sleep", "settle", "enter"].includes(phase)
+    )
+      beginWake("rest", now);
     if (next !== active) {
-      if (!active && ready && visible && next) {
-        const transform = getComputedStyle(actor).transform;
-        if (transform !== "none" && actor.clientWidth)
-          home +=
-            (new DOMMatrixReadOnly(transform).m41 * 520) / actor.clientWidth;
-        home = Math.max(12, Math.min(82, home));
+      if (next) {
+        autoMuted = autoWindow;
+        manualNap = false;
+        wakeForCare = hasBed && ["sleep", "rise", "enter", "exit", "settle"].includes(phase);
+        if (wakeForCare)
+          home = doorstep + 18;
       }
-      from = home;
       active = next;
-      started = performance.now();
+      from = home;
+      started = now;
+      setPhase("rest", now);
+      careFacing = home > 365 ? -1 : 1;
+      careGoal =
+        next === "Feed" || next === "Water" ? home + careFacing * 57 : home;
+      facing = careFacing;
     }
     visible = !area.hidden && !document.hidden;
     if (visible && !ready && !loading) {
@@ -383,6 +657,10 @@
     if (!ready) return;
     const view = [
       visible,
+      owns,
+      period,
+      area.lang,
+      document.documentElement.lang,
       next,
       scene.dataset.outfit,
       scene.dataset.toy,
@@ -394,15 +672,24 @@
     worn.hat = outfit.includes("hat");
     worn.glasses = outfit.includes("glasses");
     stopFrames();
-    actor.classList.toggle("strolling", visible && !active);
+    labels();
     if (visible) draw(performance.now());
   }
   const observer = new MutationObserver(sync);
   observer.observe(scene, {
     attributes: true,
-    attributeFilter: ["data-action", "data-toy", "class", "data-outfit"],
+    attributeFilter: [
+      "data-action",
+      "data-toy",
+      "class",
+      "data-outfit",
+      "data-bed",
+    ],
   });
-  observer.observe(area, { attributes: true, attributeFilter: ["hidden"] });
+  observer.observe(area, {
+    attributes: true,
+    attributeFilter: ["hidden", "lang"],
+  });
   document.addEventListener("visibilitychange", sync);
   motion.addEventListener("change", sync);
   sync();
