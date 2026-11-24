@@ -676,7 +676,59 @@ function tickStaff(){
   save();
 }
 
-function updateSky(){var mode=state.dayMode||'auto',hour=gameHour(),phase=mode==='day'?'day':mode==='night'?'night':hour<5?'night':hour<6?'dawn':hour<8?'sunrise':hour<11?'morning':hour<17?'day':hour<19?'sunset':hour<21?'dusk':'night';$('scene').dataset.sky=phase;document.body.dataset.sky=phase;document.body.classList.toggle('night-ui',phase==='night'||phase==='dusk');var ar={night:'ليل',dawn:'فجر',sunrise:'شروق',morning:'ضحى',day:'نهار',sunset:'غروب',dusk:'غسق'},en={night:'Night',dawn:'Dawn',sunrise:'Sunrise',morning:'Morning',day:'Day',sunset:'Sunset',dusk:'Dusk'};$('skyPhase').textContent=(state.lang==='ar'?'السماء الآن: ':'Sky: ')+(state.lang==='ar'?ar[phase]:en[phase]);$('dayMode').value=mode;updateWeather();updateClock()}function tr(s){return txt[state.lang][s]}function msg(s){$('message').textContent=s}
+// Palette stops use the same two-real-seconds-per-game-minute clock as the HUD.
+// The repeated midnight stop makes the last hour blend into the next day.
+var daylightStops = [
+  // Hour, phase, upper sky, horizon, page, panels, celestial disc, scene exposure
+  [0,  'night',     '#101b45','#35456b','#1d2b40','#293d51','#fff3cf',0.71],
+  [4,  'dawn',      '#38365e','#8e728b','#323449','#485062','#f2dfd2',0.78],
+  [6,  'sunrise',   '#ab99b2','#ffc392','#b5a29f','#dcc8b9','#ffe6ac',0.90],
+  [8,  'morning',   '#8ac9e9','#ffe9bd','#f4efd9','#fcf7e9','#ffe19a',1.00],
+  [12, 'day',       '#72c3f0','#d8eee2','#ecf3df','#f9fcf5','#fff2b7',1.00],
+  [16, 'afternoon', '#84b8d8','#f8d597','#f1e6d1','#fbf1de','#ffdc90',0.98],
+  [18, 'sunset',    '#b486a4','#ffab79','#dac0ac','#f2d8be','#ffc781',0.93],
+  [20, 'dusk',      '#524e80','#ae829c','#5c566e','#716b7d','#f4d5bc',0.83],
+  [22, 'night',     '#1c294f','#495575','#243247','#304257','#fff1cc',0.74],
+  [24, 'night',     '#101b45','#35456b','#1d2b40','#293d51','#fff3cf',0.71]
+];
+var skyLabels = {
+  ar:{night:'ليل', dawn:'فجر', sunrise:'شروق', morning:'صباح', day:'نهار', afternoon:'عصر', sunset:'غروب', dusk:'غسق'},
+  en:{night:'Night', dawn:'Dawn', sunrise:'Sunrise', morning:'Morning', day:'Day', afternoon:'Afternoon', sunset:'Sunset', dusk:'Dusk'}
+};
+var lastSkyMinute;
+function blendSkyColor(from,to,amount){
+  var rgb=[1,3,5].map(function(i){
+    var a=parseInt(from.slice(i,i+2),16), b=parseInt(to.slice(i,i+2),16);
+    return Math.round(a+(b-a)*amount);
+  });
+  return 'rgb('+rgb.join(',')+')';
+}
+function updateSky(){
+  var mode=state.dayMode||'auto';
+  if(!Number.isFinite(Number(state.gameEpoch)))state.gameEpoch=Date.now();
+  var elapsed=Math.floor((Date.now()-Number(state.gameEpoch))/2000);
+  var minute=mode==='day'?720:mode==='night'?0:((elapsed%1440)+1440)%1440;
+  if(lastSkyMinute!==minute){
+    var hour=minute/60;
+    var next=daylightStops.findIndex(function(stop){return stop[0]>hour});
+    var a=daylightStops[next-1], b=daylightStops[next];
+    var mix=(hour-a[0])/(b[0]-a[0]);
+    var body=document.body;
+    ['--sky-top','--sky-horizon','--cycle-page','--cycle-panel','--cycle-disc'].forEach(function(name,index){
+      body.style.setProperty(name,blendSkyColor(a[index+2],b[index+2],mix));
+    });
+    body.style.setProperty('--cycle-light',(a[7]+(b[7]-a[7])*mix).toFixed(3));
+    body.dataset.sky=a[1];
+    $('scene').dataset.sky=a[1];
+    body.classList.toggle('night-ui',minute<312||minute>=1200);
+    lastSkyMinute=minute;
+  }
+  $('skyPhase').textContent=(state.lang==='ar'?'السماء الآن: ':'Sky: ')+skyLabels[state.lang][document.body.dataset.sky];
+  $('dayMode').value=mode;
+  updateWeather();
+  updateClock();
+}
+function tr(s){return txt[state.lang][s]}function msg(s){$('message').textContent=s}
 function renderNurseryNotice(){$('abuNotice').hidden=activeArea!=='nursery'||!nurseryPots().some(p=>isReady(p)||!p.active)}function updateWeather(){var selected=state.weatherMode||'auto';var w=selected==='auto'?['clear','wind','rain','clear'][Math.floor((Date.now()-state.gameEpoch)/240000)%4]:selected;document.body.dataset.weather=w;$('scene').dataset.weather=w;$('weatherMode').value=selected;$('weatherStatus').textContent=(selected==='auto'?'🔄 ':'')+(w==='rain'?(state.lang==='ar'?'🌧️ مطر':'🌧️ Rain'):w==='wind'?(state.lang==='ar'?'💨 ريح':'💨 Wind'):(state.lang==='ar'?'☀️ صحو':'☀️ Clear'))}function gameHour(){if(!Number.isFinite(Number(state.gameEpoch)))state.gameEpoch=Date.now();return ((Math.floor((Date.now()-Number(state.gameEpoch))/120000)%24)+24)%24}function updateClock(){if(!Number.isFinite(Number(state.gameEpoch)))state.gameEpoch=Date.now();var elapsed=Math.floor((Date.now()-state.gameEpoch)/1000),minutes=Math.floor((elapsed%120)/2)%60,h=gameHour(),time=String(h%12||12).padStart(2,'0')+':'+String(minutes).padStart(2,'0')+' '+(h<12?'AM':'PM');$('gameTime').textContent=time;var dateEl=$('gameDate');if(!dateEl){dateEl=document.createElement('span');dateEl.id='gameDate';dateEl.dir='ltr';dateEl.style.cssText='flex:0 0 auto;min-width:0;text-align:center;white-space:nowrap;font-size:clamp(13px,3.5vw,21px);font-weight:800;font-variant-numeric:tabular-nums';$('gameTime').before(dateEl)}var gameDays=Math.max(0,Math.floor((Date.now()-Number(state.gameEpoch))/2880000)),calendar=new Date(Date.UTC(2020,0,1)+gameDays*86400000);dateEl.textContent=String(calendar.getUTCDate()).padStart(2,'0')+'/'+String(calendar.getUTCMonth()+1).padStart(2,'0')+'/'+calendar.getUTCFullYear();$('gameTime').setAttribute('dir','ltr');$('gameTime').style.direction='ltr';$('gameTime').style.unicodeBidi='isolate';$('skyClock').textContent=(state.lang==='ar'?'وقت اللعبة: ':'Game time: ')+time;$('skyClock').style.direction='ltr';$('skyClock').style.unicodeBidi='isolate'} function renderGoal(){var g=state.abu.hired?(state.nana.hired?null:{ar:'توظيف نانا',en:'Hire Nana',sales:12,cost:120}):{ar:'توظيف أبو وردة',en:'Hire John',sales:ECONOMY_CONFIG.abuSales,cost:80};var el=$('nextGoal');el.hidden=!g;if(!g)return;var en=state.lang==='en',ds=Math.max(0,g.sales-state.sales),dc=Math.max(0,g.cost-state.money);$('goalTitle').textContent=(en?'🎯 Next goal: ':'🎯 هدفك القادم: ')+g[en?'en':'ar'];$('goalSalesLabel').textContent=(en?'Sales: ':'المبيعات: ')+Math.min(state.sales,g.sales)+'/'+g.sales;$('goalCoinsLabel').textContent=(en?'Coins: ':'العملات: ')+Math.min(state.money,g.cost)+'/'+g.cost;$('goalSalesBar').value=Math.min(100,state.sales/g.sales*100);$('goalCoinsBar').value=Math.max(0,Math.min(100,state.money/g.cost*100));$('goalRemaining').textContent=en?ds+' more sales and '+dc+' coins needed':('باقي '+ds+' مبيعة و '+dc+' عملة لـ'+g.ar)}$('nextGoal').onclick=function(){activeArea='workers';render();$('workersArea').scrollIntoView({block:'start',behavior:'smooth'})};$('nextGoal').onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();$('nextGoal').click()}};
 $('employeesToggle').onclick=function(){$('employeesPanel').hidden=!$('employeesPanel').hidden};$('employeesClose').onclick=function(){$('employeesPanel').hidden=true};$('dayMode').onchange=function(){state.dayMode=this.value;render()};$('weatherMode').onchange=function(){state.weatherMode=this.value;render()};$('qualityCard').onclick=function(){$('qualityReason').hidden=!$('qualityReason').hidden};$('qualityCard').onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();$('qualityCard').click()}};$('abuWagePay').onclick=function(){$('hireAbu').click()};
 function runGardenRegressionChecks(){
