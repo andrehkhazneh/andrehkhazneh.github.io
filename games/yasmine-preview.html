@@ -183,7 +183,14 @@ header #siteBack:active{transform:translateY(4px);box-shadow:inset 0 3px 5px #44
 @media(prefers-reduced-motion:reduce){#catScene.cat-drinking svg .cat-walk,#catScene.cat-drinking svg .cat-head,#catScene.cat-drinking svg .water-ripples{animation:none}}
 #gameRulesSheet .employee-rule{margin:10px 0 10px 12px;padding:10px 12px;border:1px solid #c9d7c4;border-radius:12px;background:#f4f9ef}#gameRulesSheet .employee-rule summary{font-size:17px}#gameRulesSheet .employee-rule p{font-size:16px;line-height:1.7}
 </style><link rel="stylesheet" href="yasmine/css/nursery-plots.css?v=plots1">
-</head><body><main>
+<style id="calendarHeaderLayout">
+#levelHeadingRow{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px!important;align-items:stretch!important;direction:ltr}
+#levelHeadingRow #title{grid-column:1/-1;grid-row:1;text-align:center!important;white-space:normal;overflow-wrap:anywhere;direction:inherit;font-size:clamp(24px,6vw,38px)!important}
+#levelHeadingRow #gameTime,#levelHeadingRow #gameDate{display:flex!important;align-items:center;justify-content:center;box-sizing:border-box;width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;padding:9px 4px!important;border-radius:14px;background:rgba(93,151,83,.13)!important;color:inherit;font-size:clamp(14px,4vw,21px)!important;font-weight:800!important;line-height:1.4!important;white-space:nowrap!important;font-variant-numeric:tabular-nums;direction:ltr}
+#levelHeadingRow #gameTime{grid-column:1;grid-row:2}
+#levelHeadingRow #gameDate{grid-column:2;grid-row:2}
+body.night-ui #levelHeadingRow #gameTime,body.night-ui #levelHeadingRow #gameDate{background:rgba(115,168,195,.19)!important}
+</style></head><body><main>
 <section id="catEmergencyPanel" hidden aria-labelledby="welfareTitle">
 <div class="welfare-heading"><strong id="welfareTitle"></strong><b id="welfareTime" dir="ltr" hidden></b></div>
 <p id="catEmergencyText" aria-live="polite"></p>
