@@ -1,26 +1,26 @@
 /* Each sprite strip contains the four growth poses on the same soil line. */
 #scene .nursery-plot{
- position:absolute;bottom:5%;left:57%;transform:translateX(-50%);width:min(44%,192px);height:81%;
+ position:absolute;bottom:33.5%;left:56%;transform:translateX(-50%);width:min(27%,125px);height:39%;
  display:flex;align-items:center;justify-content:flex-end;flex-direction:column;
  padding:0;border:0;background:transparent!important;box-shadow:none!important;color:#243e2e;z-index:6;
 }
-#scene.two-pots .nursery-plot{width:min(35%,168px)}
-#scene.two-pots #plot0{left:37%}
-#scene.two-pots #plot1{left:78%}
+#scene.two-pots .nursery-plot{width:min(26%,120px)}
+#scene.two-pots #plot0{left:47%}
+#scene.two-pots #plot1{left:77%}
 #scene .nursery-plot[hidden],#scene .foliage[hidden]{display:none}
 #scene .nursery-plot:focus-visible{outline:3px solid #eaba4f;outline-offset:2px}
 .nursery-plot .foliage{
  width:100%;aspect-ratio:240/248;max-height:70%;position:relative;z-index:2;
  background-size:400% 100%;background-repeat:no-repeat;transform-origin:center 99%;pointer-events:none;margin-bottom:-6px;
 }
-.nursery-plot .clay-bowl{width:67%;height:clamp(34px,7vw,52px);position:relative;flex:none;filter:drop-shadow(1px 4px 2px #5438224a)}
+.nursery-plot .clay-bowl{width:67%;height:clamp(17px,5vw,29px);position:relative;flex:none;filter:drop-shadow(1px 4px 2px #5438224a)}
 .clay-bowl::before,.clay-bowl::after{content:"";position:absolute}
 .clay-bowl::before{inset:2% 4% 0;border-radius:10% 10% 40% 40% /15% 15% 17% 17%;clip-path:polygon(0 0,100% 0,90% 100%,10% 100%);background:linear-gradient(100deg,#a56442,#e5a77b 38%,#cc865c 75%,#925936)}
 .clay-bowl::after{inset:-7% 0 auto;height:24%;border:3px solid #d6996c;border-bottom:6px solid #c58b63;border-radius:50%;background:radial-gradient(ellipse at 45% 85%,#836142,#483721);box-shadow:0 2px 0 #996548}
-#scene .plot-label{position:relative;display:block;margin-top:6px;border-radius:14px;padding:2px 8px;line-height:1.4;max-width:100%;font-size:clamp(12px,3.2vw,16px);background:#fff8e7;color:#324638;border:1px solid #a59c7a}
+#scene .plot-label{position:absolute;top:108%;left:50%;transform:translateX(-50%);display:block;width:max-content;max-width:110%;box-sizing:border-box;border-radius:6px;padding:2px 5px;line-height:1.15;font-size:clamp(11px,2.8vw,14px);background:#fff8e7;color:#324638;border:1px solid #a59c7a}
 #scene .nursery-plot[aria-pressed="true"] .plot-label{background:#335c45;color:#fff;border-color:#57775a}
-#scene #abuWorker{animation:none;left:4%;bottom:13%;width:19%;height:53%;z-index:4;transition:left .7s ease}
-#scene.two-pots[data-tending="1"] #abuWorker{left:49%}
+#scene #abuWorker{animation:none;left:4%;bottom:7%;width:27%;height:69%;z-index:4;transition:left .7s ease}
+
 #scene .event{z-index:10}
 #scene[data-weather="wind"] .foliage{--sway:4deg;animation:leaf-sway 1.8s ease-in-out infinite alternate}
 #scene[data-weather="wind"] [data-kind="mint"] .foliage,#scene[data-weather="wind"] [data-kind="basil"] .foliage{--sway:1.6deg}
@@ -30,3 +30,17 @@
 @keyframes leaf-sway{from{transform:rotate(calc(0deg - var(--sway)))}to{transform:rotate(var(--sway))}}
 @media(prefers-reduced-motion:reduce){#scene[data-weather="wind"] .foliage{animation:none}#scene #abuWorker{transition:none}}
 #seedPanel #shop button{font-size:clamp(15px,3.6vw,20px)!important}
+
+/* The tabletop occupies 64–68% of this illustration at every viewport. */
+#scene .potting-bench {
+ position:absolute; inset:0; z-index:3; pointer-events:none;
+ background:url(../images/potting-bench.webp) center / 100% 100% no-repeat;
+}
+body.night-ui #scene .potting-bench {filter:brightness(.72) saturate(.82)}
+#scene .nursery-plot {overflow:visible}
+#scene .clay-bowl {filter:drop-shadow(1px 2px 1px #34211080)}
+#scene #abuWorker::before {
+ content:"";position:absolute;bottom:-1%;left:14%;width:72%;height:5%;
+ border-radius:50%;background:#36271555;filter:blur(2px);
+}
+#scene #abuWorker img {position:relative}
