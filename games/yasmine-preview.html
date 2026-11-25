@@ -342,7 +342,12 @@ html body #settingsPanel .cfg-row[open]>summary:before,html body #settingsPanel 
 #compostNeeds p{margin:0;padding:8px 0;border-bottom:1px solid var(--cycle-edge,#899783);line-height:1.5}
 #compostStation .compost-more{margin-top:14px}
 #compostStation [hidden]{display:none!important}
-</style><style>#compostLedgerStats{white-space:pre-line;line-height:1.85}</style><style>#financePanel{padding:1rem}#financePanel details{padding:.65rem 0;border-block-end:1px solid currentColor}#financePanel summary{cursor:pointer;font-weight:700}#financePanel input,#financePanel select{box-sizing:border-box;max-width:100%;padding:.55rem}#financePanel button{margin:.25rem}#financeBalance{font-weight:700}#compostLedgerStats,#financeCosts,#financePlants{white-space:pre-line}</style><style>body #gameNav #workersTab::before{background:url(yasmine/images/nabih.webp) center bottom/contain no-repeat!important}.office-intro{display:flex;align-items:center;gap:1rem}.office-intro img{object-fit:contain;flex:none}#compostHint:empty,#compostFeedback:empty{display:none}#compostStation #compostNeeds[hidden]{display:none!important}</style></head><body><main>
+</style><style>#compostLedgerStats{white-space:pre-line;line-height:1.85}</style><style>#financePanel{padding:1rem}#financePanel details{padding:.65rem 0;border-block-end:1px solid currentColor}#financePanel summary{cursor:pointer;font-weight:700}#financePanel input,#financePanel select{box-sizing:border-box;max-width:100%;padding:.55rem}#financePanel button{margin:.25rem}#financeBalance{font-weight:700}#compostLedgerStats,#financeCosts,#financePlants{white-space:pre-line}</style><style>body #gameNav #workersTab::before{background:url(yasmine/images/nabih.webp) center bottom/contain no-repeat!important}.office-intro{display:flex;align-items:center;gap:1rem}.office-intro img{object-fit:contain;flex:none}#compostHint:empty,#compostFeedback:empty{display:none}#compostStation #compostNeeds[hidden]{display:none!important}</style><style>
+#financePanel .office-wallet{display:grid;gap:.22rem;margin:.9rem 0;padding:.85rem 1rem;border-inline-start:3px solid #71936e;background:rgba(125,152,110,.12);border-radius:.6rem;text-align:start}
+#financeBalance{font-size:1.6rem;line-height:1.25;font-variant-numeric:tabular-nums}
+#financePanel .office-intro{gap:.65rem}#financePanel .office-intro img{width:56px;height:68px}
+#financePanel details{border-block-end:1px solid rgba(128,128,128,.28)}#financePanel [hidden]{display:none!important}
+</style></head><body><main>
 <section id="catEmergencyPanel" hidden aria-labelledby="welfareTitle">
 <div class="welfare-heading"><strong id="welfareTitle"></strong><b id="welfareTime" dir="ltr" hidden></b></div>
 <p id="catEmergencyText" aria-live="polite"></p>
@@ -500,7 +505,7 @@ html body #settingsPanel .cfg-row[open]>summary:before,html body #settingsPanel 
 <script src="yasmine/js/garden.js?v=plots1"></script>
 <script src="yasmine/js/cat-scene.js?v=garden-walk2"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/field-guide.js?v=plant-pages"></script><script src="yasmine/js/medals.js?v=plant-pages"></script><script src="yasmine/js/compost.js?v=nabih6"></script><script src="yasmine/js/game.js?v=nabih6"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/field-guide.js?v=plant-pages"></script><script src="yasmine/js/medals.js?v=plant-pages"></script><script src="yasmine/js/compost.js?v=nabih6"></script><script src="yasmine/js/game.js?v=nabih-office2"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
