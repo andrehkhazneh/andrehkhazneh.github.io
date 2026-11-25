@@ -13,7 +13,12 @@ function amounts(rows){
        if(paid===20){totals.food+=15;totals.transport+=5}
        else totals.emergency+=paid;
        break;
-     case 'salary': totals[['abu','nana'].includes(r.person)?r.person:'oldSalary']+=paid;break;
+     case 'salary': {
+       // Before names were recorded, these were the only two salary postings.
+       const person=r.person || ({15:'abu',20:'nana'})[paid];
+       totals[['abu','nana'].includes(person)?person:'oldSalary']+=paid;
+       break;
+     }
      case 'bonus': totals.yasmin+=paid;break;
      case 'accountant': totals.ledger+=paid;break;
    }
@@ -21,7 +26,7 @@ function amounts(rows){
  return totals;
 }
 function render(box,group,f,en,cat,name,title,wages){
- const t=(ar,eng)=>en?eng:ar,fmt=n=>n.toLocaleString(en?'en':'ar-EG');
+ const t=(ar,eng)=>en?eng:ar,fmt=n=>String(n);
  const a=amounts(f.rows);
  const lines=[],line=(label,value)=>lines.push([label,value]);
  let label,note,total;
@@ -36,13 +41,14 @@ function render(box,group,f,en,cat,name,title,wages){
    if(a.emergency)line(t('طوارئ أخرى','Other emergency bills'),a.emergency);
    if(a.oldShop)line(t('مشتريات متجر قديمة بلا تفاصيل','Earlier shop purchases without item details'),a.oldShop);
    label=t('مجموع مصاريف ','Total spent on ')+cat;
-   note=t('كل دفعة بتنحسب مرة وحدة. فاتورة الطوارئ المدفوعة بـ٢٠ عملة بتتوزع بين ١٥ للطعام و٥ للنقل.','Each payment is counted once. A paid 20-coin emergency bill includes 15 for food and 5 for transport.');
+   note=t('كل دفعة بتنحسب مرة وحدة. فاتورة الطوارئ المدفوعة بـ20 عملة بتتوزع بين 15 للطعام و5 للنقل.','Each payment is counted once. A paid 20-coin emergency bill includes 15 for food and 5 for transport.');
  }else{
    line(t('أبو وردة · راتب البستاني','Abu Warda · Gardener wages'),a.abu);line(t('نانا · راتب مربية القطط','Nana · Cat caretaker wages'),a.nana);
    line(t('ياسمين · بونص المديرة','Yasmin · Manager bonuses'),a.yasmin);line(t('جمال · راتب المحاسب','Jamal · Accountant wages'),a.ledger);
-   if(a.oldSalary)line(t('رواتب قديمة بلا اسم','Earlier wages without a name'),a.oldSalary);
+   total=a.abu+a.nana+a.yasmin+a.ledger+a.oldSalary;
    label=t('مجموع المدفوع للموظفين','Total wages and bonuses paid');
    note=t('نجمع الرواتب والبونص المدفوع. الراتب المستحق بينضاف وقت الدفع. التوظيف والتطوير مسجّلين لحالهم بالدفتر.','Includes paid wages and bonuses. Wages due count once paid. Hiring and upgrades are separate ledger entries.');
+   if(a.oldSalary)note+=t(' المجموع بيشمل دفعات سابقة إضافية بقيمة ',' The total includes additional earlier payments of ')+fmt(a.oldSalary)+t(' عملة.',' coins.');
  }
  total??=lines.reduce((n,row)=>n+row[1],0);
  const helpOpen=box.dataset.group===group&&box.querySelector('details')?.open;
