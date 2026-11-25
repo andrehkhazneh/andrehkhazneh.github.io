@@ -21,3 +21,21 @@ dialog.medal-dialog{background:linear-gradient(100deg,#d3b882 0,#f3e8cc 4%,#fff7
 .keeper-note img{width:52px;height:60px;object-fit:contain}
 .keeper-note strong{display:block;color:#435a40}
 @media(prefers-reduced-motion:no-preference){.medal-notice img{animation:medal-glint 1.15s ease-out 1}@keyframes medal-glint{45%{filter:brightness(1.35) drop-shadow(0 0 5px #ffd879)}}}
+#achievementsArea .album-cover{position:relative;isolation:isolate;display:grid;justify-items:center;align-content:center;gap:.5rem;width:min(83%,350px);aspect-ratio:3/4;margin:20px auto 32px;padding:28px;border:1px solid #805e31!important;border-inline-start:12px solid #18382e!important;border-radius:6px 18px 18px 6px;background:repeating-linear-gradient(12deg,#ffffff06 0 1px,transparent 1px 4px),linear-gradient(115deg,#173a32,#305343 55%,#16342d)!important;color:#ffe5a5!important;box-shadow:2px 3px #c9b58f,4px 5px #f8edd5,6px 7px #a58a63,8px 9px #294437,10px 15px 20px #1d261e42!important}
+.album-cover::before{content:"";position:absolute;inset:12px;border:3px double #c3a869;border-radius:3px 11px;pointer-events:none}
+.album-cover img{width:52%;max-height:145px;object-fit:contain;filter:drop-shadow(0 4px 4px #091c18)}
+.album-cover strong{font:700 clamp(22px,5vw,34px)/1.4 Georgia,serif}
+.album-open{margin-top:12px;border-block-end:1px solid #c3ab7d}
+dialog.medal-dialog{border-radius:6px 15px 15px 6px;border:4px solid #304b39;border-inline-start:10px solid #294332;padding:clamp(12px,4vw,24px);box-shadow:3px 3px #cdbc9e,5px 5px #f9f0da,8px 8px #856f4d,10px 10px #27412e}
+.medal-dialog header,.album-pages{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.medal-dialog header{padding-bottom:10px;border-bottom:1px solid #baa782}
+.medal-dialog header button,.album-pages button{padding:6px 12px;min-height:38px;font-size:.95rem}
+.album-pages{border-top:1px solid #baa782;padding-top:12px}
+.album-pages bdi{white-space:nowrap;color:#51452d}
+.album-entries{display:grid;gap:5px;margin-top:10px}
+.medal-dialog .album-entry{display:grid;grid-template-columns:48px 1fr auto;align-items:center;gap:9px;text-align:start;padding:4px 8px;border:1px solid #baab8b!important;background:#fffaec!important;color:#273a2d!important;box-shadow:none!important}
+.album-entry img{width:48px;height:48px;object-fit:contain}
+.album-entry small{display:block;color:#575746;font-weight:400}
+.medal-dialog .album-entry.unread{border:2px solid #ba3345!important}
+.album-leaf{padding-block:12px}
+@media(prefers-reduced-motion:no-preference){.album-leaf{transform-origin:left center;animation:album-turn .32s ease-out}.medal-dialog[dir=rtl] .album-leaf{transform-origin:right center}@keyframes album-turn{from{transform:perspective(850px) rotateY(12deg);opacity:.55}to{transform:none;opacity:1}}}

@@ -1,4 +1,4 @@
-/* Paint the same medal for the cabinet, the enlarged view and the story card. */
+/* Use lightweight book thumbnails and detailed medal artwork for pages and stories. */
 (function () {
 'use strict';
 const designs = {
@@ -17,6 +17,9 @@ const designs = {
 const gameUrl='https://andrehkhazneh.github.io/games/yasmine-preview.html';
 function artwork(id){
  return id==='plants'?'yasmine/images/plant-lover.webp':'yasmine/images/medals/'+id+'.webp';
+}
+function fullArtwork(id){
+ return 'yasmine/images/medals/hd/'+id+'.webp';
 }
 function loadImage(src){
  return new Promise((resolve,reject)=>{
@@ -53,25 +56,55 @@ function condition(row,en){
  plants:['ازرع '+n+' أنواع مختلفة لحدّ النضج','Grow '+n+' different plant species to maturity']
  })[id][en?1:0];
 }
-let signature='', activeId=null, current, prepared, dialog;
+let signature='', activeId=null, current, dialog;
 function render(area,rows,awards,en,acknowledge){
  current={area,rows,awards,en,acknowledge};
  const key=JSON.stringify([en,rows.map(r=>[r[0],r[4],awards[r[0]]])]);
  if(key===signature)return;
  signature=key;
  const earned=rows.filter(r=>awards[r[0]]);
- const locked=rows.filter(r=>!awards[r[0]]).sort((a,b)=>b[4]/b[5]-a[4]/a[5]);
- function tile(r){
-   const id=r[0], won=awards[id];
-   return '<button type="button" class="medal-tile'+(won?.unread?' unread':'')+'" data-medal="'+id+'"><img alt="" src="'+artwork(id)+'"><span><strong>'+r[en?3:2]+'</strong><small>'+(won?accomplishment(r,en):condition(r,en))+'</small><small>'+(won?(won.unread?(en?'New':'جديد'):''):'<bdi>'+Math.min(r[4],r[5])+' / '+r[5]+'</bdi>')+'</small></span></button>';
+ const count=earned.length+' / '+rows.length;
+ area.innerHTML='<button type="button" class="album-cover"><img alt="" src="'+artwork('plants')+'"><strong>'+(en?'Medal book':'كتاب الميداليات')+'</strong><span>'+(en?'My medals':'ميدالياتي')+' · <bdi>'+count+'</bdi></span><span class="album-open">'+(en?'Open book':'افتح الكتاب')+'</span></button>';
+ area.querySelector('.album-cover').onclick=showContents;
+}
+function showDialog(){
+ if(!dialog.open)dialog.showModal();
+ dialog.scrollTop=0;
+ dialog.querySelector('h2')?.focus({preventScroll:true});
+}
+function initBook(){
+ if(!dialog){
+   dialog=document.createElement('dialog');
+   dialog.className='medal-dialog';
+   dialog.setAttribute('aria-labelledby','medalHeading');
+   document.body.append(dialog);
+   dialog.addEventListener('close',()=>{
+     if(dialog.open)return;
+     activeId=null;
+     current.area.querySelector('.album-cover')?.focus({preventScroll:true});
+   });
  }
- const previousFocus=area.contains(document.activeElement)?document.activeElement.dataset.medal:null;
- area.innerHTML='<h2>'+(en?'Medal book':'كتاب الميداليات')+'</h2><h3>'+(en?'My medals':'ميدالياتي')+' <bdi>'+earned.length+' / '+rows.length+'</bdi></h3><div class="medal-grid">'+earned.map(tile).join('')+'</div>'+(!earned.length?'<p>'+(en?'Your first medal will appear here.':'أول ميدالية بتربحها رح تظهر هون.')+'</p>':'')+(locked.length?'<h3>'+(en?'Next medals':'الميداليات الجاية')+'</h3><div class="medal-grid pending">'+locked.map(tile).join('')+'</div>':'');
- if(previousFocus)area.querySelector('[data-medal="'+previousFocus+'"]')?.focus({preventScroll:true});
- area.onclick=e=>{const tile=e.target.closest('[data-medal]');if(tile)open(tile.dataset.medal)};
+ dialog.dir=current.en?'ltr':'rtl';
+}
+function showContents(){
+ initBook();
+ const {en,rows,awards}=current;
+ activeId=null;
+ const entries=rows.map((row,i)=>{
+   const won=awards[row[0]];
+   const state=won?(won.unread?(en?'New':'جديد'):(en?'Earned':'مكتسب')):(en?'Locked':'مقفل');
+   return '<button class="album-entry'+(won?.unread?' unread':'')+'" data-medal="'+row[0]+'"><img alt="" src="'+artwork(row[0])+'"><span>'+row[en?3:2]+'<small>'+state+'</small></span><bdi>'+String(i+1).padStart(2,'0')+'</bdi></button>';
+ });
+ dialog.innerHTML='<header><h2 id="medalHeading" tabindex="-1">'+(en?'Contents':'الفهرس')+'</h2><button class="medal-close">'+(en?'Close':'إغلاق')+'</button></header><div class="album-entries">'+entries.join('')+'</div>';
+ dialog.querySelector('.medal-close').onclick=()=>dialog.close();
+ dialog.querySelector('.album-entries').onclick=e=>{
+   const entry=e.target.closest('[data-medal]');
+   if(entry)open(entry.dataset.medal);
+ };
+ showDialog();
 }
 async function story(row,en){
- const [art,qr]=await Promise.all([loadImage(artwork(row[0])),loadImage('yasmine/images/game-qr.png')]);
+ const [art,qr]=await Promise.all([loadImage(fullArtwork(row[0])),loadImage('yasmine/images/game-qr.png')]);
  const canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;
  const g=canvas.getContext('2d'),[dark,light]=designs[row[0]];
  const bg=g.createLinearGradient(0,0,1080,1920);bg.addColorStop(0,'#152b29');bg.addColorStop(1,dark);
@@ -89,30 +122,34 @@ async function story(row,en){
  return new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
 }
 function open(id){
- if(!dialog){
-   dialog=document.createElement('dialog');dialog.className='medal-dialog';dialog.setAttribute('aria-labelledby','medalHeading');document.body.append(dialog);
-   dialog.addEventListener('close',()=>{const tile=current.area.querySelector('[data-medal="'+activeId+'"]');activeId=null;prepared=null;tile?.focus({preventScroll:true})});
- }
+ initBook();
  const {rows,awards,en,acknowledge}=current,r=rows.find(x=>x[0]===id),won=awards[id];
- activeId=id;prepared=null;
+ activeId=id;
  dialog.dir=en?'ltr':'rtl';
  const title=r[en?3:2];
  const note=won&&id==='plants'
    ? '<aside class="keeper-note"><img alt="" src="yasmine/images/abu-warda-portrait.webp"><span><strong>'+(en?'John':'أبو وردة')+'</strong>'+(en?'Remember your first pot? Look at everything you’ve grown since. You earned this medal.':'بتتذكّر أول أصيص؟ شوف قديش كبر مشتلك من وقتها. هالوسام إلك!')+'</span></aside>'
    : '';
- dialog.innerHTML='<button type="button" class="medal-close">'+(en?'Close':'إغلاق')+'</button><img class="medal-large" alt="" src="'+artwork(id)+'"><h2 id="medalHeading">'+title+'</h2><p>'+(won?accomplishment(r,en):condition(r,en))+'</p><p>'+(won?'':(en?'Progress ':'تقدّمك ')+'<bdi>'+Math.min(r[4],r[5])+' / '+r[5]+'</bdi> · ')+r[6]+' '+(en?'coins':'عملة')+'</p>'+note+(won?'<button type="button" class="medal-share" disabled>'+(en?'Share medal':'شارك وسامك')+'</button><p class="medal-status" role="status"></p>':'');
- dialog.querySelector('.medal-close').onclick=()=>dialog.close();dialog.showModal();
+ const page=rows.indexOf(r);
+ const leaf='<article class="album-leaf"><img class="medal-large" alt="" src="'+fullArtwork(id)+'"><h2 id="medalHeading" tabindex="-1">'+title+'</h2><p>'+(won?accomplishment(r,en):condition(r,en))+'</p><p>'+(won?'':(en?'Progress ':'تقدّمك ')+'<bdi>'+Math.min(r[4],r[5])+' / '+r[5]+'</bdi> · ')+r[6]+' '+(en?'coins':'عملة')+'</p>'+note+(won?'<button type="button" class="medal-share" disabled>'+(en?'Share medal':'شارك وسامك')+'</button><p class="medal-status" role="status"></p>':'')+ '</article>';
+ dialog.innerHTML='<header><button class="contents-link">'+(en?'Contents':'الفهرس')+'</button><button class="medal-close">'+(en?'Close':'إغلاق')+'</button></header>'+leaf+
+   '<nav class="album-pages"><button class="prev" '+(page===0?'disabled':'')+'>'+(en?'← Previous':'→ السابق')+'</button><bdi>'+(page+1)+' / '+rows.length+'</bdi><button class="next" '+(page===rows.length-1?'disabled':'')+'>'+(en?'Next →':'التالي ←')+'</button></nav>';
+ dialog.querySelector('.medal-close').onclick=()=>dialog.close();
+ dialog.querySelector('.contents-link').onclick=showContents;
+ dialog.querySelector('.prev').onclick=()=>open(rows[page-1][0]);
+ dialog.querySelector('.next').onclick=()=>open(rows[page+1][0]);
+ showDialog();
  if(!won)return;
  if(won.unread)acknowledge(id);
  const button=dialog.querySelector('.medal-share');
  story(r,en).then(blob=>{
-   if(activeId!==id||!dialog.open||!blob)return;
-   prepared=new File([blob],'medal-'+id+'.png',{type:'image/png'});button.disabled=false;
+   if(!button.isConnected||activeId!==id||!dialog.open||!blob)return;
+   const prepared=new File([blob],'medal-'+id+'.png',{type:'image/png'});button.disabled=false;
    const download=()=>{const link=document.createElement('a'),url=URL.createObjectURL(prepared);link.href=url;link.download=prepared.name;link.click();setTimeout(()=>URL.revokeObjectURL(url),60000);dialog.querySelector('.medal-status').textContent=en?'Image saved for your story.':'نزّلت صورة الميدالية لتشاركها بالستوري أو الحالة.'};
    if(!navigator.canShare?.({files:[prepared]})){button.textContent=en?'Save story image':'تنزيل صورة للستوري';button.onclick=download;return}
    button.onclick=async()=>{try{await navigator.share({files:[prepared],text:(en?'I earned the '+title+' medal in Jasmine Nursery!':'ربحت وسام «'+title+'» بلعبة مشتل الياسمينة!')+' '+gameUrl})}catch(e){if(e.name!=='AbortError'&&activeId===id){button.textContent=en?'Save story image':'تنزيل صورة للستوري';button.onclick=download}}};
  }).catch(()=>{
-   if(activeId!==id||!dialog.open)return;
+   if(!button.isConnected||activeId!==id||!dialog.open)return;
    dialog.querySelector('.medal-status').textContent=en?'Could not prepare the picture. Open the medal to retry.':'تعذر تجهيز الصورة. افتح الوسام مرة تانية للمحاولة.';
  });
 }
@@ -134,7 +171,7 @@ function showCelebration(){
  notice.append(button);document.body.append(notice);
  function finish(){notice.remove();showCelebration()}
  const timer=setTimeout(finish,6500);
- button.onclick=()=>{clearTimeout(timer);if(dialog?.open)dialog.close();showAward();open(row[0]);finish()};
+ button.onclick=()=>{clearTimeout(timer);showAward();open(row[0]);finish()};
 }
 document.getElementById('achievementsTab').style.setProperty('--gold-medal','url('+artwork('sales500')+')');
 window.YasmineMedals={render,celebrate};
