@@ -315,6 +315,7 @@ function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}}
 var requests=[{type:'fertilizer',cost:20},{type:'catfood',cost:15},{type:'bonus',cost:30}];
 function stockRequests(){var st=state.staff;if(!st.rejectedStock||typeof st.rejectedStock!=='object')st.rejectedStock={};return ['fertilizer','catfood'].filter(function(type){if(type==='catfood'&&state.cat.away)return false;var quantity=state.stock[type];if(quantity>=5){delete st.rejectedStock[type];return false}return Date.now()>=(st.rejectedStock[type]||0)})}
 function staffWords(lang=state.lang){return lang==='ar'?{nursery:'اسم المشتل',cat:'اسم القطة',hire:'وظّف ياسمين · 💰 50',hired:'موظفة دائمة',joke:'اسمع دعابة 😂',yes:'ادفع',no:'ارفض',mood:'مزاج ياسمين',hello:'أهلاً يا مدير! أنا جاهزة أراقب المشتل والقطة.',needWater:'يا مدير، النبتة عطشانة! لا تكون مفكرها صبّارة؟',needCat:'يا مدير، '+displayName("catName")+' جاعت! بدنا نطعميها.',request:{fertilizer:'يا مدير، بدي 20 عملة أجيب سماد للنبتة!',catfood:'عطيني 15 عملة أجيب أكل لـ'+displayName("catName")+'!',bonus:'أنا عم اشتغل من قلبي... ما في بونص 30 عملة؟'},jokes:['القطة شكلها ناوية تستلم الإدارة!','يا مدير، النباتات بدها مي مو خطابات تحفيزية!','أنا موظفة مش ساحرة، بس بونص صغير بيعمل عجايب!','قلت للقطة اشتغلي معي، قالت: أنا مديرة النوم!','السماد غلي يا مدير... حتى الوردة صارت بدها قرض!','زرعت نعنع، طلعلي طلب إجازة من الياسمينة!','القطة بتعرف تعدّ المصاري... بس كل العدّ بيخلص عند التونة!','طلبت من النبتة تكبر بسرعة، قالت: ادفعلي أوفر تايم!','أنا وياسمين النبتة نفس الاسم، بس هي بتاخد مي وأنا بدي بونص!','ليش الجزرة احمرّت؟ شافت فاتورة السماد!'],thanks:'يسلمو يا مدير! هيك الشغل الحلو.',refused:'طيب يا مدير... بس رح أتذمّر شوي! 😂',poor:'الخزنة فاضية يا مدير!',liked:'يا سلام! ضحكتك أحلى من البونص! 😂',disliked:'آخ يا مدير! خلص رح جرّب نكتة أحسن المرة الجاية.',postponed:'تمام يا مدير، منأجل الشراء شوي.'}:{nursery:'Nursery name',cat:'Cat name',hire:'Hire Yasmin · 💰 50',hired:'Permanent employee',joke:'Tell a joke 😂',yes:'Pay',no:'Decline',mood:'Yasmin’s mood',hello:'Hello boss! I am watching the plants and your cat.',needWater:'Boss, the plant needs water!',needCat:'Boss, '+displayName("catName")+' is hungry!',request:{fertilizer:'Boss, I need 20 coins for fertilizer!',catfood:'Give me 15 coins to buy food for '+displayName("catName")+'!',bonus:'I work so hard... could I get a 30-coin bonus?'},jokes:['The cat wants to become the manager!','Plants need water, not motivational speeches!','I am no magician, but a bonus works wonders!','I offered the cat a job. She said she already manages naps!','Fertilizer is so expensive even the flowers want a loan!','I planted mint, and the jasmine asked for vacation time!','The cat can count coins, but only until dinner!','I told the plant to grow faster. It asked for overtime pay!','The jasmine gets water, and I get bonus requests!','Why did the carrot blush? It saw the fertilizer bill!'],thanks:'Thanks, boss! I appreciate it.',refused:'Okay boss... but I will complain a little! 😂',poor:'Not enough coins, boss!',liked:'Yay! Your laugh is better than a bonus! 😂',disliked:'Ouch, boss! I’ll try a better joke next time.',postponed:'Okay boss, we can postpone this purchase.'}}
+$('levelHeader').after($('settingsPanel'));
 $('settingsNamesPanel').appendChild($('identityPanel'));var editingNames=false,settingsOpen=false,audioPanelOpen=false,jokeAwaitingRating=false;$('topEditNames').onclick=function(){settingsOpen=!settingsOpen;if(!settingsOpen){editingNames=false;audioPanelOpen=false}render();$('settingsPanel').hidden=!settingsOpen};$('settingsNames').onclick=function(){settingsOpen=true;editingNames=!editingNames;render();if(editingNames){$('settingsNamesPanel').hidden=false;$('identityPanel').hidden=false;$('gardenNameInput').focus()}};$('settingsAudio').onclick=function(){audioPanelOpen=!audioPanelOpen;render()};$('restartGame').onclick=function(){$('reset').click()};$('saveGardenName').onclick=function(){commitNames()};$('gardenNameInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();commitNames()}});function commitNames(){state.gardenName=($('gardenNameInput').value||'').trim().slice(0,24)||'حديقة السعادة';state.nurseryName=($('nurseryNameInput').value||'').trim().slice(0,12)||'مشتل الياسمينة';state.catName=($('catNameInput').value||'').trim().slice(0,10)||'مشمش';state.namesSet=true;editingNames=false;save();render()}
 $('editNames').onclick=function(){editingNames=!editingNames;render();if(editingNames)$('nurseryNameInput').focus()};$('saveNurseryName').onclick=commitNames;$('saveCatName').onclick=commitNames;['nurseryNameInput','catNameInput'].forEach(function(id){$(id).addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();commitNames();this.blur()}})});
 function notificationCount(){return state.staff.hired&&state.staff.request?1:0}
@@ -1154,8 +1155,13 @@ function eventBudget(pot){var price=crops[pot.kind].price*(.5+pot.quality/200);r
 function awardEvent(amount){var pot=potAt(eventPot);var n=Math.min(amount,eventBudget(pot));if(n>0){state.money+=n;pot.eventEarned+=n;state.extraEarned+=n}return n}
 var eventPot=0,eventNext=Date.now()+ECONOMY_CONFIG.eventMinMs,eventTaps=0;
 function scheduleEvent(){eventNext=Date.now()+ECONOMY_CONFIG.eventMinMs+Math.random()*(ECONOMY_CONFIG.eventMaxMs-ECONOMY_CONFIG.eventMinMs)}
-function eventSpawn(){var pot=selectedPot();if(!pot.active||pot.progress>=100||ev||activeArea!=='nursery'||document.hidden||document.querySelector('dialog[open],#catSheetOverlay:not([hidden])')||settingsOpen)return;eventPot=state.selectedPot||0;ev=['bee','dew','pest'][Math.floor(Math.random()*3)];eventTaps=0;var b=$('event');b.hidden=false;b.textContent=ev==='bee'?'🐝':ev==='dew'?'💧':'🐛';b.setAttribute('aria-label',ev==='bee'?'Bee':ev==='dew'?'Dew':'Worm');b.style.left=hasSecondPot()?(eventPot?'74%':'34%'):(ev==='dew'?'54%':'15%');b.style.top=ev==='dew'?'48%':'32%';evTimeout=setTimeout(function(){if(!ev)return;if(ev==='pest'){pot.quality=Math.max(30,pot.quality-ECONOMY_CONFIG.pestQualityLoss);pot.qualityCause=state.lang==='ar'?'دودة: ناقص 2%':'Worm: -2%'}ev=null;b.hidden=true;render()},ECONOMY_CONFIG.eventDurationMs)}
-$('event').onclick=function(){if(!ev)return;var type=ev;if(type==='pest'&&++eventTaps<ECONOMY_CONFIG.pestTaps){$('event').textContent='🐛 '+(ECONOMY_CONFIG.pestTaps-eventTaps);return}clearTimeout(evTimeout);var reward=awardEvent(ECONOMY_CONFIG.eventRewards[type]);msg((state.lang==='ar'?'مكافأة الحدث: +':'Event reward: +')+reward);sound(type==='pest'?'pest':'bee');ev=null;$('event').hidden=true;render()};
+function eventSpawn(){var pot=selectedPot();if(!pot.active||pot.progress>=100||ev||activeArea!=='nursery'||document.hidden||document.querySelector('dialog[open],#catSheetOverlay:not([hidden])')||settingsOpen)return;eventPot=state.selectedPot||0;ev=Math.random()<.5?'dew':'pest';eventTaps=0;var b=$('event');b.hidden=false;b.dataset.kind=ev;b.textContent='';b.removeAttribute('data-left');
+ b.setAttribute('aria-label',ev==='dew'?(state.lang==='ar'?'اجمع الندى':'Collect dew'):(state.lang==='ar'?'أزل الدودة':'Remove worm'));
+ const leaf=$('plot'+eventPot).querySelector('.foliage').getBoundingClientRect(), frame=$('scene').getBoundingClientRect();
+ b.style.left=((leaf.left+leaf.width*.54-frame.left)/frame.width*100)+'%';
+ b.style.top=((leaf.top+leaf.height*.52-frame.top)/frame.height*100)+'%';
+ evTimeout=setTimeout(function(){if(!ev)return;if(ev==='pest'){pot.quality=Math.max(30,pot.quality-ECONOMY_CONFIG.pestQualityLoss);pot.qualityCause=state.lang==='ar'?'دودة: ناقص 2%':'Worm: -2%'}ev=null;b.hidden=true;render()},ECONOMY_CONFIG.eventDurationMs)}
+$('event').onclick=function(){if(!ev)return;var type=ev;if(type==='pest'&&++eventTaps<ECONOMY_CONFIG.pestTaps){$('event').dataset.left=String(ECONOMY_CONFIG.pestTaps-eventTaps);return}clearTimeout(evTimeout);var reward=awardEvent(ECONOMY_CONFIG.eventRewards[type]);msg((state.lang==='ar'?'مكافأة الحدث: +':'Event reward: +')+reward);sound(type==='pest'?'pest':'water');ev=null;$('event').hidden=true;render()};
 ['water','feed','sun'].forEach(function(k){$(k).onclick=function(){care(k)}});$('sell').onclick=sell;$('lang').onclick=function(){state.lang=state.lang==='ar'?'en':'ar';history.replaceState(null,'',location.pathname+(state.lang==='en'?'?lang=en':''));render()};$('reset').onclick=function(){if(confirm(state.lang==='ar'?'متأكد بدك تعيد اللعبة من البداية؟ رح تنمسح كل المصاري والمبيعات والأسماء والقطة وتوظيف ياسمين.':'Restart from scratch? All coins, sales, names, cat and Yasmin progress will be erased.')){state={gameEpoch:Date.now(),dayMode:'auto',weatherMode:'auto',catTreats:0,catSpy:{status:'idle',report:'',end:0},catHunt:{status:'idle',end:0},catItems:{},catEquipped:{},gardenName:'حديقة السعادة',dismissedEmpty:false,money:50,sales:0,kind:'jasmine',progress:0,quality:100,care:0,active:true,lang:state.lang,cat:freshCat(),nurseryName:'مشتل الياسمينة',catName:'مشمش',namesSet:false,stock:{fertilizer:4,catfood:3},staff:{hired:false,mood:60,request:null,dialogue:''},abu:{hired:false,paidSales:0,paused:false,lastCare:0},nana:{hired:false,paidSales:0,paused:false,lastCare:0,lastWarn:0,dialogueIndex:0,action:''},eventEarned:0,eventCycleSales:0,extraEarned:0,catHuntLast:0,catCoinTimes:[],catEmergencyBill:0,catFoodEmergencyNotice:false};catLast={};catMessage=null;catSeconds=0;catBusyUntil=0;nanaCareUntil=0;catDrinking=false;graceSample=null;clearTimeout(catCareTimer);editingNames=false;settingsOpen=false;audioPanelOpen=false;jokeAwaitingRating=false;activeArea='nursery';lastNotificationCount=0;lastTick=Date.now();last={water:0,feed:0,sun:0};clearTimeout(catAnimationTimer);clearTimeout(evTimeout);ev=null;$('event').hidden=true;delete $('catScene').dataset.action;$('catScene').classList.remove('is-napping');try{localStorage.removeItem(key)}catch(e){}msg('');render()}};
 
 /* Mimi: petting, treats and playful inspection of John's nursery work. */
@@ -1186,12 +1192,13 @@ $('catTreatBuy').onclick=function(){
  if(state.money<10)return;
  buyCatItem({id:'treat',cost:10,ar:'🍬 3 حبات مكافأة',en:'🍬 3 treats'});
 };
+$('caseClose').onclick=function(){state.catSpy.dismissed=true;save();render();};
 $('catSpy').onclick=function(){
  if(state.cat.sleeping||Date.now()<catBusyUntil||state.cat.away||state.catSpy.status==='running'||!state.abu.hired||Date.now()<(Number(state.catSpy.cooldownUntil)||0))return;
  $('catMissions').open=false;
  state.catSpy={status:'running',report:'',end:Date.now()+8000,cooldownUntil:Date.now()+8000+120000};
  activeArea='nursery';sound('notify');save();render();
- $('nurseryArea').scrollIntoView({behavior:'smooth',block:'center'});
+ updateSpyScene();$('scene').scrollIntoView({behavior:'smooth',block:'center'});
 };
 $('catTreatReward').onclick=function(){
  if(state.cat.away||state.catTreats<1||state.catSpy.status!=='done')return;
@@ -1242,14 +1249,21 @@ function renderCatExtras(){
  $('catTreatBuy').textContent=ar?'🍬 اشتري 3 حبة مكافأة لـ'+displayName("catName")+' · 💰 10':'🍬 Buy 3 treats · 💰 10';
  $('catTreatBuy').disabled=state.money<10;
  $('catTreatCount').textContent=(ar?'🍬 الحبة مكافأة المتوفرة: ':'🍬 Treats available: ')+state.catTreats;
- if(spy.status==='running'&&Date.now()>=spy.end){
-  var sleeping=state.abu.paused||(nurseryPots().every(p=>!p.active)&&Math.random()<.45);
-  finishInvestigation(spy);
- }
  $('catSpy').textContent=spy.status==='running'?(ar?'🐾 '+displayName("catName")+' عم تتجسس...':'🐾 '+displayName("catName")+' is spying...'):(ar?'🕵️ ابعت '+displayName("catName")+' تتجسس على أبو وردة':'🕵️ Send '+displayName("catName")+' to spy on John');
  var spyCooldown=Math.max(0,(Number(spy.cooldownUntil)||0)-Date.now());
  if(spy.status!=='running'&&spyCooldown>0){var secs=Math.ceil(spyCooldown/1000);$('catSpy').textContent=(ar?'🕵️ التجسس متاح بعد ':'🕵️ Spy available in ')+String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');}
  $('catSpy').disabled=spy.status==='running'||spyCooldown>0||!state.abu.hired;
+ if(spy.status!=='running'&&!spyCooldown){
+   const reason=!state.abu.hired?(ar?'وظّف أبو وردة أولاً':'Hire John first'):state.cat.sleeping?(ar?'القطة نايمة':'Cat is asleep'):Date.now()<catBusyUntil?(ar?'القطة مشغولة شوي':'Cat is busy'):'';
+   if(reason){$('catSpy').disabled=true;$('catSpy').textContent=reason;}
+ }
+ const card=$('caseCard');
+ card.hidden=!spy.report||spy.dismissed===true||spy.status==='running';
+ if(!card.hidden){
+   $('caseTitle').textContent=(ar?'دفتر '+displayName('catName')+' · ملف ':'Detective '+displayName('catName')+' · Case ')+String(spy.caseNumber||1).padStart(3,'0');
+   $('caseNote').textContent=(detectiveNotes[spy.reportIndex]||detectiveNotes[0])[ar?0:1];
+   $('caseClose').ariaLabel=ar?'إغلاق التقرير':'Close case file';
+ }
  $('catSpy').style.opacity=$('catSpy').disabled?'0.55':'';
  $('catSpy').style.filter=$('catSpy').disabled?'grayscale(1)':'';
  $('catSpyReport').textContent=spy.status==='running'?(ar?displayName("catName")+' رايحة تتفقد المشتل، استناها شوي...':''+displayName("catName")+' is checking the nursery...'):spy.report?caseText(spy,ar):(ar?'دلّع '+displayName("catName")+' بلمسة، وابعتها بمهمة تجسس!':'Tap '+displayName("catName")+' to pet her, or send her on a spy mission!');
@@ -1263,7 +1277,7 @@ var spyStyle=document.createElement('style');
 spyStyle.textContent='#spyMimi{position:absolute;bottom:6%;right:-24%;width:100px;height:75px;z-index:15;pointer-events:none;transition:right 2s ease-in-out;filter:drop-shadow(0 5px 4px #0004)}#spyMimi.spy-in{right:5%}#spyMimi.spy-out{right:-24%}#spyMimi svg{width:100%;height:100%}#spyCaption{position:absolute;left:8%;right:8%;top:2%;bottom:auto;z-index:17;background:#fff9e6e8;color:#27442d;border-radius:15px;padding:8px;text-align:center;font-weight:bold;pointer-events:none}';
 document.head.appendChild(spyStyle);
 var spyMimi=document.createElement('div');spyMimi.id='spyMimi';spyMimi.hidden=true;
-spyMimi.innerHTML='<svg viewBox="0 0 120 95" aria-hidden="true"><path d="M19 47L16 13L43 29Q60 20 78 28L104 12L102 48Q109 71 84 83Q57 94 32 80Q12 69 19 47Z" fill="#edab61" stroke="#a76234" stroke-width="3"/><path d="M24 34L22 23L40 34M82 34L99 22L96 37" fill="#f3a6a0"/><ellipse cx="45" cy="54" rx="5" ry="7" fill="#322b25"/><ellipse cx="78" cy="54" rx="5" ry="7" fill="#322b25"/><path d="M55 66L66 66L60 72Z" fill="#bc7073"/><path d="M60 72Q51 80 45 73M60 72Q69 80 75 73" stroke="#8a5236" stroke-width="2.5" fill="none"/><path d="M35 69L12 66M35 75L13 79M85 69L108 66M85 75L109 79" stroke="#8a5236" stroke-width="2"/></svg>';
+spyMimi.innerHTML='<img alt="" src="yasmine/images/cat-care/idle.webp">';
 $('scene').appendChild(spyMimi);
 var spyCover=document.createElement('div');spyCover.id='spyCover';spyCover.hidden=true;spyCover.setAttribute('aria-hidden','true');spyCover.innerHTML='<svg viewBox="0 0 130 90" aria-hidden="true"><rect x="15" y="38" width="104" height="45" rx="8" fill="#a7764b" stroke="#795335" stroke-width="3"/><path d="M15 51H119M37 38V83M96 38V83" stroke="#d2a477" stroke-width="4"/><path d="M17 37Q22 12 42 25Q54 0 70 23Q94 5 111 32" fill="#428d57" stroke="#27653d" stroke-width="3"/><path d="M34 26Q23 10 17 16M69 22Q76 8 88 12M103 27Q114 15 123 22" fill="none" stroke="#428d57" stroke-width="9" stroke-linecap="round"/></svg>';$('scene').appendChild(spyCover);
 var spyCaption=document.createElement('div');spyCaption.id='spyCaption';spyCaption.hidden=true;$('scene').appendChild(spyCaption);
@@ -1284,13 +1298,9 @@ setInterval(function(){
  var spy=state.catSpy;
  if(spy.status!=='running'&&activeArea!=='cat')return;
  updateSpyScene();
- if(spy.status!=='running'&&activeArea==='cat'&&Date.now()<(Number(spy.cooldownUntil)||0)){
-  var remaining=Math.ceil((spy.cooldownUntil-Date.now())/1000),button=$('catSpy');
-  if(button){button.textContent=(state.lang==='ar'?'🕵️ التجسس متاح بعد ':'🕵️ Spy available in ')+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');button.disabled=true;button.style.opacity='0.55';button.style.filter='grayscale(1)';}
- }else if(spy.status!=='running'&&activeArea==='cat'&&$('catSpy').disabled&&state.abu.hired){renderCatExtras()}
  if(spy.status==='running'&&Date.now()>=spy.end){
   finishInvestigation(spy);
-  activeArea='cat';render();$('catArea').scrollIntoView({behavior:'smooth',block:'start'});
+  activeArea='cat';updateSpyScene();render();$('caseCard').scrollIntoView({behavior:'smooth',block:'center'});
  }
 },250);
 
