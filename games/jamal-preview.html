@@ -1,0 +1,30 @@
+<!doctype html><html dir="rtl" lang="ar"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>جمال · معاينة مكتب المحاسب</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#ede8db;color:#29392f;font:18px/1.6 Tahoma,Arial,sans-serif}main{max-width:560px;margin:auto;padding:16px 16px 40px}header{display:flex;align-items:center;justify-content:space-between;min-height:52px}h1{margin:14px 0;font-size:28px}h2{font-size:20px}.note,small{color:#576456;font-size:15px}button,summary{font:inherit;cursor:pointer;color:inherit}button{border:1px solid #baae97;border-radius:14px;background:#fffbef;padding:12px}.back{background:transparent;border:0;text-decoration:underline}.hero{display:block;width:100%;border-radius:20px}.actions{display:grid;gap:11px;margin-top:16px}.actions button,.tile{font-weight:bold;text-align:start;background:#fffaf0;box-shadow:0 2px 0 #d3c6b2}.actions button{display:flex;align-items:center;gap:.65em;min-height:57px}.actions button:after{content:'‹';margin-inline-start:auto;color:#647659}.grid,.switch{display:grid;grid-template-columns:1fr 1fr;gap:9px}.tile{display:flex;align-items:center;gap:8px;min-height:78px}.tile img{width:38px;height:50px;object-fit:contain}.switch{margin:10px 0 18px}.switch button{font-size:16px}.switch [aria-pressed=true]{background:#294f40;color:white;border-color:#294f40}.paper,details{background:#fffaf0;border:1px solid #d2c5ad;border-radius:15px;padding:14px;margin:9px 0}.paper div,summary span{display:flex;justify-content:space-between;align-items:center;gap:10px}.paper div+div{border-top:1px solid #e4dccd;padding-top:6px;margin-top:6px}summary{font-weight:bold}summary span{display:inline-flex;width:92%}.medal{width:110px;display:block;margin:auto}.plant{width:100%;max-width:220px}.green{color:#31653a}.red{color:#934329}bdi{white-space:nowrap}button:focus-visible,summary:focus-visible{outline:3px solid #60874b}
+</style><main><header><small>حديقة السعادة · معاينة تجريبية</small><button class="back" id="back"></button></header><article id="page"></article></main>
+<script>
+const page=document.querySelector('#page'),back=document.querySelector('#back'),art='yasmine/images/';let view='office',summaryFirst=true;
+let cat='ميمي';try{cat=JSON.parse(localStorage.getItem('yasmine-nursery-preview-v1')||'{}').catName||cat}catch{}
+const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const catTitle='فواتير '+escapeHTML(cat);
+const sales=[{name:'الياسمينة',seed:10,sale:40},{name:'الورد الجوري',seed:30,sale:90}];
+const num=n=>n.toLocaleString('ar');const line=(s,n)=>'<div><span>'+s+'</span><strong>'+num(n)+'</strong></div>';
+function button(id,label){return '<button data-view="'+id+'">'+label+'</button>'}
+function show(v){view=v;draw();scrollTo(0,0)}
+function draw(){
+back.hidden=view==='home';back.textContent=['garden','cat','wages'].includes(view)?'رجوع لجمال':'الشاشة الرئيسية';
+if(view==='office')page.innerHTML='<h1>جمال <small>محاسب المشتل</small></h1><img class="hero" src="'+art+'jamal-desk.webp" alt="جمال قاعد ورا مكتبه وعم يكتب بدفتر الحسابات"><div class="actions">'+button('garden','🌱 فواتير المشتل')+button('cat','🐾 '+catTitle)+button('wages','👥 فواتير الموظفين')+'</div>';
+if(view==='garden'){
+const total=k=>sales.reduce((a,r)=>a+r[k],0),profit=total('sale')-total('seed');
+page.innerHTML='<h1>فواتير المشتل</h1><small>جرّب طريقتي العرض بنفس المبيعات التجريبية</small><div class="switch"><button data-layout="sum" aria-pressed="'+summaryFirst+'">ملخّص ثم الفواتير</button><button data-layout="list" aria-pressed="'+!summaryFirst+'">الفواتير مباشرة</button></div>'+(summaryFirst?'<div class="paper">'+line('دفعت ثمن البذور',total('seed'))+line('قبضت من البيع',total('sale'))+line('ربح بعد ثمن البذور',profit)+'</div>':'')+'<h2>فواتير البيع</h2>'+sales.map(r=>'<details><summary><span>بيع '+r.name+' <bdi class="green">+'+num(r.sale)+' عملة</bdi></span></summary><div class="paper">'+line('ثمن البذرة',r.seed)+line('سعر البيع',r.sale)+line('ربح بعد ثمن البذرة',r.sale-r.seed)+'</div></details>').join('')+'<small>الربح هون محسوب قبل السماد والرواتب.</small>';
+}
+if(view==='cat'||view==='wages'){let animal=view==='cat';page.innerHTML='<h1>'+(animal?catTitle:'فواتير الموظفين')+'</h1><p class="note">فاتورة تجريبية</p><details><summary>'+(animal?'طعام '+escapeHTML(cat):'راتب أبو وردة')+' · ١٥ عملة</summary><p>'+(animal?'٥ حصص طعام × ٣ عملات':'راتب عن ٣ مبيعات')+' · مدفوعة</p></details>'}
+if(view==='home')page.innerHTML='<h1>حديقة السعادة</h1><div class="grid">'+[['yasmin','ياسمين','yasmin-happy.webp'],['office','جمال','nabih.webp'],['staff','الموظفين','abu-warda-full.webp'],['book','الإنجازات والموسوعة','medals/sales50.webp']].map(([id,s,img])=>'<button class="tile" data-view="'+id+'"><img src="'+art+img+'" alt="">'+s+'</button>').join('')+'</div>';
+if(view==='staff')page.innerHTML='<h1>الموظفين</h1>'+[['ياسمين','مديرة المشتل'],['أبو وردة','عامل المشتل'],['نانا','مربية القطط'],['جمال','محاسب المشتل']].map(([s,d])=>'<details><summary>'+s+'</summary>'+d+'</details>').join('');
+if(view==='yasmin')page.innerHTML='<h1>ياسمين</h1><p>مديرة المشتل</p>';
+if(view==='book')page.innerHTML='<h1>الإنجازات والموسوعة</h1><details><summary>الإنجازات</summary><h2>كتاب الميداليات</h2><img class="medal" src="'+art+'medals/sales50.webp" alt=""><p>التاجر الصغير · ٥٠ عملية بيع</p></details><details><summary>موسوعة النباتات</summary><h2>الياسمينة</h2><img class="plant" src="'+art+'plants/jasmine.webp" alt="مراحل نمو الياسمينة"></details>';
+}
+back.onclick=()=>show(['garden','cat','wages'].includes(view)?'office':'home');
+page.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.view)show(b.dataset.view);else if(b.dataset.layout){summaryFirst=b.dataset.layout==='sum';draw()}};
+draw();
+</script></html>
