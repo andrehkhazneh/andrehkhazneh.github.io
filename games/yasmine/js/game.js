@@ -255,7 +255,7 @@ $('catTab').onclick=function(){activeArea='cat';renderCat();renderNurseryNotice(
 });
 $('catToy').onclick=function(){
   if(state.cat.away||state.cat.toy||state.money<20)return;
-  financeMove(-20,'catfood');sound('purchase');
+  financeMove(-20,'catshop',{itemId:'feather'});sound('purchase');
   state.cat.toy=true;
   catMessage='bought';
   render();
@@ -419,7 +419,7 @@ async function shareOfficePage(heading,lines){
  try{if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:heading});return}}catch(e){if(e.name==='AbortError')return}
  const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=file.name;link.click();setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
-let invoiceGroup='',showInvoiceSummary=true;
+let invoiceGroup='';
 function invoiceSection(category){
  if(['salary','accountant','hire','bonus','upgrade'].includes(category))return 'staff';
  if(['catfood','catshop','invoice','catreward'].includes(category))return 'cat';
@@ -438,13 +438,11 @@ function renderFinance(){
    panel.innerHTML='<summary></summary><div class="office-intro"><img src="yasmine/images/nabih.webp" alt="" width="84" height="84"><p id="financeIntro"></p></div><button id="financeHire" type="button"></button><section class="office-wallet"><small id="financeWalletLabel"></small><strong id="financeBalance"></strong><span id="financeDue"></span></section><details id="financeBills"><summary></summary><div></div></details><div id="financeBook"><details id="financeReports"><summary></summary><select id="financePeriods"></select><p id="financeTotals"></p><div id="financeCategories"></div><details><summary id="financeCostsTitle"></summary><p id="financeCosts"></p></details><details><summary id="financePlantsTitle"></summary><p id="financePlants"></p></details><button id="financeShare"></button></details><details id="financeHistory"><summary></summary><input id="financeSearch" type="search"><div id="financeRows"></div><button id="financeMore"></button></details><details id="financeAsk"><summary></summary><p id="financeAdvice"></p><button id="financeTalk"></button></details><details><summary id="compostLedgerTitle"></summary><p id="compostLedgerStats"></p></details></div>';
    panel.firstElementChild.remove();
    panel.querySelector('.office-intro img').remove();
-   panel.insertAdjacentHTML('afterbegin','<h2 id="jamalName"></h2><img class="jamal-art" src="yasmine/images/jamal-desk.webp" alt=""><div id="jamalMenu"><button data-group="garden"></button><button data-group="cat"></button><button data-group="staff"></button></div><div id="jamalSub" class="jamal-subhead"><h3 id="jamalHeading"></h3><button id="jamalBack"></button></div><button id="jamalLayout"></button><p id="jamalSummary"></p><div id="jamalReceipts"></div><button id="jamalOlder"></button>');
+   panel.insertAdjacentHTML('afterbegin','<h2 id="jamalName"></h2><img class="jamal-art" src="yasmine/images/jamal-desk.webp" alt=""><div id="jamalMenu"><button data-group="garden"></button><button data-group="cat"></button><button data-group="staff"></button></div><div id="jamalSub" class="jamal-subhead"><h3 id="jamalHeading"></h3><button id="jamalBack"></button></div><article id="jamalSheet" class="statement" hidden></article><p id="jamalAccess" hidden></p>');
    const advanced=document.createElement('details');advanced.id='jamalAdvanced';advanced.innerHTML='<summary></summary>';panel.append(advanced);advanced.append(panel.querySelector('#financeBook'));
    $('officeArea').append(panel);
    $('jamalMenu').onclick=e=>{const b=e.target.closest('[data-group]');if(b){invoiceGroup=b.dataset.group;financePage=40;renderFinance()}};
    $('jamalBack').onclick=()=>{invoiceGroup='';renderFinance()};
-   $('jamalLayout').onclick=()=>{showInvoiceSummary=!showInvoiceSummary;renderFinance()};
-   $('jamalOlder').onclick=()=>{financePage+=40;renderFinance()};
    panel.addEventListener('toggle',e=>{if(['financePanel','financeBills','financeReports','financeHistory','financeAsk'].includes(e.target.id)&&e.target.open){financeViewStamp='';renderFinance()}},true);
    $('financeHire').onclick=()=>{
      const f=financeData();if(f.due&&state.money>=20){financeMove(-20,'accountant',{person:'ledger',billKey:'ledger'});f.due=false}
@@ -460,18 +458,16 @@ function renderFinance(){
  const t=finText,openBills=Object.values(f.pending).map(id=>f.bills[id-1]),debt=openBills.filter(b=>!b.key.startsWith('request-')).reduce((n,b)=>n+b.amount,0);
  if(activeArea!=='office')return;
  const today=new Date();today.setHours(0,0,0,0);
- const stamp=[invoiceGroup,showInvoiceSummary,state.lang,today.getTime(),state.money,state.sales,f.rows.length,f.bills.length,openBills.map(b=>b.id+':'+b.seen),f.hired,f.due,financePeriod,financePage,financeSearch,f.joke,state.catName].join('|');
+ const stamp=[invoiceGroup,state.lang,today.getTime(),state.money,state.sales,f.rows.length,f.bills.length,openBills.map(b=>b.id+':'+b.seen),f.hired,f.due,financePeriod,financePage,financeSearch,f.joke,state.catName].join('|');
  if(stamp===financeViewStamp)return;financeViewStamp=stamp;
  const put=(id,text)=>{$(id).textContent=text};
  const title=(id,ar,en)=>{$(id).firstElementChild.textContent=t(ar,en)};
- const names={garden:t('فواتير المشتل','Nursery invoices'),cat:t('فواتير ','Invoices · ')+displayName('catName'),staff:t('فواتير الموظفين','Staff invoices')};
+ const names={garden:t('حسابات المشتل','Nursery accounts'),cat:t('مصاريف ','Expenses · ')+displayName('catName'),staff:t('رواتب الموظفين ومكافآتهم','Staff wages and bonuses')};
  const home=!invoiceGroup;
  put('jamalName',t('جمال · محاسب المشتل','Jamal · Nursery accountant'));
  for(const b of $('jamalMenu').children)b.textContent=names[b.dataset.group];
  $('jamalMenu').hidden=!home;panel.querySelector('.jamal-art').hidden=!home;
  $('jamalSub').hidden=home;put('jamalHeading',names[invoiceGroup]||'');put('jamalBack',t('رجوع','Back'));
- $('jamalLayout').hidden=invoiceGroup!=='garden'||!f.hired;
- put('jamalLayout',showInvoiceSummary?t('اعرض الفواتير مباشرة','Show invoices only'):t('اعرض الملخص والفواتير','Show summary and invoices'));
  $('jamalAdvanced').hidden=invoiceGroup!=='garden'||!f.hired;
  $('jamalAdvanced').firstChild.textContent=t('تقارير ودفتر الحسابات','Reports and ledger');
  panel.querySelector('.office-intro').hidden=!(invoiceGroup==='staff');
@@ -508,28 +504,21 @@ function renderFinance(){
    for(const b of [...relevant.filter(b=>b.status==='pending'),...relevant.filter(b=>b.status!=='pending').slice(-financePage).reverse()])receipt(box,b);
    if(relevant.length>financePage){const more=document.createElement('button');more.textContent=t('فواتير أقدم','Older bills');more.onclick=()=>{financePage+=40;renderFinance()};box.append(more)}
  }
- const history=$('jamalReceipts');history.replaceChildren();
- $('jamalOlder').hidden=true;$('jamalSummary').hidden=true;
+ const sheet=$('jamalSheet');
+ sheet.hidden=home||!f.hired;
+ $('jamalHeading').hidden=!sheet.hidden;
+ $('jamalAccess').hidden=home||f.hired||invoiceGroup==='staff';
+ put('jamalAccess',t('وظّف جمال من قسم الرواتب لتفتح كشوفك المحفوظة.','Hire Jamal under Staff wages to see your recorded statements.'));
  if(home)return;
  if(f.hired){
-   const records=f.rows.filter(r=>invoiceSection(r.category)===invoiceGroup);
-   if(invoiceGroup==='garden'&&showInvoiceSummary){
-     const seedSpent=-records.filter(r=>r.category==='seeds').reduce((n,r)=>n+r.amount,0);
-     const sales=records.filter(r=>r.category==='sales'),gross=sales.reduce((n,r)=>n+r.amount,0);
-     const matched=sales.filter(r=>Number.isFinite(r.seedCost));
-     put('jamalSummary',[t('دفعت ثمن بذور: ','Seed purchases: ')+coins(seedSpent),t('قبضت من بيع النباتات: ','Plant sales: ')+coins(gross),matched.length?t('ربح بعد ثمن البذور: ','Margin after seeds: ')+coins(matched.reduce((n,r)=>n+r.amount-r.seedCost,0))+t(' · للمبيعات المطابقة فقط، قبل السماد والرواتب',' · matched sales only, before fertilizer and wages'):t('الربح بيظهر لما تبيع نبتة زرعت بذرتها بعد التحديث.','Margin appears after you sell a plant seeded after this update.')].join('\n'));
-     $('jamalSummary').hidden=false;
+   const wages={};
+   if(invoiceGroup==='staff')for(const [key,amount,category,person,button] of billSources()){
+     if(amount&&['salary','accountant'].includes(category))wages[person]={amount,affordable:state.money>=amount,pay:()=>{
+       if(billSources().some(x=>x[0]===key&&x[1]===amount)&&state.money>=amount)$(button).onclick();
+     }};
    }
-   const movements=records.filter(r=>!r.invoice);
-   for(const r of movements.slice(-financePage).reverse()){
-     const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');
-     s.textContent=[finLabel(r.category),crops[r.crop]?.[state.lang],r.person&&finLabel(r.person),fmt(r.amount)].filter(Boolean).join(' · ');
-     p.textContent=[new Date(r.at).toLocaleString(state.lang),r.id?'TX-'+r.id:'',Number.isFinite(r.seedCost)?t('ثمن البذرة ','Seed cost ')+coins(r.seedCost)+t(' · ربح بعد البذرة ',' · Margin after seed ')+coins(r.amount-r.seedCost):''].filter(Boolean).join(' · ');
-     d.append(s,p);history.append(d);
-   }
-   $('jamalOlder').hidden=movements.length<=financePage;put('jamalOlder',t('حركات أقدم','Older transactions'));
-   if(!movements.length&&!relevant.length)history.textContent=t('ما في فواتير بهالقسم لحد هلأ.','No invoices in this section yet.');
- }else if(!relevant.length)history.textContent=t('وظّف جمال من فواتير الموظفين لتشوف سجل الحركات.','Hire Jamal under Staff invoices to view the ledger.');
+   window.JamalStatements.render(sheet,invoiceGroup,f,state.lang==='en',displayName('catName'),displayName('nurseryName'),names[invoiceGroup],wages);
+ }
  if(!f.hired)return;
  title('financeReports','تقرير الإيرادات والمصاريف','Income and spending');title('financeHistory','دفتر الحركات','Transaction ledger');title('financeAsk','اسأل جمال','Ask Jamal');
  const options={all:t('من بداية التسجيل','All recorded history'),today:t('اليوم','Today'),yesterday:t('أمس','Yesterday'),week:t('آخر ٧ أيام','Last 7 days'),month:t('آخر ٣٠ يوم','Last 30 days')};
@@ -1779,7 +1768,7 @@ function buyCatItem(item){
  var ar=state.lang==='ar',before=state.catTreats;
  var notice=$('catPurchaseNotice');if(!notice){notice=document.createElement('p');notice.id='catPurchaseNotice';notice.setAttribute('role','status');notice.style.cssText='padding:12px;border-radius:12px;background:#e4efd5;color:#24452e;font-weight:bold';$('catSheetBalance').after(notice);}
  if(state.money<item.cost){notice.textContent=ar?'ما معك عملات كفاية':'Not enough coins';return;}
- financeMove(-item.cost,'catshop');if(item.id==='treat')state.catTreats+=3;else state.catItems[item.id]=true;
+ financeMove(-item.cost,'catshop',{itemId:item.id});if(item.id==='treat')state.catTreats+=3;else state.catItems[item.id]=true;
  catPurchase={id:item.id,until:Date.now()+2200};
  notice.textContent=(ar?'✓ اشتريت ':'✓ Purchased ')+(ar?item.ar:item.en).replace('{cat}',displayName("catName"))+(item.id==='treat'?(ar?' · المخزون: ':' · Stock: ')+before+' → '+state.catTreats:'')+' · −'+item.cost+' 🪙';
  notice.animate([{opacity:.35,transform:'scale(.97)'},{opacity:1,transform:'scale(1)'}],{duration:350});
