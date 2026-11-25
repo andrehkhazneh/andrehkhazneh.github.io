@@ -174,5 +174,5 @@ function showCelebration(){
  button.onclick=()=>{clearTimeout(timer);showAward();open(row[0]);finish()};
 }
 document.getElementById('achievementsTab').style.setProperty('--gold-medal','url('+artwork('sales500')+')');
-window.YasmineMedals={render,celebrate};
+window.YasmineMedals={render,celebrate,open};
 })();

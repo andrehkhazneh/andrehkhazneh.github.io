@@ -1,0 +1,24 @@
+.field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(43%,145px),1fr));gap:.7rem}
+#encyclopediaArea .field-card{display:grid;justify-items:center;align-content:center;gap:.25rem;width:100%;padding:.55rem;border:1px solid #c8bc9b!important;background:linear-gradient(#fffaf0,#eee7d4)!important;color:#243d30!important;border-radius:16px;box-shadow:0 3px 5px #312b201a!important}
+.field-card img{height:clamp(85px,22vw,135px);width:100%;object-fit:contain}
+.field-card strong{font-size:clamp(1rem,4.3vw,1.25rem)}
+#encyclopediaArea .field-card:disabled{opacity:1!important;color:#555b50!important}
+.field-card:disabled img{filter:brightness(0);opacity:.2}
+#encyclopediaArea .field-card.fresh{outline:2px solid #ab283b;outline-offset:-2px}
+.field-card small{font-size:.85rem}
+.field-award{display:flex;align-items:center;justify-content:center;gap:.6rem;width:100%;margin-top:1rem}
+.field-award img{width:48px;height:48px;object-fit:contain}
+dialog.field-page{box-sizing:border-box;width:min(94vw,560px);max-height:90dvh;overflow:auto;padding:clamp(14px,4vw,26px);background:#fff9ec;border:2px solid #a59269;border-radius:20px;color:#29382b;box-shadow:0 12px 54px #10211965;text-align:start;line-height:1.65}
+.field-page::backdrop{background:#16251dd9}
+.field-page header{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.field-page header button{width:auto;padding:8px 16px}
+.field-page h2,.field-page h3,.field-page p,.field-page summary,.field-page li,.field-page strong{color:#283c2f!important}
+.field-page h2,.field-page h3,.field-page p{margin:.4rem 0}
+.field-page header i{font-family:Georgia,serif;color:#50604e}
+.field-portrait{display:block;width:100%;height:auto;border-radius:12px;margin:.8rem 0}
+.field-fact{font-size:1.06rem}
+.field-page details,.field-page aside,.field-page section{margin:.9rem 0;padding:.6rem .85rem;background:#f2eddd;border-radius:10px}
+.field-page summary{cursor:pointer;font-weight:bold}
+.field-page ol{padding-inline-start:1.4rem}.field-page li+li{margin-top:.4rem}
+.field-page footer{font-size:.9rem;color:#4a5846}
+.field-page a{color:#315638;text-decoration:underline}
