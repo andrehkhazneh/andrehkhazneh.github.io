@@ -21,7 +21,7 @@ function canStart(c){
 function improve(state,level,charge){
  const c=data(state),next=tiers[c.tier+1];
  if(!next||c.batch||level<next.level||state.money<next.price)return false;
- charge(-next.price,c.tier?'compostUpgrade':'compostBuy');
+ charge(-next.price,['compostBuy','compostUpgrade2','compostUpgrade3'][c.tier]);
  c.tier++;c.invested+=next.price;return true;
 }
 function start(state,now){
@@ -36,6 +36,13 @@ function collect(state,now){
  if(!ready(c,now))return 0;
  const amount=c.batch.units;
  state.stock.fertilizer+=amount;c.units+=amount;c.batches++;c.batch=null;return amount;
+}
+// Only one finished batch can be waiting. Moving it into stock leaves lifetime output unchanged.
+function production(c,now){
+ const pending=ready(c,now)?c.batch.units:0;
+ const units=c.units+pending;
+ return {completed:c.batches+Number(pending>0),collected:c.batches,units,pending,
+   value:units*2,investment:c.invested,net:units*2-c.invested};
 }
 function clock(seconds){return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0')}
 const el=id=>document.getElementById(id);
@@ -103,10 +110,21 @@ function render(state,h){
  el('compostProgress').hidden=!batch||done;if(batch)el('compostProgress').value=Math.min(1,(now-batch.start)/(batch.end-batch.start));
  upgrade.hidden=!next||!c.tier;
  if(next){upgrade.disabled=!!batch||state.money<next.price||level<next.level;put('compostUpgrade',(c.tier?txt('تطوير المحطة','Upgrade station'):txt('شراء المحطة','Buy station'))+' · '+next.price+' 🪙 · '+txt('المستوى ','Level ')+next.level)}
- const value=c.units*2,net=value-c.invested;
- const stats=txt('دفعات جمعتها: ','Batches collected: ')+c.batches+txt(' · وحدات سماد: ',' · Fertilizer units: ')+c.units+txt(' · قيمة تقديرية: ',' · Estimated value: ')+value+txt(' · استثمار: ',' · Investment: ')+c.invested+' · '+(net<0?txt('باقي لاسترداد التكلفة: ','Left to break even: '):txt('صافي الوفر التقديري: ','Estimated net savings: '))+Math.abs(net)+' 🪙';
+ const book=production(c,now),value=book.value,net=book.net;
+ const stats=txt('دفعات جمعتها: ','Batches collected: ')+c.batches+txt(' · وحدات سماد: ',' · Fertilizer units: ')+book.units+txt(' · قيمة تقديرية: ',' · Estimated value: ')+value+txt(' · استثمار: ',' · Investment: ')+c.invested+' · '+(net<0?txt('باقي لاسترداد التكلفة: ','Left to break even: '):txt('صافي الوفر التقديري: ','Estimated net savings: '))+Math.abs(net)+' 🪙';
  put('compostStatsTitle',txt('المخزون والتطوير والإحصائيات','Stock, upgrades and statistics'));put('compostStats',stats);
- put('compostLedgerTitle',txt('توفير السماد العضوي','Organic compost savings'));put('compostLedgerStats',stats);
+ put('compostLedgerTitle',txt('توفير السماد العضوي','Organic compost savings'));
+ put('compostLedgerStats',[
+   txt('من بداية تشغيل المحطة','Lifetime station totals'),
+   txt('دفعات اكتمل تصنيعها: ','Completed batches: ')+book.completed,
+   txt('دفعات تم جمعها: ','Collected batches: ')+book.collected,
+   txt('إجمالي السماد المنتج: ','Total fertilizer produced: ')+book.units,
+   txt('وحدات جاهزة بانتظار الجمع: ','Units awaiting collection: ')+book.pending,
+   txt('قيمة الإنتاج بسعر وحدتين نقديتين لكل سماد: ','Production valued at 2 coins per unit: ')+book.value+' 🪙',
+   txt('تكلفة شراء المحطة وتطويرها: ','Station purchase and upgrades: ')+book.investment+' 🪙',
+   txt('صافي الوفر التقديري: ','Estimated net savings: ')+book.net+' 🪙',
+   txt('الدفتر بيحسب هالتقدير لحاله. الرصيد والربح النقدي بيتغيّروا بالحركات المالية الفعلية.','This estimate is separate from the cash balance and net cash result.')
+ ].join('\n'));
  const route=el('compostRequest'),fert=state.staff.hired&&state.staff.request==='fertilizer';
  route.hidden=!fert||(!batch&&!canStart(c));
  if(!route.hidden){put('compostRequest',done?txt('اجمع السماد الجاهز','Collect ready fertilizer'):txt('افتح المحطة','Open station'));put('requestText',done?txt('يا مدير، السماد جاهز بالصندوق!','There’s fertilizer ready to collect!'):batch?txt('باقي ','Time left: ')+clock(left)+txt(' للدفعة. فينا نشتري إذا مستعجلين.','. We can buy now if needed.'):txt('مواد الدفعة جاهزة. منبلّش التصنيع أو منشتري؟','We have enough materials. Compost or buy?'))}
@@ -122,5 +140,5 @@ function render(state,h){
  };
  buy.onclick=upgrade.onclick=()=>{const s=h.state();if(performance.now()-lastUpgrade<650||!improve(s,root.YasmineGardenCore.levelFor(s.sales),h.charge))return;lastUpgrade=performance.now();h.save();h.render();put('compostFeedback','')};
 }
-root.YasmineCompost={data,add,improve,start,collect,ready,tick,render};
+root.YasmineCompost={data,add,improve,start,collect,ready,production,tick,render};
 })(window);

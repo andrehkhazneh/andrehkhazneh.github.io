@@ -317,6 +317,13 @@ function financeData(){return state.finance||(state.finance={started:Date.now(),
 function financeMove(amount,category){var f=financeData();state.money+=amount;if(amount)f.rows.push({at:Date.now(),amount:amount,category:category});}
 function financeWage(){var f=financeData();if(!f.hired||f.due)return;if(++f.count>=10){f.count=0;if(state.money>=20)financeMove(-20,'accountant');else f.due=true}}
 var financePeriod='all',financeJoke=0;
+function financeCategory(row){
+ if(row.category==='compostUpgrade'){
+   if(row.amount===-200)return 'compostUpgrade2';
+   if(row.amount===-350)return 'compostUpgrade3';
+ }
+ return row.category;
+}
 function renderFinance(){
  var f=financeData(),en=state.lang==='en',panel=document.getElementById('financePanel');
  if(!panel){panel=document.createElement('details');panel.id='financePanel';panel.className='panel';panel.style.cssText='background:#f4ead8;color:#382c20;padding:14px;border-radius:16px';panel.innerHTML='<summary style="cursor:pointer;font-weight:bold"></summary><p id="financeIntro"></p><button type="button" id="financeHire"></button><div id="financeBook" hidden><div id="financePeriods" style="display:flex;flex-wrap:wrap;gap:6px"></div><p id="financeTotals"></p><details><summary id="compostLedgerTitle"></summary><p id="compostLedgerStats"></p></details><div id="financeCategories"></div><details><summary id="financeHistoryTitle"></summary><div id="financeHistory" style="max-height:260px;overflow:auto"></div></details><p id="financeNote"></p><button type="button" id="financeTalk"></button><p id="financeAdvice"></p></div>';document.getElementById('workersArea').appendChild(panel);
@@ -331,18 +338,19 @@ function renderFinance(){
  var hire=document.getElementById('financeHire');hire.hidden=f.hired&&!f.due;hire.disabled=f.due?state.money<20:window.YasmineGardenCore.levelFor(state.sales)<10||state.money<400;hire.textContent=f.due?(en?'Pay outstanding wage · 20':'ادفع الراتب المستحق · 20'):(en?'Hire accountant':'وظّف أبو حسبة');
  document.getElementById('financeBook').hidden=!f.hired||f.due;
  if(!f.hired||f.due||!panel.open)return;
- var labels={compostBuy:['شراء محطة السماد','Compost station purchase'],compostUpgrade:['تطوير محطة السماد','Compost station upgrade'],sales:['المبيعات','Sales'],salary:['الرواتب','Wages'],accountant:['راتب المحاسب','Accountant wage'],hire:['التوظيف','Hiring'],upgrade:['التطوير','Upgrades'],seeds:['البذور','Seeds'],fertilizer:['السماد','Fertilizer'],catfood:['طعام القطة','Cat food'],bonus:['البونص','Bonuses'],invoice:['الفواتير','Invoices'],catshop:['متجر القطة','Cat shop'],awards:['الميداليات','Medals'],missions:['المهمات','Missions'],events:['الأحداث','Events'],catreward:['مكافآت القطة','Cat rewards']};
- var start=new Date();start.setHours(0,0,0,0);if(financePeriod==='week')start.setDate(start.getDate()-6);var rows=f.rows.filter(function(x){return financePeriod==='all'||x.at>=+start}),income=0,expense=0,groups={};rows.forEach(function(x){if(x.amount>0)income+=x.amount;else expense-=x.amount;groups[x.category]=(groups[x.category]||0)+x.amount});
+ var labels={compostBuy:['شراء محطة السماد','Compost station purchase'],compostUpgrade:['تطوير محطة السماد','Compost station upgrade'],compostUpgrade2:['تطوير محطة السماد للمستوى 2','Compost station upgrade to tier 2'],compostUpgrade3:['تطوير محطة السماد للمستوى 3','Compost station upgrade to tier 3'],sales:['المبيعات','Sales'],salary:['الرواتب','Wages'],accountant:['راتب المحاسب','Accountant wage'],hire:['التوظيف','Hiring'],upgrade:['التطوير','Upgrades'],seeds:['البذور','Seeds'],fertilizer:['شراء سماد تجاري','Commercial fertilizer purchase'],catfood:['طعام القطة','Cat food'],bonus:['البونص','Bonuses'],invoice:['الفواتير','Invoices'],catshop:['متجر القطة','Cat shop'],awards:['الميداليات','Medals'],missions:['المهمات','Missions'],events:['الأحداث','Events'],catreward:['مكافآت القطة','Cat rewards']};
+ var start=new Date();start.setHours(0,0,0,0);if(financePeriod==='week')start.setDate(start.getDate()-6);var rows=f.rows.filter(function(x){return financePeriod==='all'||x.at>=+start}),income=0,expense=0,groups={};rows.forEach(function(x){if(x.amount>0)income+=x.amount;else expense-=x.amount;var category=financeCategory(x);groups[category]=(groups[category]||0)+x.amount});
  document.querySelectorAll('#financePeriods button').forEach(function(b){b.textContent=({today:en?'Today':'اليوم',week:en?'7 days':'7 أيام',all:en?'All':'من البداية'})[b.dataset.period];b.setAttribute('aria-pressed',String(b.dataset.period===financePeriod))});
  put('financeTotals',(en?'Income: ':'الإيرادات: ')+income+' 🪙 | '+(en?'Expenses: ':'المصاريف: ')+expense+' 🪙 | '+(en?'Net: ':'الصافي: ')+(income-expense)+' 🪙');
  var list=function(id,items){var el=document.getElementById(id),str=items.join('\n');if(el.textContent!==str){el.textContent=str;el.style.whiteSpace='pre-line';el.style.lineHeight='1.8'}};
  var label=function(k){return (labels[k]||[k,k])[en?1:0]};
  list('financeCategories',Object.entries(groups).map(function(x){return label(x[0])+': '+(x[1]>0?'+':'')+x[1]+' 🪙'}));
  put('financeHistoryTitle',en?'Transaction ledger':'دفتر الحركات المالية');
- list('financeHistory',rows.slice(-100).reverse().map(function(x){return new Date(x.at).toLocaleString(en?'en-CA':'ar')+' · '+label(x.category)+' · '+(x.amount>0?'+':'')+x.amount+' 🪙'}));
+ list('financeHistory',rows.slice(-100).reverse().map(function(x){return new Date(x.at).toLocaleString(en?'en-CA':'ar')+' · '+label(financeCategory(x))+' · '+(x.amount>0?'+':'')+x.amount+' 🪙'}));
  put('financeNote',(en?'Recorded since ':'التسجيل من تاريخ ')+new Date(f.started).toLocaleDateString()+(en?' · Opening balance: ':' · الرصيد الافتتاحي: ')+f.opening+(en?' · Latest 100 transactions shown.':' · آخر 100 حركة معروضة.'));
  put('financeTalk',en?'Ask the accountant':'اسأل أبو حسبة');
- var jokes=en?['My salary is an investment!','The cat has expensive taste!','Keep an eye on expenses.']:['راتبي مو مصروف يا معلم، راتبي استثمار!','مشمش شكلو فاتح مطعم لحالو!','راقب المصاريف يا معلم، المصاري ما إلها جناحات!'];put('financeAdvice',jokes[financeJoke%jokes.length]);
+ var jokes=en?['My salary is an investment!','The cat has expensive taste!','Keep an eye on expenses.']:['راتبي مو مصروف يا معلم، راتبي استثمار!','مشمش شكلو فاتح مطعم لحالو!','راقب المصاريف يا معلم، المصاري ما إلها جناحات!'];if(state.compost&&state.compost.tier)jokes.push(en?'Those dry leaves finally earned their keep!':'أول مرة بشوف ورق يابس عم يوفّر علينا مصاري!',en?'If the bin keeps this up, I might ask for a bonus.':'إذا الصندوق ضلّ هيك، شكلي رح طالب ببونص.');
+ put('financeAdvice',jokes[financeJoke%jokes.length]);
 }
 
 function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}}
