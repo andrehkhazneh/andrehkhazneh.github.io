@@ -342,7 +342,7 @@ html body #settingsPanel .cfg-row[open]>summary:before,html body #settingsPanel 
 #compostNeeds p{margin:0;padding:8px 0;border-bottom:1px solid var(--cycle-edge,#899783);line-height:1.5}
 #compostStation .compost-more{margin-top:14px}
 #compostStation [hidden]{display:none!important}
-</style><style>#compostLedgerStats{white-space:pre-line;line-height:1.85}</style></head><body><main>
+</style><style>#compostLedgerStats{white-space:pre-line;line-height:1.85}</style><style>#financePanel{padding:1rem}#financePanel details{padding:.65rem 0;border-block-end:1px solid currentColor}#financePanel summary{cursor:pointer;font-weight:700}#financePanel input,#financePanel select{box-sizing:border-box;max-width:100%;padding:.55rem}#financePanel button{margin:.25rem}#financeBalance{font-weight:700}#compostLedgerStats,#financeCosts,#financePlants{white-space:pre-line}</style></head><body><main>
 <section id="catEmergencyPanel" hidden aria-labelledby="welfareTitle">
 <div class="welfare-heading"><strong id="welfareTitle"></strong><b id="welfareTime" dir="ltr" hidden></b></div>
 <p id="catEmergencyText" aria-live="polite"></p>
@@ -500,7 +500,7 @@ html body #settingsPanel .cfg-row[open]>summary:before,html body #settingsPanel 
 <script src="yasmine/js/garden.js?v=plots1"></script>
 <script src="yasmine/js/cat-scene.js?v=garden-walk2"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/field-guide.js?v=plant-pages"></script><script src="yasmine/js/medals.js?v=plant-pages"></script><script src="yasmine/js/compost.js?v=ledger3"></script><script src="yasmine/js/game.js?v=ledger3"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/field-guide.js?v=plant-pages"></script><script src="yasmine/js/medals.js?v=plant-pages"></script><script src="yasmine/js/compost.js?v=office4"></script><script src="yasmine/js/game.js?v=office4"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
@@ -550,6 +550,10 @@ function syncRules(){
  const en=isEnglish(),template=document.createElement('template');
  template.innerHTML=en?english:arabic;
  const updated=template.content.firstElementChild;if(!updated)return;
+ const guide=document.createElement('details'),title=document.createElement('summary'),body=document.createElement('p');
+ title.textContent=en?'How do I use the nursery accountant?':'كيف أستفيد من محاسب المشتل؟';
+ body.textContent=en?'Open Staff → Mr. Ledger. The ledger starts with your opening balance. Hire him at level 10 for 400 coins. His wage is 20 every 10 sales. Open a bill to see its status and pay it. Requests only cost coins when approved. Net cash is money received minus money paid, including investments. Organic savings are estimated from tracked fertilizer use. Open a report or invoice to share its image.':'من الموظفين افتح مكتب أبو حسبة. التسجيل بيبدأ من رصيدك الافتتاحي. بتوظفه بالمستوى ١٠ مقابل ٤٠٠ عملة، وراتبه ٢٠ كل ١٠ مبيعات. افتح الفاتورة لتشوف حالتها وتدفعها. طلب ياسمين بينخصم بس لما توافق عليه. صافي الحركة النقدية بيحسب كل المقبوضات والمدفوعات بما فيها التطويرات. توفير السماد تقديري وبيتحسب وقت الاستعمال. فيك تشارك صورة من التقرير أو الفاتورة.';
+ guide.append(title,body);updated.append(guide);
  sheet.innerHTML=updated.innerHTML;sheet.dir=en?'ltr':'rtl';sheet.lang=en?'en':'ar';
  open.textContent=en?'📖 Game guide':'📖 دليل اللعبة';
 }

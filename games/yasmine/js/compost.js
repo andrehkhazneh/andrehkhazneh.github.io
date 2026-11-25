@@ -35,14 +35,14 @@ function collect(state,now){
  const c=data(state);
  if(!ready(c,now))return 0;
  const amount=c.batch.units;
- state.stock.fertilizer+=amount;c.units+=amount;c.batches++;c.batch=null;return amount;
+ state.stock.fertilizer+=amount;c.organicStock=(c.organicStock||0)+amount;c.units+=amount;c.batches++;c.batch=null;return amount;
 }
 // Only one finished batch can be waiting. Moving it into stock leaves lifetime output unchanged.
 function production(c,now){
  const pending=ready(c,now)?c.batch.units:0;
  const units=c.units+pending;
  return {completed:c.batches+Number(pending>0),collected:c.batches,units,pending,
-   value:units*2,investment:c.invested,net:units*2-c.invested};
+   value:units*2,investment:c.invested,net:(c.organicUsed||0)*2-c.invested};
 }
 function clock(seconds){return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0')}
 const el=id=>document.getElementById(id);
@@ -121,6 +121,7 @@ function render(state,h){
    txt('إجمالي السماد المنتج: ','Total fertilizer produced: ')+book.units,
    txt('وحدات جاهزة بانتظار الجمع: ','Units awaiting collection: ')+book.pending,
    txt('قيمة الإنتاج بسعر وحدتين نقديتين لكل سماد: ','Production valued at 2 coins per unit: ')+book.value+' 🪙',
+   txt('سماد عضوي استعملته من وقت تحديث الدفتر: ','Organic units used since ledger update: ')+(c.organicUsed||0),
    txt('تكلفة شراء المحطة وتطويرها: ','Station purchase and upgrades: ')+book.investment+' 🪙',
    txt('صافي الوفر التقديري: ','Estimated net savings: ')+book.net+' 🪙',
    txt('الدفتر بيحسب هالتقدير لحاله. الرصيد والربح النقدي بيتغيّروا بالحركات المالية الفعلية.','This estimate is separate from the cash balance and net cash result.')
