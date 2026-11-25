@@ -113,6 +113,35 @@ var workersSection=document.getElementById('workersArea');document.getElementByI
 const jamalStaff=document.createElement('details');jamalStaff.className='panel';jamalStaff.id='jamalStaff';
 jamalStaff.innerHTML='<summary><img src="yasmine/images/nabih.webp" alt=""><strong id="jamalStaffName"></strong></summary><p id="jamalStaffInfo"></p><button id="jamalStaffGo"></button>';
 workersSection.append(jamalStaff);
+const teamCards = [jamalStaff, $('workersYasminCard'), $('abuPanel'), $('nanaPanel')];
+for (const card of teamCards) {
+  const header = card.querySelector('summary');
+  const portrait = header.querySelector('img');
+  const heading = header.querySelector('h2,strong');
+  const role = header.querySelector('#workersYasminRole,#nanaRole') || document.createElement('span');
+  const status = header.querySelector('#abuStatus,#nanaStatus');
+  if (status) header.after(status);
+  if (card.id==='abuPanel') role.id='teamAbuRole';
+  if (card===jamalStaff) role.id='teamJamalRole';
+  const photo=document.createElement('span'), text=document.createElement('span');
+  photo.className='team-photo';photo.append(portrait);portrait.alt='';
+  text.className='team-text';heading.classList.add('team-name');role.classList.add('team-role');
+  text.append(heading,role);
+  if (['abuPanel','nanaPanel','jamalStaff'].includes(card.id)) {
+    const due=document.createElement('small');due.id=card.id+'Due';due.className='team-due';due.hidden=true;text.append(due);
+  }
+  header.className='team-header';header.replaceChildren(photo,text);
+  card.name='nursery-team';card.open=false;
+}
+function renderTeam(){
+  const en=state.lang==='en';
+  $('teamAbuRole').textContent=en?'Nursery gardener':'عامل المشتل';
+  $('teamJamalRole').textContent=en?'Nursery accountant':'محاسب المشتل';
+  for(const [card,due] of [['abuPanel',state.abu.paused],['nanaPanel',state.nana.paused],['jamalStaff',financeData().due]]){
+    const badge=$(card+'Due');badge.hidden=!due;
+    badge.textContent=en?'Wage due':'راتب مستحق';
+  }
+}
 var graceSample=null;
 document.addEventListener('visibilitychange',function(){graceSample=null});
 window.addEventListener('pagehide',function(){graceSample=null});
@@ -144,6 +173,7 @@ function renderCat(){
   $('catArea').hidden=activeArea!=='cat';
   $('staffArea').hidden=activeArea!=='staff';
   $('workersArea').hidden=activeArea!=='workers';
+  if(activeArea==='workers')renderTeam();
   $('workersTab').setAttribute('aria-pressed',String(activeArea==='workers'));
   $('workersTab').setAttribute('aria-expanded',String(activeArea==='workers'));
   $('workersTab').firstChild.textContent=finText('الموظفين ','Staff ');
@@ -152,7 +182,7 @@ function renderCat(){
   $('jamalTab').setAttribute('aria-pressed',String(activeArea==='office'));
   $('jamalStaffName').textContent=finText('جمال','Jamal');
   $('jamalStaffInfo').textContent=finText('محاسب المشتل · التوظيف من المستوى ٦ مقابل ٤٠٠ عملة. الراتب ٢٠ كل ١٠ مبيعات.','Nursery accountant · Level 6, 400 coins to hire, wage 20 per 10 sales.');
-  $('jamalStaffGo').textContent=finText('حسابات جمال','Visit Jamal');
+  $('jamalStaffGo').textContent=finText('افتح الحسابات','Open accounts');
   const openings=Number(!state.abu.hired&&state.sales>=ECONOMY_CONFIG.abuSales)+Number(!state.nana.hired&&state.sales>=12);
   $('workersBadge').hidden=openings===0;
   $('workersBadge').textContent=openings;
@@ -964,7 +994,7 @@ $('catEmergencyBuy').onclick=function(){if(state.cat.away||state.stock.catfood!=
 $('welfareWater').onclick=function(){giveCatWater('player')};
 $('welfareFeed').onclick=function(){visitCat('Feed')};
 $('welfarePlay').onclick=function(){visitCat('Play')};
-$('welfareStaff').onclick=function(){activeArea='workers';render();$('nanaPanel').scrollIntoView({block:'center'})};
+$('welfareStaff').onclick=function(){activeArea='workers';render();$('nanaPanel').open=true;$('nanaPanel').scrollIntoView({block:'center'})};
 $('welfareReturn').onclick=restoreCat;
 $('welfareAck').onclick=function(){state.cat.aidBy='';save();render()};
 $('catEmergencyPay').onclick=function(){if(!state.catEmergencyBill||state.money<state.catEmergencyBill)return;financeMove(-state.catEmergencyBill,'invoice',{person:'nana',billKey:'emergency'});state.catEmergencyBill=0;state.catFoodEmergencyNotice=false;save();render()};

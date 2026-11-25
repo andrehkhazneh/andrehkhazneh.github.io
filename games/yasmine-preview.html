@@ -357,6 +357,22 @@ body #gameNav #workersTab::before{background:var(--nana-art) right bottom/auto 8
 #financePanel #jamalSummary{white-space:pre-line;line-height:1.8;font-weight:bold}
 #financePanel .office-intro{display:block}#financePanel>.office-wallet{display:none}
 #jamalStaff img{width:64px;height:76px;object-fit:contain;vertical-align:middle;margin-inline-end:10px}
+</style><style>
+#workersArea:not([hidden]){display:grid;gap:10px}
+body #workersArea>details.panel{margin:0!important;padding:0 14px!important;text-align:start}
+body #workersArea>details.panel>summary.team-header{display:grid!important;grid-template-columns:58px minmax(0,1fr) 16px;align-items:center;gap:12px;min-height:84px;box-sizing:border-box;padding:10px 0!important;margin:0!important;list-style:none;cursor:pointer;text-align:start}
+body #workersArea>details.panel>summary.team-header::before{display:none!important;content:none!important}
+body #workersArea .team-header::after{content:"";width:8px;height:8px;border-inline-end:2px solid currentColor;border-block-end:2px solid currentColor;transform:rotate(45deg);justify-self:center}
+body #workersArea details[open]>.team-header::after{transform:rotate(225deg)}
+body #workersArea .team-photo{width:58px;height:58px;overflow:hidden;border-radius:50%;background:#b29e7924}
+body #workersArea>details.panel>.team-header .team-photo img{display:block!important;width:100%!important;height:100%!important;max-width:none!important;object-fit:cover!important;object-position:center top!important;margin:0!important}
+body #workersArea .team-text{display:grid;gap:2px}
+body #workersArea #abuPanel .team-header #abuTitle,body #workersArea #abuPanel .team-header #abuName,body #workersArea .panel .team-header .team-name{font-size:20px!important;line-height:1.35!important;margin:0!important;padding:0!important;text-align:start!important;font-weight:750}
+body #workersArea .panel .team-header .team-role{font-size:16px!important;line-height:1.45!important;margin:0!important;padding:0!important;text-align:start!important}
+body #workersArea .panel .team-header .team-due:not([hidden]){font-size:14px!important;font-weight:bold;color:#8c3519!important}
+body.night-ui #workersArea .panel .team-header .team-due:not([hidden]){color:#ffccb2!important}
+body #workersArea>details[open]>.team-header{border-bottom:1px solid #9996}
+body #workersArea>details[open]{padding-bottom:14px!important}
 </style></head><body><main>
 <section id="catEmergencyPanel" hidden aria-labelledby="welfareTitle">
 <div class="welfare-heading"><strong id="welfareTitle"></strong><b id="welfareTime" dir="ltr" hidden></b></div>
@@ -514,7 +530,7 @@ body #gameNav #workersTab::before{background:var(--nana-art) right bottom/auto 8
 <script src="yasmine/js/garden.js?v=plots1"></script>
 <script src="yasmine/js/cat-scene.js?v=garden-walk2"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/field-guide.js?v=plant-pages"></script><script src="yasmine/js/medals.js?v=plant-pages"></script><script src="yasmine/js/compost.js?v=nabih6"></script><script src="yasmine/js/game.js?v=jamal-invoices1"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/field-guide.js?v=plant-pages"></script><script src="yasmine/js/medals.js?v=plant-pages"></script><script src="yasmine/js/compost.js?v=nabih6"></script><script src="yasmine/js/game.js?v=team-cards1"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
