@@ -27,7 +27,9 @@
       const t=Math.min(8,(now-(start??now))/1000);
       const outbound=t<5.4;
       const progress=outbound?Math.min(1,t/3.1):Math.max(0,1-(t-5.4)/2.6);
-      const x=w*(1.13-progress*.64),floor=h*.94,size=Math.min(w*.26,h*.39);
+      // A brief step past the planter reveals her face before she ducks back.
+      const peek=t>=3.1&&t<=5.4?Math.sin(Math.PI*(t-3.1)/2.3)**2:0;
+      const x=w*(1.13-progress*.64-.125*peek),floor=h*.94,size=Math.min(w*.26,h*.39);
       const frame=frames[Math.floor(progress*w*.64/(size*.38)*8)%8];
       const fw=walk.width/4,fh=walk.height/2;
       ctx.save();ctx.translate(x,floor);ctx.scale(outbound?-1:1,1);
