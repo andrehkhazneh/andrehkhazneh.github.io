@@ -66,10 +66,10 @@ function render(state,h){
  const done=ready(c,now),batch=c.batch,recipe=c.tier?t:tiers[1];
  if(done&&!batch.notified){batch.notified=true;h.save()}
  const left=batch?Math.max(0,Math.ceil((batch.end-now)/1000)):0;
- const status=batch?(done?txt('جاهز للجمع','Ready to collect'):clock(left)):!c.tier?(level<4?txt('🔒 المستوى 4','🔒 Level 4'):txt('متاحة للشراء','Available to buy')):canStart(c)?txt('المواد جاهزة','Materials ready'):txt('عم نجمع المواد','Gathering materials');
+ const status=batch?(done?txt('جاهز للجمع','Ready to collect'):clock(left)):!c.tier?(level<4?txt('🔒 المستوى 4','🔒 Level 4'):txt('متاحة للشراء','Available to buy')):canStart(c)?txt('جاهزة لبدء التصنيع','Ready to start'):txt('عم نجمع المواد','Gathering materials');
  const panel=el('compostStation');
  put('compostTitle',txt('محطة السماد العضوي','Organic Compost Station'));
- put('compostStatus',status);el('compostBadge').hidden=!done;
+ put('compostStatus',status);el('compostBadge').hidden=!(done||canStart(c));
  el('compostArt').style.backgroundPosition=(Math.max(c.tier-1,0)*50)+'% center';el('compostArt').dataset.phase=batch?(done?'ready':'working'):c.tier?'empty':'locked';
  put('compostInventory',txt('🍂 أوراق ','🍂 Leaves ')+c.leaves+'/'+t.capacity+txt(' · 🌿 بقايا ',' · 🌿 Scraps ')+c.scraps+'/'+t.capacity+txt(' · سماد بالمخزون ',' · Fertilizer in stock ')+state.stock.fertilizer);
  const mins=recipe.seconds/60;
@@ -108,7 +108,7 @@ function render(state,h){
  const route=el('compostRequest'),fert=state.staff.hired&&state.staff.request==='fertilizer';
  route.hidden=!fert||(!batch&&!canStart(c));
  if(!route.hidden){put('compostRequest',done?txt('اجمع السماد الجاهز','Collect ready fertilizer'):txt('افتح المحطة','Open station'));put('requestText',done?txt('يا مدير، السماد جاهز بالصندوق!','There’s fertilizer ready to collect!'):batch?txt('باقي ','Time left: ')+clock(left)+txt(' للدفعة. فينا نشتري إذا مستعجلين.','. We can buy now if needed.'):txt('مواد الدفعة جاهزة. منبلّش التصنيع أو منشتري؟','We have enough materials. Compost or buy?'))}
- if(done){el('nurseryBadge').hidden=false;el('nurseryBadge').textContent=h.potAlerts()+1}
+ if(done||canStart(c)){el('nurseryBadge').hidden=false;el('nurseryBadge').textContent=h.potAlerts()+1}
  if(panel.dataset.bound)return;
  panel.dataset.bound='1';
  route.onclick=()=>{h.open();panel.open=true;panel.scrollIntoView({block:'center'})};

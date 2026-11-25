@@ -1436,7 +1436,7 @@ function packOrders(){
  for(const [index,p] of nurseryPots().entries()){
    if(!p.forYasmin||!isReady(p)||p.kind!==o.kind)continue;
    recordCollections();
-   o.cost+=p.seedPaid;o.packed++;
+   o.cost+=p.seedPaid??0;o.packed++;
    delete p.seedPaid;delete p.forYasmin;
    p.active=false;p.progress=0;p.collectionRecorded=false;p.eventEarned=0;
    if(ev&&eventPot===index){clearTimeout(evTimeout);ev=null;$('event').hidden=true}
@@ -1450,7 +1450,13 @@ function packOrders(){
  }
 }
 function supplierDeal(){
- const b=tradeBook(),food=b.shipments%2===1;
+ const b=tradeBook();
+ if(b.nextDealSale===undefined){
+   b.dealEdition=b.shipments;
+   b.nextDealSale=b.dealAt===b.shipments?state.sales+5:state.sales;
+   if(b.dealAt===b.shipments)b.dealEdition++;
+ }
+ const food=b.dealEdition%2===1;
  const unit=food?15:10;
  return {type:food?'catfood':'fertilizer',unit,price:3*(unit-5)};
 }
@@ -1463,9 +1469,27 @@ function plantForOrder(){
  if(o.stage!=='packing'||orderSlots()<=0||i<0||state.money<crops[o.kind].cost)return;
  state.selectedPot=i;buy(o.kind,true);
 }
+function matchingOrderPot(){
+ const order=state.staff.trade?.order;
+ if(order?.stage!=='packing'||orderSlots()<=0)return;
+ const matches=nurseryPots().filter(p=>p.active&&!p.forYasmin&&p.kind===order.kind);
+ return matches.sort((a,b)=>b.progress-a.progress)[0];
+}
+function handoffPlant(){
+ const pot=matchingOrderPot();
+ if(!pot)return;
+ pot.forYasmin=true;
+ render();
+}
+$('crateHandoff').onclick=$('gardenHandoff').onclick=handoffPlant;
 function renderTrade(){
  const panel=$('tradePanel'),plant=$('orderPlant');
- panel.hidden=!state.staff.hired;plant.hidden=true;
+ panel.hidden=$('supplierPanel').hidden=!state.staff.hired;plant.hidden=true;
+ const match=matchingOrderPot();
+ for(const button of [$('crateHandoff'),$('gardenHandoff')]){
+   button.hidden=!match;
+   if(match)button.textContent=(isReady(match)?finText('سلّم لياسمين','Give to Yasmin'):finText('احجز لياسمين','Reserve for Yasmin'))+' · '+crops[match.kind][state.lang]+' · '+finText('أصيص ','Pot ')+(nurseryPots().indexOf(match)+1);
+ }
  if(!state.staff.hired)return;
  const b=tradeBook(),o=campaign(),t=finText,c=crops[o.kind],name=c[state.lang];
  if(o.stage==='packing'&&orderSlots()>0){
@@ -1476,7 +1500,7 @@ function renderTrade(){
  if(activeArea!=='staff')return;
  const deal=supplierDeal(),edition=b.edition%3;
  const format=[t('بروشور','Flyer'),t('بوست فيسبوك','Facebook post'),t('ستوري إنستا','Instagram story')][edition];
- const stamp=[state.lang,displayName('nurseryName'),b.edition,o.stage,o.packed,orderSlots(),b.shipments,b.dealAt,b.due,state.money>=deal.price,state.money>=20].join('|');
+ const stamp=[state.lang,displayName('nurseryName'),b.edition,o.stage,o.packed,orderSlots(),b.shipments,b.nextDealSale,state.sales,b.due,state.money>=deal.price,state.money>=20].join('|');
  if(panel.dataset.stamp===stamp)return;
  panel.dataset.stamp=stamp;
  const poster=$('tradePoster');
@@ -1497,27 +1521,27 @@ function renderTrade(){
    info=name+' × 2 · '+o.price+t(' عملة. رأي ياسمين: ',' coins. Yasmin: ')+rating+t('، سعر التنين المعتاد ',' · usual price for both ')+o.normal;
    action(t('اقبل الطلبية','Accept order'),()=>{o.stage='packing'});action(t('ارفض العرض','Decline offer'),next);
  }else if(o.stage==='packing'){
-   heading=t('صندوق الطلبية','Order crate')+' · '+o.packed+' / 2';
+   heading=t('صندوق الطلبية','Order crate')+' · '+o.packed+t(' من 2',' of 2');
    info=name+' × 2 · '+o.price+t(' عملة عند التسليم',' coins on delivery');
-   action(t('روح للمشتل','Go to nursery'),()=>{activeArea='nursery';nurseryOpenPanel='seeds';requestAnimationFrame(()=>plant.scrollIntoView({block:'center'}))});
+   action(t('روح للمشتل','Go to nursery'),()=>{activeArea='nursery';nurseryOpenPanel='seeds';requestAnimationFrame(()=>(matchingOrderPot()?$('gardenHandoff'):plant.hidden?$('scene'):plant).scrollIntoView({block:'center'}))});
  }else{
    heading=t('تسلّمت الطلبية','Order delivered');
    info=name+' × 2 · '+t('قبضنا ','Received ')+o.price+t(' عملة',' coins');
    action(t('حضّري إعلان جديد','Prepare next ad'),next);
  }
  $('tradeHeading').textContent=heading;$('tradeInfo').textContent=info;
- $('dealHeading').textContent=t('عرض المورّد','Supplier offer');
+ $('dealHeading').textContent=t('عروض الموارد · سماد وأكل القطة','Supplier deals · Fertilizer and cat food');
  const product=deal.type==='catfood'?t('أكل القطة','cat food'):t('سماد','fertilizer');
- $('dealInfo').textContent=b.dealAt===b.shipments?t('اشتريت هالعرض.','Offer purchased.'):'3 × 5 '+product+' · '+t('سعر الكيس ','Per pack ')+deal.unit+' ← '+(deal.unit-5)+' · '+t('التوفير الكلي 15','Total savings 15');
- $('buyDeal').hidden=b.dealAt===b.shipments;
+ $('dealInfo').textContent=state.sales<b.nextDealSale?t('العرض الجاي بعد ','Next offer in ')+(b.nextDealSale-state.sales)+t(' مبيعات.',' sales.'):'3 × 5 '+product+' · '+t('سعر الكيس ','Per pack ')+deal.unit+' ← '+(deal.unit-5)+' · '+t('التوفير الكلي 15','Total savings 15');
+ $('buyDeal').hidden=state.sales<b.nextDealSale;
  $('buyDeal').disabled=state.money<deal.price;
  $('buyDeal').textContent=t('اشتري بـ','Buy for ')+deal.price;
  $('payYasmin').hidden=!b.due;$('payYasmin').disabled=state.money<20;$('payYasmin').textContent=t('ادفع راتب ياسمين · 20','Pay Yasmin · 20');
 }
 $('buyDeal').onclick=()=>{
  const b=tradeBook(),d=supplierDeal();
- if(!state.staff.hired||b.dealAt===b.shipments||state.money<d.price)return;
- financeMove(-d.price,d.type,{person:'yasmin',savings:15,quantity:15});state.stock[d.type]+=15;b.dealAt=b.shipments;render();
+ if(!state.staff.hired||state.sales<b.nextDealSale||state.money<d.price)return;
+ financeMove(-d.price,d.type,{person:'yasmin',savings:15,quantity:15});state.stock[d.type]+=15;b.dealEdition++;b.nextDealSale=state.sales+5;render();
 };
 $('tradePoster').onclick=e=>{const poster=e.currentTarget;poster.setAttribute('aria-expanded',String(poster.getAttribute('aria-expanded')!=='true'))};
 $('orderPlant').onclick=plantForOrder;
