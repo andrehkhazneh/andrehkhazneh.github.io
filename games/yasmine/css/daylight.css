@@ -12,7 +12,7 @@ body[data-sky] main {
 }
 body[data-sky] :is(.panel:not(.hud),#staffArea,#settingsPanel,#daySettings,#employeesPanel,.staff-request,.staff-dialogue,.abu-notice),
 body[data-sky] .hud.hud-3d > div,
-body[data-sky] #gameNav :is(#workersTab,#staffTab,#achievementsTab,#encyclopediaTab) {
+body[data-sky] #gameNav :is(#workersTab,#staffTab,#jamalTab,#collectionsTab) {
   background: var(--cycle-panel) !important;
   border-color: var(--cycle-edge) !important;
   color: var(--cycle-ink) !important;
