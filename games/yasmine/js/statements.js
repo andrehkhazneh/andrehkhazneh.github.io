@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 function amounts(rows){
- const totals={seeds:0,sales:0,food:0,treat:0,goods:0,oldShop:0,transport:0,emergency:0,abu:0,nana:0,yasmin:0,ledger:0,oldSalary:0};
+ const totals={seeds:0,sales:0,food:0,treat:0,goods:0,oldShop:0,transport:0,emergency:0,abu:0,nana:0,yasmin:0,ledger:0,oldSalary:0,managerSalary:0};
  for(const r of rows){
    const paid=-r.amount;
    switch(r.category){
@@ -16,7 +16,7 @@ function amounts(rows){
      case 'salary': {
        // Before names were recorded, these were the only two salary postings.
        const person=r.person || ({15:'abu',20:'nana'})[paid];
-       totals[['abu','nana'].includes(person)?person:'oldSalary']+=paid;
+       totals[person==='yasmin'?'managerSalary':['abu','nana'].includes(person)?person:'oldSalary']+=paid;
        break;
      }
      case 'bonus': totals.yasmin+=paid;break;
@@ -30,7 +30,16 @@ function render(box,group,f,en,cat,name,title,wages){
  const a=amounts(f.rows);
  const lines=[],line=(label,value)=>lines.push([label,value]);
  let label,note,total;
- if(group==='garden'){
+ if(group==='campaign'){
+   const sales=f.rows.filter(r=>r.category==='sales'&&r.person==='yasmin');
+   const revenue=sales.reduce((n,r)=>n+r.amount,0),cost=sales.reduce((n,r)=>n+r.seedCost,0);
+   line(t('مجموع مبيعات الطلبيات','Order sales'),revenue);
+   line(t('ثمن بذور النباتات المسلّمة','Delivered seed costs'),cost);
+   total=revenue-cost;label=t('ربح الطلبيات بعد ثمن البذور','Order margin after seeds');
+   const saved=f.rows.reduce((n,r)=>n+(r.savings||0),0);
+   line(t('توفير عروض الشراء','Supplier savings'),saved);
+   note=t('الربح هو المبيعات ناقص ثمن البذور، قبل السماد والرواتب. التوفير بيحسب العروض المشتراة وبيظهر لحاله.','Margin is sales minus seeds, before fertilizer and wages. Savings count purchased deals separately.');
+ }else if(group==='garden'){
    line(t('ثمن البذور اللي اشتريتها','Seed purchases'),a.seeds);
    line(t('قبضت من بيع النباتات','Plant sales received'),a.sales);
    total=a.sales-a.seeds;label=t('الصافي بعد ثمن البذور','Net after seeds');
@@ -44,8 +53,8 @@ function render(box,group,f,en,cat,name,title,wages){
    note=t('كل دفعة بتنحسب مرة وحدة. فاتورة الطوارئ المدفوعة بـ20 عملة بتتوزع بين 15 للطعام و5 للنقل.','Each payment is counted once. A paid 20-coin emergency bill includes 15 for food and 5 for transport.');
  }else{
    line(t('أبو وردة · راتب البستاني','Abu Warda · Gardener wages'),a.abu);line(t('نانا · راتب مربية القطط','Nana · Cat caretaker wages'),a.nana);
-   line(t('ياسمين · بونص المديرة','Yasmin · Manager bonuses'),a.yasmin);line(t('جمال · راتب المحاسب','Jamal · Accountant wages'),a.ledger);
-   total=a.abu+a.nana+a.yasmin+a.ledger+a.oldSalary;
+   line(t('ياسمين · راتب المديرة','Yasmin · Manager wages'),a.managerSalary);line(t('ياسمين · بونص المديرة','Yasmin · Manager bonuses'),a.yasmin);line(t('جمال · راتب المحاسب','Jamal · Accountant wages'),a.ledger);
+   total=a.managerSalary+a.abu+a.nana+a.yasmin+a.ledger+a.oldSalary;
    label=t('مجموع المدفوع للموظفين','Total wages and bonuses paid');
    note=t('نجمع الرواتب والبونص المدفوع. الراتب المستحق بينضاف وقت الدفع. التوظيف والتطوير مسجّلين لحالهم بالدفتر.','Includes paid wages and bonuses. Wages due count once paid. Hiring and upgrades are separate ledger entries.');
    if(a.oldSalary)note+=t(' المجموع بيشمل دفعات سابقة إضافية بقيمة ',' The total includes additional earlier payments of ')+fmt(a.oldSalary)+t(' عملة.',' coins.');
@@ -60,7 +69,7 @@ function render(box,group,f,en,cat,name,title,wages){
  for(const [index,[text,value]] of lines.entries()){
    const row=box.querySelector('tbody').insertRow(),description=row.insertCell();
    description.textContent=text;row.insertCell().textContent=fmt(value);
-   const wage=group==='staff'&&wages[['abu','nana','yasmin','ledger'][index]];
+   const wage=group==='staff'&&wages[['abu','nana','yasmin','', 'ledger'][index]];
    if(wage){
      const button=document.createElement('button');button.type='button';
      button.textContent=t('ادفع الراتب المستحق · ','Pay wage due · ')+fmt(wage.amount);
