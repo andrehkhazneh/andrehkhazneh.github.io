@@ -287,6 +287,18 @@ html[dir] :is(#customerToggle,#seedToggle)[aria-expanded=true]::before{content:"
 html[lang=en] .employee-activity [lang=ar],html[lang=ar] .employee-activity [lang=en]{display:none}
 .employee-activity{padding:9px 12px;border-inline-start:3px solid #839a72;text-align:start;line-height:1.6}
 #achievementsArea button.medal-tile.unread{outline:2px solid #c43b46;outline-offset:-2px}
+</style><style>
+body #seedPanel #shop button.seed-card:disabled{
+ background:#e1e0d9!important;color:#555851!important;border:1px dashed #858980!important;
+ box-shadow:none!important;filter:none!important;opacity:1!important;cursor:not-allowed;transform:none!important
+}
+#seedPanel .seed-card:disabled .seed-art{filter:grayscale(1);opacity:.48}
+body.night-ui #seedPanel #shop button.seed-card:disabled{background:#34404a!important;color:#c3c9cd!important;border-color:#79848c!important}
+body #workersArea{--staff-paper:#fff9ed;--staff-text:#22362c}
+body.night-ui #workersArea{--staff-paper:#273945;--staff-text:#f7f3e8}
+body[data-sky] #workersArea .panel{background:var(--staff-paper)!important;color:var(--staff-text)!important}
+body #workersArea .panel :is(p,small,.info,.staff-mood,.employee-activity,.staff-dialogue){color:var(--staff-text)!important;background:transparent!important;opacity:1!important;font-size:clamp(18px,4.4vw,21px)!important;line-height:1.65!important}
+body #workersArea .panel :is(h2,h3){color:var(--staff-text)!important}
 </style></head><body><main>
 <section id="catEmergencyPanel" hidden aria-labelledby="welfareTitle">
 <div class="welfare-heading"><strong id="welfareTitle"></strong><b id="welfareTime" dir="ltr" hidden></b></div>
@@ -438,7 +450,7 @@ html[lang=en] .employee-activity [lang=ar],html[lang=ar] .employee-activity [lan
 <script src="yasmine/js/garden.js?v=plots1"></script>
 <script src="yasmine/js/cat-scene.js?v=garden-walk2"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/medals.js?v=unread-ring"></script><script src="yasmine/js/game.js?v=field-missions4"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/medals.js?v=unread-ring"></script><script src="yasmine/js/game.js?v=readable-seeds"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
