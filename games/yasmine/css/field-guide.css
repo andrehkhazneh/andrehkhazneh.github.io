@@ -22,3 +22,8 @@ dialog.field-page{box-sizing:border-box;width:min(94vw,560px);max-height:90dvh;o
 .field-page ol{padding-inline-start:1.4rem}.field-page li+li{margin-top:.4rem}
 .field-page footer{font-size:.9rem;color:#4a5846}
 .field-page a{color:#315638;text-decoration:underline}
+.field-card .field-specimen{display:block;width:min(100%,158px);aspect-ratio:240/248;background-size:400% 100%;background-position:right center;background-repeat:no-repeat}
+.field-card:disabled .field-specimen{filter:brightness(0);opacity:.22}
+.field-pages{position:sticky;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:.4rem;margin-block-start:14px;padding:8px 0;background:#fff9ec;border-block-start:1px solid #c2b99c}
+.field-pages button{width:auto;padding:6px 12px}
+.field-pages bdi{color:#344937;white-space:nowrap}

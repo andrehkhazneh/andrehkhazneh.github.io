@@ -49,7 +49,7 @@ const entries = {
    ['ازرع البذور بأصيص صغير فيه فتحات تصريف بمكان دافي ومضيء.','Sow seeds in a small pot with drainage holes in a warm, bright place.'],
    ['حافظ على رطوبة خفيفة، وانقل الشتلات لأصص أوسع لما تكبر ويصير فيها أوراق حقيقية.','Keep the mix lightly moist. Once seedlings have true leaves and are growing well, move them into larger pots.'],
    ['بعد ما تقوى النبتة، اقطف القمة فوق زوج أوراق وخلي تحته أوراق كفاية.','Once established, pinch a tip above a pair of leaves, leaving plenty of foliage below.']],
-  note:['شوف الورقتين المتقابلتين قبل ما تختار وين تقطف.','Find a pair of opposite leaves before you pick your sprig.'],
+  note:['دور على ورقتين طالعين من نفس النقطة عالساق. اقرص رأس الغصن فوقهن مباشرة وخلي الورقتين عالنبتة، حتى تطلع فروع جديدة من هالمكان.','Find two leaves growing opposite each other on the stem. Pinch the tip just above them and leave both leaves in place so side shoots can grow there.'],
   sources:[['RHS','https://www.rhs.org.uk/propagation/propagating-herbs'],['Royal Botanical Gardens','https://www.rbg.ca/app/uploads/Plant-Profiles-final-2024_1.pdf']]
  },
  lavender: {
@@ -109,6 +109,8 @@ function showPlant(id){
    });
  }
  const lang=en?'en':'ar', index=en?1:0;
+ const discovered=Object.keys(crops).filter(key=>plants[key]);
+ const page=discovered.indexOf(id);
  const sources=entry.sources.map(([name,url])=>'<a href="'+url+'" target="_blank" rel="noopener noreferrer">'+name+'</a>').join(' · ');
  const steps=entry.steps.map(pair=>'<li>'+pair[index]+'</li>').join('');
  dialog.dir=en?'ltr':'rtl';
@@ -116,10 +118,13 @@ function showPlant(id){
    '<img class="field-portrait" src="yasmine/images/field-guide/'+id+'.webp" alt="'+(en?'Botanical illustration and growing stages of ':'رسم النبتة وخطوات زراعتها · ')+crop[lang]+'">'+
    '<p class="field-fact">'+entry.fact[index]+'</p>'+
    '<details><summary>'+(en?'How to grow it at home':'كيف بزرعها بالبيت؟')+'</summary><ol>'+steps+'</ol></details>'+
-   '<aside><strong>'+(en?'From John’s notebook':'من دفتر أبو وردة')+'</strong><p>'+entry.note[index]+'</p></aside>'+
-   '<section><h3>'+(en?'In your nursery':'سجلّك بالمشتل')+'</h3><p>'+ (en?'Mature plants · ':'نباتات ناضجة · ')+record.count+'<br>'+(en?'Best quality · ':'أفضل جودة · ')+record.best+'%</p></section>'+
-   '<footer>'+(en?'Sources · ':'المصادر · ')+sources+'</footer>';
- dialog.querySelector('button').onclick=()=>dialog.close();
+   '<details><summary>'+(en?'From John’s notebook':'من دفتر أبو وردة')+'</summary><p>'+entry.note[index]+'</p></details>'+
+   '<details><summary>'+(en?'Your nursery record':'سجلّك بالمشتل')+'</summary><p>'+(en?'Times this plant reached maturity':'عدد المرّات اللي وصلت فيها هالنبتة للنضج')+' · '+record.count+'<br>'+(en?'Highest quality recorded':'أعلى جودة سجّلتها لهالنوع')+' · '+record.best+'%</p></details>'+
+   '<footer>'+(en?'Sources · ':'المصادر · ')+sources+'</footer>'+
+   '<nav class="field-pages"><button type="button" class="prev" '+(page===0?'disabled':'')+'>'+(en?'← Previous':'→ السابق')+'</button><bdi>'+(page+1)+' / '+discovered.length+'</bdi><button type="button" class="next" '+(page===discovered.length-1?'disabled':'')+'>'+(en?'Next →':'التالي ←')+'</button></nav>';
+ dialog.querySelector('header button').onclick=()=>dialog.close();
+ dialog.querySelector('.prev').onclick=()=>showPlant(discovered[page-1]);
+ dialog.querySelector('.next').onclick=()=>showPlant(discovered[page+1]);
  if(!dialog.open)dialog.showModal();
  dialog.scrollTop=0;
  if(record.unread)markRead(id);
@@ -134,7 +139,7 @@ function render(area,crops,plants,en,markRead,openMedal){
  const cards=ids.map(id=>{
    const plant=crops[id],record=plants[id];
    const text=record?plant[lang]:(en?'Undiscovered plant':'نبتة غير مكتشفة');
-   return '<button type="button" class="field-card'+(record?.unread?' fresh':'')+'" data-plant="'+id+'" '+(record?'':'disabled')+'><img loading="lazy" src="yasmine/images/plants/'+id+'.webp" alt=""><strong>'+text+'</strong>'+
+   return '<button type="button" class="field-card'+(record?.unread?' fresh':'')+'" data-plant="'+id+'" '+(record?'':'disabled')+'><span class="field-specimen" aria-hidden="true" style="background-image:url(yasmine/images/plants/'+id+'.webp)"></span><strong>'+text+'</strong>'+
     (record?.unread?'<small>'+(en?'New':'جديد')+'</small>':!record?'<small>'+(en?'Grow to maturity · Level ':'ازرعها حتى النضج · المستوى ')+plant.level+'</small>':'')+'</button>';
  });
  area.innerHTML='<h2>'+(en?'Plant encyclopedia':'موسوعة النباتات')+'</h2><p>'+(en?'Plants discovered':'نباتات اكتشفتها')+' · <bdi>'+known.length+' / '+ids.length+'</bdi></p><div class="field-grid">'+cards.join('')+'</div>'+

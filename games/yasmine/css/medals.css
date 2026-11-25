@@ -39,3 +39,5 @@ dialog.medal-dialog{border-radius:6px 15px 15px 6px;border:4px solid #304b39;bor
 .medal-dialog .album-entry.unread{border:2px solid #ba3345!important}
 .album-leaf{padding-block:12px}
 @media(prefers-reduced-motion:no-preference){.album-leaf{transform-origin:left center;animation:album-turn .32s ease-out}.medal-dialog[dir=rtl] .album-leaf{transform-origin:right center}@keyframes album-turn{from{transform:perspective(850px) rotateY(12deg);opacity:.55}to{transform:none;opacity:1}}}
+dialog.medal-dialog .album-entry>span,dialog.medal-dialog .keeper-note span{color:#28382b!important}
+dialog.medal-dialog .album-leaf .award-state{display:inline-block;color:#38452e!important;background:#e7dfc7;border:1px solid #ac9c75;border-radius:1em;padding:0 .8em;font-weight:700}

@@ -92,7 +92,7 @@ function showContents(){
  activeId=null;
  const entries=rows.map((row,i)=>{
    const won=awards[row[0]];
-   const state=won?(won.unread?(en?'New':'جديد'):(en?'Earned':'مكتسب')):(en?'Locked':'مقفل');
+   const state=won?(won.unread?(en?'New':'جديد'):(en?'Earned':'مكتسب')):(en?'Not earned':'غير مكتسب');
    return '<button class="album-entry'+(won?.unread?' unread':'')+'" data-medal="'+row[0]+'"><img alt="" src="'+artwork(row[0])+'"><span>'+row[en?3:2]+'<small>'+state+'</small></span><bdi>'+String(i+1).padStart(2,'0')+'</bdi></button>';
  });
  dialog.innerHTML='<header><h2 id="medalHeading" tabindex="-1">'+(en?'Contents':'الفهرس')+'</h2><button class="medal-close">'+(en?'Close':'إغلاق')+'</button></header><div class="album-entries">'+entries.join('')+'</div>';
@@ -131,7 +131,7 @@ function open(id){
    ? '<aside class="keeper-note"><img alt="" src="yasmine/images/abu-warda-portrait.webp"><span><strong>'+(en?'John':'أبو وردة')+'</strong>'+(en?'Remember your first pot? Look at everything you’ve grown since. You earned this medal.':'بتتذكّر أول أصيص؟ شوف قديش كبر مشتلك من وقتها. هالوسام إلك!')+'</span></aside>'
    : '';
  const page=rows.indexOf(r);
- const leaf='<article class="album-leaf"><img class="medal-large" alt="" src="'+fullArtwork(id)+'"><h2 id="medalHeading" tabindex="-1">'+title+'</h2><p>'+(won?accomplishment(r,en):condition(r,en))+'</p><p>'+(won?'':(en?'Progress ':'تقدّمك ')+'<bdi>'+Math.min(r[4],r[5])+' / '+r[5]+'</bdi> · ')+r[6]+' '+(en?'coins':'عملة')+'</p>'+note+(won?'<button type="button" class="medal-share" disabled>'+(en?'Share medal':'شارك وسامك')+'</button><p class="medal-status" role="status"></p>':'')+ '</article>';
+ const leaf='<article class="album-leaf"><img class="medal-large" alt="" src="'+fullArtwork(id)+'"><h2 id="medalHeading" tabindex="-1">'+title+'</h2><p class="award-state">'+(won?(en?'Earned':'مكتسب'):(en?'Not earned':'غير مكتسب'))+'</p><p>'+(won?accomplishment(r,en):condition(r,en))+'</p><p>'+(won?'':(en?'Progress ':'تقدّمك ')+'<bdi>'+Math.min(r[4],r[5])+' / '+r[5]+'</bdi> · ')+r[6]+' '+(en?'coins':'عملة')+'</p>'+note+(won?'<button type="button" class="medal-share" disabled>'+(en?'Share medal':'شارك وسامك')+'</button><p class="medal-status" role="status"></p>':'')+ '</article>';
  dialog.innerHTML='<header><button class="contents-link">'+(en?'Contents':'الفهرس')+'</button><button class="medal-close">'+(en?'Close':'إغلاق')+'</button></header>'+leaf+
    '<nav class="album-pages"><button class="prev" '+(page===0?'disabled':'')+'>'+(en?'← Previous':'→ السابق')+'</button><bdi>'+(page+1)+' / '+rows.length+'</bdi><button class="next" '+(page===rows.length-1?'disabled':'')+'>'+(en?'Next →':'التالي ←')+'</button></nav>';
  dialog.querySelector('.medal-close').onclick=()=>dialog.close();
