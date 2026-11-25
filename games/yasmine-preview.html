@@ -238,6 +238,17 @@ body.night-ui #levelHeadingRow #topEditNames,body.night-ui #levelHeadingRow #sit
  box-sizing:border-box;background:#af1735!important;color:white!important;border:2px solid white!important;border-radius:99px!important;
  min-width:25px!important;height:25px!important;padding:0 4px!important;margin:0!important;font:800 15px/1 sans-serif!important;box-shadow:0 1px 4px #38202466!important
 }
+</style><style>
+html[lang=en] #gameNav #achievementsTab{--art-width:clamp(22px,6vw,44px);padding:19px 4px 6px;white-space:nowrap;overflow-wrap:normal;font-size:clamp(14px,3.65vw,18px)!important}
+html[lang=en] #gameNav #achievementsTab::before{height:23px;top:1px;right:4px}
+html[lang=en] :is(#customerToggle,#seedToggle){padding-left:31px!important;padding-right:6px!important}
+.mish-notice[data-kind=spy]{position:relative!important;display:grid!important;grid-template-columns:70px 1fr;gap:6px 12px;align-items:center;padding:16px!important;background:#fff0d4!important;border:2px solid #ae8450!important;color:#382c26!important;text-align:start}
+.mish-notice[data-kind=spy] strong{padding-inline-end:28px;font-size:1.04rem}
+.mish-notice[data-kind=spy] p{grid-column:2;font-size:1rem;line-height:1.5;margin:0}
+.mish-notice[data-kind=spy] .mish-close{position:absolute!important;inset:5px 5px auto auto!important;width:25px!important;min-width:0!important;height:25px!important;min-height:0!important;padding:0!important;background:#ead4b4!important;color:#513823!important;box-shadow:none!important;font-size:16px!important}
+[dir=rtl] .mish-notice[data-kind=spy] .mish-close{left:5px!important;right:auto!important}
+.detective-portrait{grid-row:1/3;position:relative;height:82px;background:url(yasmine/images/cat-care/idle.webp) 87% 16%/auto 165% no-repeat}
+.detective-portrait i,.detective-portrait b{position:absolute;font:24px sans-serif;right:8px;top:-4px}.detective-portrait b{top:42px;right:1px}
 </style></head><body><main>
 <section id="catEmergencyPanel" hidden aria-labelledby="welfareTitle">
 <div class="welfare-heading"><strong id="welfareTitle"></strong><b id="welfareTime" dir="ltr" hidden></b></div>
@@ -389,7 +400,7 @@ body.night-ui #levelHeadingRow #topEditNames,body.night-ui #levelHeadingRow #sit
 <script src="yasmine/js/garden.js?v=plots1"></script>
 <script src="yasmine/js/cat-scene.js?v=garden-walk2"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/medals.js?v=nav-family"></script><script src="yasmine/js/game.js?v=nav-family"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/medals.js?v=nav-family"></script><script src="yasmine/js/game.js?v=detective-grow3"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');
@@ -406,7 +417,10 @@ if(old&&old.dataset.message===msg)return;
 if(old)old.remove();
 const card=document.createElement('div');card.className='mish-notice';card.dataset.kind=type;card.dataset.message=msg;
 const close=document.createElement('button');close.className='mish-close';close.textContent='×';close.setAttribute('aria-label','إغلاق');close.onclick=()=>{closed[type]=msg;card.remove()};
-const title=document.createElement('strong');title.textContent=document.documentElement.lang==='en'?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير التجسس السرّي':'🐱🐭 نتيجة المطاردة');
+const title=document.createElement('strong');title.textContent=document.documentElement.lang==='en'?(type==='spy'?'Detective’s field notes':'🐱🐭 Mouse patrol result'):(type==='spy'?'دفتر القطة المحققة':'🐱🐭 نتيجة المطاردة');
+if(type==='spy'){
+ const portrait=document.createElement('span');portrait.className='detective-portrait';portrait.setAttribute('aria-hidden','true');portrait.innerHTML='<i>🎩</i><b>🔎</b>';card.append(portrait);
+}
 const p=document.createElement('p');p.textContent=msg;card.append(close,title,p);notices.append(card);syncNoticeLanguage();
 }
 function syncNoticeLanguage(){
@@ -414,7 +428,7 @@ const en=document.documentElement.lang==='en';
 const cat=$('catArea');if(cat)cat.lang=en?'en':'ar';
 for(const card of notices.querySelectorAll('.mish-notice')){
 const type=card.dataset.kind,title=card.querySelector('strong'),close=card.querySelector('.mish-close');
-if(title)title.textContent=en?(type==='spy'?'🐱 Secret spy report':'🐱🐭 Mouse patrol result'):(type==='spy'?'🐱 تقرير التجسس السرّي':'🐱🐭 نتيجة المطاردة');
+if(title)title.textContent=en?(type==='spy'?'Detective’s field notes':'🐱🐭 Mouse patrol result'):(type==='spy'?'دفتر القطة المحققة':'🐱🐭 نتيجة المطاردة');
 if(close)close.setAttribute('aria-label',en?'Close':'إغلاق');
 }
 const treats=$('catTreatStatValue'),count=$('catTreatCount');
