@@ -75,7 +75,7 @@ function render(area,rows,awards,en,acknowledge){
  function tile(r){
    const id=r[0], won=awards[id];
    if(!thumb[id])thumb[id]=medal(id).toDataURL();
-   return '<button type="button" class="medal-tile" data-medal="'+id+'"><img alt="" src="'+thumb[id]+'"><span><strong>'+r[en?3:2]+'</strong><small>'+condition(r,en)+'</small><small>'+(won?(won.unread?(en?'New · ':'جديدة · '):'')+won.date:'<bdi>'+Math.min(r[4],r[5])+' / '+r[5]+'</bdi>')+'</small></span></button>';
+   return '<button type="button" class="medal-tile'+(won?.unread?' unread':'')+'" data-medal="'+id+'"><img alt="" src="'+thumb[id]+'"><span><strong>'+r[en?3:2]+'</strong><small>'+condition(r,en)+'</small><small>'+(won?(won.unread?(en?'New · ':'جديدة · '):'')+won.date:'<bdi>'+Math.min(r[4],r[5])+' / '+r[5]+'</bdi>')+'</small></span></button>';
  }
  const previousFocus=area.contains(document.activeElement)?document.activeElement.dataset.medal:null;
  area.innerHTML='<h2>'+(en?'Medal cabinet':'قاعة الميداليات')+'</h2><h3>'+(en?'My medals':'ميدالياتي')+' <bdi>'+earned.length+' / '+rows.length+'</bdi></h3><div class="medal-grid">'+earned.map(tile).join('')+'</div>'+(!earned.length?'<p>'+(en?'Your first medal will appear here.':'أول ميدالية بتربحها رح تظهر هون.')+'</p>':'')+(locked.length?'<h3>'+(en?'Next medals':'الميداليات الجاية')+'</h3><div class="medal-grid pending">'+locked.map(tile).join('')+'</div>':'');
