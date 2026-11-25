@@ -386,7 +386,8 @@ function renderFinance(){
  let panel=$('financePanel');
  if(!panel){
    panel=document.createElement('details');panel.id='financePanel';panel.className='panel';
-   panel.innerHTML='<summary></summary><div class="office-intro"><img src="yasmine/images/nabih.webp" alt="" width="84" height="84"><p id="financeIntro"></p></div><button id="financeHire" type="button"></button><p id="financeBalance"></p><details id="financeBills"><summary></summary><div></div></details><div id="financeBook"><details id="financeReports"><summary></summary><select id="financePeriods"></select><p id="financeTotals"></p><div id="financeCategories"></div><details><summary id="financeCostsTitle"></summary><p id="financeCosts"></p></details><details><summary id="financePlantsTitle"></summary><p id="financePlants"></p></details><button id="financeShare"></button></details><details id="financeHistory"><summary></summary><input id="financeSearch" type="search"><div id="financeRows"></div><button id="financeMore"></button></details><details id="financeAsk"><summary></summary><p id="financeAdvice"></p><button id="financeTalk"></button></details><details><summary id="compostLedgerTitle"></summary><p id="compostLedgerStats"></p></details></div>';
+   panel.innerHTML='<summary></summary><div class="office-intro"><img src="yasmine/images/nabih.webp" alt="" width="84" height="84"><p id="financeIntro"></p></div><button id="financeHire" type="button"></button><section class="office-wallet"><small id="financeWalletLabel"></small><strong id="financeBalance"></strong><span id="financeDue"></span></section><details id="financeBills"><summary></summary><div></div></details><div id="financeBook"><details id="financeReports"><summary></summary><select id="financePeriods"></select><p id="financeTotals"></p><div id="financeCategories"></div><details><summary id="financeCostsTitle"></summary><p id="financeCosts"></p></details><details><summary id="financePlantsTitle"></summary><p id="financePlants"></p></details><button id="financeShare"></button></details><details id="financeHistory"><summary></summary><input id="financeSearch" type="search"><div id="financeRows"></div><button id="financeMore"></button></details><details id="financeAsk"><summary></summary><p id="financeAdvice"></p><button id="financeTalk"></button></details><details><summary id="compostLedgerTitle"></summary><p id="compostLedgerStats"></p></details></div>';
+   panel.querySelector('.office-intro').before(panel.querySelector('.office-wallet'));
    $('workersArea').prepend(panel);
    panel.addEventListener('toggle',e=>{if(['financePanel','financeBills','financeReports','financeHistory','financeAsk'].includes(e.target.id)&&e.target.open){financeViewStamp='';renderFinance()}},true);
    $('financeHire').onclick=()=>{
@@ -409,17 +410,22 @@ function renderFinance(){
  const put=(id,text)=>{$(id).textContent=text};
  const title=(id,ar,en)=>{$(id).firstElementChild.textContent=t(ar,en)};
  const fmt=n=>(n>0?'+':'')+n;
- put('financeIntro',f.hired?(f.due?t('راتبي مستحق. فيك تراجع دفترك وتدفع من الفواتير.','Wage due. Your records are available below.'):t('راتبي الجاي بعد ','Next wage in ')+(10-f.count)+t(' مبيعات',' sales')):t('التوظيف بالمستوى ٦ · ٤٠٠ عملة · الراتب ٢٠ كل ١٠ مبيعات','Level 6 · Hire for 400 · Wage 20 every 10 sales'));
+ put('financeIntro',f.hired?(f.due?t('راتبي مستحق. فيك تراجع دفترك وتدفع من الفواتير.','Wage due. Your records are available below.'):t('راتبي الجاي بعد ','Next wage in ')+(10-f.count)+t(' مبيعات',' sales')):t('بسجّل مبيعاتك وبفرجيك وين راحت مصاري المشتل. راتبي ٢٠ عملة كل ١٠ مبيعات.','I track your sales and spending. My wage is 20 coins every 10 sales.'));
  $('financeHire').hidden=f.hired;$('financeHire').disabled=state.money<400||window.YasmineGardenCore.levelFor(state.sales)<6;
- put('financeHire',t('وظف الأستاذ نبيه','Hire Mr. Nabih'));
- put('financeBalance',t('معك ','Balance ')+state.money+t(' · عليك ',' · Due ')+debt+t(' · بعد الدفع ',' · After bills ')+(state.money-debt));
- title('financeBills','الفواتير والطلبات','Bills and requests');$('financeBills').firstElementChild.textContent+=' ('+openBills.length+')';
+ put('financeHire',(window.YasmineGardenCore.levelFor(state.sales)<6?t('التوظيف بالمستوى ٦','Hiring opens at level 6'):t('وظف نبيه','Hire Nabih'))+t(' · ٤٠٠ عملة',' · 400 coins'));
+ const coins = n => n.toLocaleString(state.lang === 'en' ? 'en' : 'ar');
+ put('financeWalletLabel',t('رصيد المشتل','Nursery balance'));
+ put('financeBalance',coins(state.money)+t(' عملة',' coins'));
+ put('financeDue',debt ? t('مطلوب دفع ','Payment due: ')+coins(debt)+t(' عملة',' coins') : t('ما عليك دفعات','No payments due'));
+ $('financeBills').hidden=!f.bills.length;
+ title('financeBills','الفواتير والطلبات','Bills and requests');
+ if(openBills.length) $('financeBills').firstElementChild.textContent+=' ('+coins(openBills.length)+')';
  $('financeBook').hidden=!f.hired;
  const receipt=(box,b)=>{
    const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');
    const status={pending:b.key.startsWith('request-')?t('بانتظار الموافقة','Awaiting approval'):t('مستحقة','Due'),paid:t('مدفوعة','Paid'),cancelled:t('ملغاة','Cancelled'),rejected:t('مرفوضة','Declined')};
-   s.textContent=(b.seen?'':'● ')+'INV-'+b.id+' · '+finLabel(b.category)+' · '+b.amount+' · '+status[b.status];
-   p.textContent=[finLabel(b.person),new Date(b.at).toLocaleString(state.lang),b.category==='invoice'&&b.amount===20?t('٥ حصص طعام ١٥ + نقل ٥','5 food portions 15 + transport 5'):'',b.transaction?'TX-'+b.transaction:''].filter(Boolean).join(' · ');
+   s.textContent=(b.seen?'':'● ')+finLabel(b.category)+' · '+b.amount+' · '+status[b.status];
+   p.textContent=['INV-'+b.id,finLabel(b.person),new Date(b.at).toLocaleString(state.lang),b.category==='invoice'&&b.amount===20?t('٥ حصص طعام ١٥ + نقل ٥','5 food portions 15 + transport 5'):'',b.transaction?'TX-'+b.transaction:''].filter(Boolean).join(' · ');
    d.append(s,p);box.append(d);
    d.ontoggle=()=>{if(d.open&&!b.seen){b.seen=true;save();s.textContent=s.textContent.replace(/^● /,'');panel.firstElementChild.textContent=t('مكتب الأستاذ نبيه','Mr. Nabih’s office')+(openBills.some(x=>!x.seen)?' 🔴':'');financeViewStamp=stamp.replace(openBills.map(x=>x.id+':'+(x===b?false:x.seen)).join(','),openBills.map(x=>x.id+':'+x.seen).join(','))}};
    const share=document.createElement('button');share.textContent=t('شارك صورة الفاتورة','Share invoice image');share.onclick=()=>shareOfficePage('INV-'+b.id,[finLabel(b.person),finLabel(b.category),b.amount+' 🪙',status[b.status]]);d.append(share);
