@@ -14,3 +14,10 @@ dialog.medal-dialog{box-sizing:border-box;width:min(92vw,420px);max-height:90dvh
 .medal-notice{position:fixed;z-index:90;bottom:max(16px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:max-content;max-width:92vw}
 .medal-notice button{display:flex;align-items:center;gap:8px;padding:7px 16px;background:#28443a!important;color:#fff5d4!important;border:1px solid #c9af74!important;box-shadow:0 5px 20px #1115!important}
 .medal-notice img{width:48px}
+dialog.medal-dialog{background:linear-gradient(100deg,#d3b882 0,#f3e8cc 4%,#fff7e5 10%,#f7eedb 95%,#e2cc9f);color:#30392c;border-inline-start:5px solid #695138}
+.medal-dialog h2,.medal-dialog p{color:#29382d!important}
+.medal-dialog .medal-large{max-height:32dvh;object-fit:contain}
+.keeper-note{display:flex;align-items:center;gap:.75rem;text-align:start;padding:.6rem;border-block:1px solid #b6a47f;line-height:1.6}
+.keeper-note img{width:52px;height:60px;object-fit:contain}
+.keeper-note strong{display:block;color:#435a40}
+@media(prefers-reduced-motion:no-preference){.medal-notice img{animation:medal-glint 1.15s ease-out 1}@keyframes medal-glint{45%{filter:brightness(1.35) drop-shadow(0 0 5px #ffd879)}}}
