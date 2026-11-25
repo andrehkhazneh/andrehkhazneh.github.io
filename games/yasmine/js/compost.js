@@ -47,34 +47,15 @@ function production(c,now){
 function clock(seconds){return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0')}
 const el=id=>document.getElementById(id);
 function put(id,text){const n=el(id);if(n.textContent!==text)n.textContent=text}
-let owner,leafDelay=0,lastWeather='',lastUpgrade=-Infinity,lastAction=-Infinity;
-const leaves=[];
-function clearLeaves(){for(const leaf of leaves)leaf.node.remove();leaves.length=0;leafDelay=0;lastWeather=''}
-function tick(state,seconds,inNursery,save){
- const weather=document.getElementById('scene').dataset.weather;
- if(owner!==state||!inNursery){clearLeaves();owner=state;return}
- const c=data(state),wind=weather==='wind';
- function interval(){return (wind?30:90)+Math.random()*(wind?30:60)}
- if(lastWeather!==weather||!leafDelay){lastWeather=weather;leafDelay=interval()}
- for(let i=leaves.length-1;i>=0;i--){
-   const leaf=leaves[i];leaf.age+=seconds;
-   if(leaf.age>=8&&state.abu.hired&&!state.abu.paused&&add(state,'leaves')){
-     leaf.node.remove();leaves.splice(i,1);save();
-   }else if(leaf.age>=45){leaf.node.remove();leaves.splice(i,1)}
+let lastUpgrade=-Infinity,lastAction=-Infinity;
+function tick(state,seconds,save){
+ const c=data(state);
+ const previous=c.gatherSeconds||0;
+ const elapsed=previous+Math.max(0,Math.min(2,seconds));
+ c.gatherSeconds=elapsed%30;
+ if(elapsed>=30){
+   add(state,'leaves');add(state,'scraps');save();
  }
- if(weather!=='clear'&&!wind)return;
- leafDelay-=seconds;
- if(leafDelay>0)return;
- leafDelay=interval();
- if(leaves.length>=3||c.leaves>=tiers[c.tier].capacity)return;
- const node=document.createElement('button'),leaf={node,age:0};
- node.className='compost-leaf';node.type='button';node.textContent='🍂';
- node.setAttribute('aria-label',state.lang==='en'?'Collect a dry leaf':'اجمع ورقة يابسة');
- node.style.left=(12+Math.random()*65)+'%';node.style.bottom=(2+Math.random()*13)+'%';
- node.onclick=()=>{const i=leaves.indexOf(leaf);if(owner!==state||i<0)return;
-   if(add(state,'leaves')){leaves.splice(i,1);node.remove();save();feedback(state.lang==='en'?'Leaf collected · '+c.leaves:'جمعت ورقة · عندك '+c.leaves)}
- };
- leaves.push(leaf);el('scene').append(node);
 }
 let feedbackUntil=0;
 function feedback(text){feedbackUntil=Date.now()+5000;put('compostFeedback',text)}
@@ -85,7 +66,7 @@ function render(state,h){
  const done=ready(c,now),batch=c.batch,recipe=c.tier?t:tiers[1];
  if(done&&!batch.notified){batch.notified=true;h.save()}
  const left=batch?Math.max(0,Math.ceil((batch.end-now)/1000)):0;
- const status=batch?(done?txt('جاهز للجمع','Ready to collect'):clock(left)):!c.tier?(level<4?txt('🔒 المستوى 4','🔒 Level 4'):txt('متاحة للشراء','Available to buy')):canStart(c)?txt('المواد جاهزة','Materials ready'):txt('بانتظار المواد','Waiting for materials');
+ const status=batch?(done?txt('جاهز للجمع','Ready to collect'):clock(left)):!c.tier?(level<4?txt('🔒 المستوى 4','🔒 Level 4'):txt('متاحة للشراء','Available to buy')):canStart(c)?txt('المواد جاهزة','Materials ready'):txt('عم نجمع المواد','Gathering materials');
  const panel=el('compostStation');
  put('compostTitle',txt('محطة السماد العضوي','Organic Compost Station'));
  put('compostStatus',status);el('compostBadge').hidden=!done;
@@ -98,9 +79,7 @@ function render(state,h){
  el('compostNeeds').hidden=!!batch||!c.tier;
  put('compostLeaves',txt('🍂 أوراق يابسة · معك ','🍂 Dry leaves · Have ')+c.leaves+txt('، المطلوب ',' · Need ')+recipe.leaves);
  put('compostScraps',txt('🌿 بقايا نباتات · معك ','🌿 Plant scraps · Have ')+c.scraps+txt('، المطلوب ',' · Need ')+recipe.scraps);
- const instructions=[];
- if(needL)instructions.push(txt('اضغط عالأوراق اليابسة اللي بتظهر بالمشتل وقت الريح.','Tap fallen leaves in the nursery during windy weather.'));
- if(needS)instructions.push(txt('بيع نبتة جاهزة لتحصل على وحدة بقايا.','Sell a mature plant to get one scrap.'));
+ const instructions=needL||needS?[txt('المواد بتتجمع لحالها كل ٣٠ ثانية لعب. البيع بيسرّع التجميع.','Materials arrive every 30 seconds of play. Selling plants speeds this up.')]:[];
  put('compostHint',!c.tier?(level<4?txt('بتفتح المحطة بالمستوى 4. فيك تجمع المواد من هلّق.','Unlocks at level 4. You can already gather materials.'):txt('اشتري الصندوق لتصنع السماد من الأوراق وبقايا النباتات.','Buy the bin to make fertilizer from leaves and scraps.')):batch&&!done?txt('فيك تسكّر اللعبة وترجع تجمع دفعتك.','You can close the game and collect your batch later.'):batch?'':instructions.join(' '));
  const action=el('compostAction'),upgrade=el('compostUpgrade'),buy=el('compostBuy');
  action.hidden=!done&&!canStart(c);action.disabled=action.hidden;
@@ -112,7 +91,7 @@ function render(state,h){
  if(next){upgrade.disabled=!!batch||state.money<next.price||level<next.level;put('compostUpgrade',(c.tier?txt('تطوير المحطة','Upgrade station'):txt('شراء المحطة','Buy station'))+' · '+next.price+' 🪙 · '+txt('المستوى ','Level ')+next.level)}
  const book=production(c,now),value=book.value,net=book.net;
  const stats=txt('دفعات جمعتها: ','Batches collected: ')+c.batches+txt(' · وحدات سماد: ',' · Fertilizer units: ')+book.units+txt(' · قيمة تقديرية: ',' · Estimated value: ')+value+txt(' · استثمار: ',' · Investment: ')+c.invested+' · '+(net<0?txt('باقي لاسترداد التكلفة: ','Left to break even: '):txt('صافي الوفر التقديري: ','Estimated net savings: '))+Math.abs(net)+' 🪙';
- put('compostStatsTitle',txt('المخزون والتطوير والإحصائيات','Stock, upgrades and statistics'));put('compostStats',stats);
+ put('compostStatsTitle',txt('تفاصيل المحطة','Station details'));put('compostStats',stats);
  put('compostLedgerTitle',txt('توفير السماد العضوي','Organic compost savings'));
  put('compostLedgerStats',[
    txt('من بداية تشغيل المحطة','Lifetime station totals'),
