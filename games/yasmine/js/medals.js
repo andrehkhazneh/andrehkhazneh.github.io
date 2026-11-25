@@ -135,5 +135,6 @@ function showCelebration(){
  const timer=setTimeout(finish,6500);
  button.onclick=()=>{clearTimeout(timer);if(dialog?.open)dialog.close();showAward();open(row[0]);finish()};
 }
+document.getElementById('achievementsTab').style.setProperty('--gold-medal','url('+medal('sales500').toDataURL()+')');
 window.YasmineMedals={render,celebrate};
 })();
