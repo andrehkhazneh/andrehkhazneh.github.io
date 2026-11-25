@@ -275,6 +275,15 @@ body #scene[data-weather=wind] .foliage{animation:gardenGust 3.6s ease-in-out in
 #scene #spyMimi,#scene #spyMimi.spy-in.spy-peek,#scene #spyMimi.spy-out{left:auto!important;bottom:18%!important;width:32%!important;height:40%!important;z-index:5!important;transition:right 1.8s ease-in-out!important}
 #scene #spyMimi{right:-33%!important}#scene #spyMimi.spy-in.spy-peek{right:36%!important;animation:none!important}#scene #spyMimi::before,#scene #spyMimi::after{display:none!important}
 html[dir=rtl] #scene #spyMimi img{transform:none}
+</style><style>
+.casePhoto img{display:block;width:100%;height:auto;border-radius:13px}
+html body #scene[data-weather=rain]::after{display:none!important}
+#scene #spyMimi{visibility:hidden!important}
+#fieldMotion{position:absolute;inset:0;width:100%;height:100%;z-index:8;pointer-events:none}
+html[dir] :is(#customerToggle,#seedToggle)::after{content:none}
+:is(#customerToggle,#seedToggle)::before{content:"▸";display:inline-block;margin-inline-end:.35em;font:inherit}
+html[dir=rtl] :is(#customerToggle,#seedToggle)::before{content:"◀"}
+html[dir] :is(#customerToggle,#seedToggle)[aria-expanded=true]::before{content:"▼"}
 </style></head><body><main>
 <section id="catEmergencyPanel" hidden aria-labelledby="welfareTitle">
 <div class="welfare-heading"><strong id="welfareTitle"></strong><b id="welfareTime" dir="ltr" hidden></b></div>
@@ -398,7 +407,7 @@ html[dir=rtl] #scene #spyMimi img{transform:none}
 <button id="catBrush" type="button">🪮 مشّطها</button>
 <button type="button" style="grid-column:1/-1;grid-row:4" id="catGiveTreat"></button><div id="catMotionControls" hidden><button type="button" id="catWalkButton">مشّيها</button><button type="button" id="catNapButton" hidden>خلّيها تنام</button></div>
 </div>
-<section id="catEmergencyBill" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d2a35a;background:#fff4dc;color:#61482c;border-radius:16px"><strong id="catEmergencyBillText">🧾 فاتورة نانا</strong><button id="catEmergencyPay" type="button" style="display:block;width:100%;margin-top:10px">💰 وافق على دفع الفاتورة · 20 عملة</button></section><article id="caseCard" hidden><div class="casePhoto"><svg viewBox="0 0 110 110" role="img" aria-label="MiMi"><rect width="110" height="110" rx="18" fill="#ddcfad"/><svg x="0" y="7" width="110" height="104" viewBox="806 160 530 535"><image href="yasmine/images/cat-care/idle.webp" width="1536" height="1024"/></svg><path d="M23 33q5-8 12-9l6-17q13-6 25 0l7 16 12 6q-21 12-62 4" fill="#69533c" stroke="#483a2f" stroke-width="2"/><path d="m36 21 35-2 2 5-39 4" fill="#a18051"/><path d="m73 69 17 18" stroke="#785831" stroke-width="7" stroke-linecap="round"/><circle cx="65" cy="61" r="16" fill="#ddf8ff44" stroke="#977949" stroke-width="4"/></svg></div><div><strong id="caseTitle"></strong><p id="caseNote"></p></div><button type="button" id="caseClose" aria-label="إغلاق">×</button></article><div id="mishmishNotices" aria-live="polite"></div><p id="catMessage" class="message" aria-live="polite"></p>
+<section id="catEmergencyBill" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d2a35a;background:#fff4dc;color:#61482c;border-radius:16px"><strong id="catEmergencyBillText">🧾 فاتورة نانا</strong><button id="catEmergencyPay" type="button" style="display:block;width:100%;margin-top:10px">💰 وافق على دفع الفاتورة · 20 عملة</button></section><article id="caseCard" hidden><div class="casePhoto"><img src="yasmine/images/cat-care/detective.webp" width="360" height="360" alt="MiMi"></div><div><strong id="caseTitle"></strong><p id="caseNote"></p></div><button type="button" id="caseClose" aria-label="إغلاق">×</button></article><div id="mishmishNotices" aria-live="polite"></div><p id="catMessage" class="message" aria-live="polite"></p>
 <button id="catToy" type="button">🪶 اشتري لعبة ريشة · 💰 20</button>
 <div id="catExtras" style="display:grid;gap:12px;margin-top:18px">
 <button id="catTreatBuy" type="button" hidden></button>
@@ -509,4 +518,4 @@ lastLevel=level;
 new MutationObserver(update).observe(salesEl,{childList:true,characterData:true,subtree:true});
 update();
 document.getElementById('lang')?.addEventListener('click',function(){setTimeout(update,0)});
-})();</script></body></html>
+})();</script><script src="yasmine/js/field-motion.js"></script></body></html>
