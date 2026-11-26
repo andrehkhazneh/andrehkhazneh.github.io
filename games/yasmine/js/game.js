@@ -401,7 +401,8 @@ function letterButton(row){
  label.textContent='💌 '+finText('رسالة من ','Letter from ')+charityName(row.charity);
  const amount=-row.amount,item=purpose(row.charity,row.variant);
  body.textContent=row.variant===0?finText('شكراً من القلب! تبرعك بـ '+amount+' عملة ساعدنا نشتري '+item+'.','Thank you! Your '+amount+' coins helped us buy '+item+'.'):finText('وصلتنا مساهمتك، وخصصنا منها مبلغ '+amount+' عملة لشراء '+item+'. يسلموا إيديك!','We received your contribution and put your '+amount+' coins toward '+item+'. Thank you!');
- box.dataset.letterId=String(row.id);box.append(label,body);box.ontoggle=()=>{if(box.open&&!row.letterRead){row.letterRead=true;save();render()}};return box;
+ const badge=document.createElement('b');badge.className='offer-alert';badge.textContent='1';badge.hidden=row.letterRead;label.append(' ',badge);
+ box.dataset.letterId=String(row.id);box.append(label,body);box.ontoggle=()=>{if(!box.isConnected)return;if(box.open&&!row.letterRead){row.letterRead=true;badge.hidden=true;save();render()}else if(!box.open&&row.letterRead&&box.parentElement?.id==='charityLetters'){charityUI()}};return box;
 }
 function renderDonationLedger(sheet){
  const rows=donationRows().reverse(),total=rows.reduce((n,r)=>n-r.amount,0);
@@ -473,7 +474,7 @@ function financeWage(){
  if(++f.count>=10){f.count=0;if(state.money>=20)financeMove(-20,'accountant',{person:'ledger'});else {f.due=true;f.reportLimit=f.rows.length}}
 }
 const financialLabels={
- donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى ٢','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى ٣','Station tier 3'],
+ fertilizerSale:['بيع فائض السماد','Surplus fertilizer sale'],donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى ٢','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى ٣','Station tier 3'],
  abu:['أبو وردة','Abu Warda'],nana:['نانا','Nana'],ledger:['جمال','Jamal'],yasmin:['ياسمين','Yasmin']
 };
 function finText(ar,en){return state.lang==='en'?en:ar}
@@ -1138,8 +1139,9 @@ function renderJamalQuestions(home){
  let box=$('jamalQuestions');
  if(!box){
    box=document.createElement('details');box.id='jamalQuestions';box.className='panel';
-   box.innerHTML='<summary></summary><article aria-live="polite"><small></small><h3></h3><p></p></article><div class="jamal-question-nav"><button type="button"></button><button type="button" id="jamalFirst"></button></div>';
-   const menu=$('jamalMenu');menu.before(box);
+   box.innerHTML='<summary></summary><article aria-live="polite"><small></small><h3></h3><p></p></article><div class="jamal-question-nav"><button type="button"></button><button type="button" id="jamalPrev"></button><button type="button" id="jamalFirst"></button></div>';
+   $('jamalInvoices').before(box);
+   $('jamalPrev').onclick=()=>{state.jamalQuestionIndex=Math.max(0,questionIndex()-1);save();renderJamalQuestions(true)};
    $('jamalFirst').onclick=()=>{state.jamalQuestionIndex=0;save();renderJamalQuestions(true)};
    box.querySelector('button').onclick=()=>{
      state.jamalQuestionIndex=(questionIndex()+1)%jamalQuestions.length;
@@ -1157,8 +1159,8 @@ function renderJamalQuestions(home){
  box.querySelector('small').textContent=(en?'Question ':'سؤال ')+(i+1)+(en?' of ':' من ')+jamalQuestions.length;
  box.querySelector('h3').textContent=card[en?2:0];
  box.querySelector('p').textContent=card[en?3:1];
- box.querySelector('button').textContent=en?'Next question':'سؤال تاني';
- $('jamalFirst').textContent=en?'Back to question 1':'ارجع للسؤال ١';$('jamalFirst').disabled=i===0;
+ box.querySelector('button').textContent=en?'Next':'التالي';
+ $('jamalFirst').textContent=en?'Start':'البداية';$('jamalFirst').disabled=i===0;$('jamalPrev').disabled=i===0;$('jamalPrev').textContent=en?'Previous':'السابق';
 }
 function renderFinance(){
  const f=financeData();syncBills();
@@ -1168,7 +1170,7 @@ function renderFinance(){
    panel.innerHTML='<summary></summary><div class="office-intro"><img src="yasmine/images/nabih.webp" alt="" width="84" height="84"><p id="financeIntro"></p></div><button id="financeHire" type="button"></button><section class="office-wallet"><small id="financeWalletLabel"></small><strong id="financeBalance"></strong><span id="financeDue"></span></section><details id="financeBills"><summary></summary><div></div></details><div id="financeBook"><details id="financeReports"><summary></summary><select id="financePeriods"></select><p id="financeTotals"></p><div id="financeCategories"></div><details><summary id="financeCostsTitle"></summary><p id="financeCosts"></p></details><details><summary id="financePlantsTitle"></summary><p id="financePlants"></p></details><button id="financeShare"></button></details><details id="financeHistory"><summary></summary><input id="financeSearch" type="search"><div id="financeRows"></div><button id="financeMore"></button></details><details id="financeAsk"><summary></summary><p id="financeAdvice"></p><button id="financeTalk"></button></details><details><summary id="compostLedgerTitle"></summary><p id="compostLedgerStats"></p></details></div>';
    panel.firstElementChild.remove();
    panel.querySelector('.office-intro img').remove();
-   panel.insertAdjacentHTML('afterbegin','<h2 id="jamalName"></h2><img class="jamal-art" src="yasmine/images/jamal-desk.webp" alt=""><div id="jamalMenu"><button data-group="garden"></button><button data-group="campaign"></button><button data-group="cat"></button><button data-group="staff"></button><button data-group="donations"></button></div><div id="jamalSub" class="jamal-subhead"><h3 id="jamalHeading"></h3><button id="jamalBack"></button></div><article id="jamalSheet" class="statement" hidden></article><p id="jamalAccess" hidden></p>');
+   panel.insertAdjacentHTML('afterbegin','<h2 id="jamalName"></h2><img class="jamal-art" src="yasmine/images/jamal-desk.webp" alt=""><details id="jamalInvoices"><summary></summary><div id="jamalMenu"><button data-group="staff"></button><button data-group="campaign"></button><button data-group="cat"></button><button data-group="garden"></button><button data-group="donations"></button></div></details><div id="jamalSub" class="jamal-subhead"><h3 id="jamalHeading"></h3><button id="jamalBack"></button></div><article id="jamalSheet" class="statement" hidden></article><p id="jamalAccess" hidden></p>');
    const advanced=document.createElement('details');advanced.id='jamalAdvanced';advanced.innerHTML='<summary></summary>';panel.append(advanced);advanced.append(panel.querySelector('#financeBook'));
    $('officeArea').append(panel);
    $('jamalMenu').onclick=e=>{const b=e.target.closest('[data-group]');if(b){invoiceGroup=b.dataset.group;financePage=40;renderFinance()}};
@@ -1196,7 +1198,9 @@ function renderFinance(){
  const home=!invoiceGroup;
  renderJamalQuestions(home);
  put('jamalName',t('جمال · محاسب المشتل','Jamal · Nursery accountant'));
- for(const b of $('jamalMenu').children)b.textContent=names[b.dataset.group];
+ const labels={staff:t('رواتب','Wages'),campaign:t('مبيعات','Sales'),cat:t('القطة','Cat'),garden:t('المشتل','Nursery'),donations:t('تبرع','Donations')};
+ $('jamalInvoices').hidden=!home;$('jamalInvoices').querySelector('summary').textContent=t('🧾 الفواتير','🧾 Invoices');
+ for(const b of $('jamalMenu').children)b.textContent=labels[b.dataset.group];
  $('jamalMenu').hidden=!home;panel.querySelector('.jamal-art').hidden=!home;
  $('jamalSub').hidden=home;put('jamalHeading',names[invoiceGroup]||'');put('jamalBack',t('رجوع','Back'));
  $('jamalAdvanced').hidden=invoiceGroup!=='garden'||!f.hired;
@@ -1310,7 +1314,7 @@ function notificationCount(){
  const book=tradeBook(),order=campaign();
  supplierDeal();
  if(order.stage==='waiting'&&Date.now()>=order.arrivesAt)order.stage='offer';
- return charityAlerts()+Number(!!state.staff.request)+Number(order.stage==='offer')+
+ return fertilizerAlert()+charityAlerts()+Number(!!state.staff.request)+Number(order.stage==='offer')+
    Number(state.sales>=book.nextDealSale)+Number(!!book.receiptUnread);
 }
 var yasminPortraits=document.querySelectorAll('[data-yasmin-portrait]');
@@ -1862,7 +1866,7 @@ function renderCollections(){var rows=recordCollections(),c=collectionData(),en=
 function acknowledgeCollection(e){if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')return;var card=e.target.closest('[data-unread-award],[data-unread-plant]');if(!card)return;e.preventDefault();var c=collectionData(),v=card.dataset.unreadAward?c.awards[card.dataset.unreadAward]:c.plants[card.dataset.unreadPlant];if(v){v.unread=false;v.announced=true;save();renderCollections()}}
 ['achievementsArea','encyclopediaArea'].forEach(function(id){$(id).addEventListener('click',acknowledgeCollection);$(id).addEventListener('keydown',acknowledgeCollection)});
 $('collectionsTab').onclick=()=>{activeArea=$('collectionsMenu').hidden?'collections':'overview';render()};
-$('achievementsTab').onclick=()=>{activeArea=activeArea==='achievements'?'collections':'achievements';render();if(activeArea==='achievements')$('achievementsArea').querySelector('.album-cover')?.click()};
+$('achievementsTab').onclick=()=>{activeArea=activeArea==='achievements'?'collections':'achievements';render();if(activeArea==='achievements')requestAnimationFrame(()=>{if(activeArea!=='achievements')return;const area=$('achievementsArea');area.scrollIntoView({block:'start'});const cover=area.querySelector('.album-cover');cover?.focus({preventScroll:true});cover?.click()})};
 $('encyclopediaTab').onclick=()=>{activeArea=activeArea==='encyclopedia'?'collections':'encyclopedia';render()};
 var abuGeoQuestions=[
   ["ما عاصمة ألبانيا؟","What is the capital of Albania?","تيرانا","Tirana","مسقط","Muscat","دبلن","Dublin","تيرانا هي عاصمة ألبانيا.","Tirana is the capital of Albania."],
@@ -2240,9 +2244,56 @@ function dismissSale(){
  tradeBook().receiptUnread=false;render();
 }
 $('gardenReceipt').querySelector('button').onclick=dismissSale;
+const fertilizerThreshold=100,fertilizerLot=15;
+function fertilizerAlert(){
+ const ad=tradeBook().fertAd;
+ if(!ad)return Number(state.stock.fertilizer>=fertilizerThreshold);
+ if(ad.stage==='waiting'&&Date.now()>=ad.due)ad.stage='offer';
+ return Number(ad.stage==='offer');
+}
+function fertilizerAction(action){
+ const b=tradeBook(),ad=b.fertAd;
+ if(!state.staff.hired)return;
+ if(action==='publish'&&!ad&&state.stock.fertilizer>=fertilizerThreshold){
+   const organic=Math.min(state.compost?.organicStock||0,fertilizerLot);
+   state.stock.fertilizer-=fertilizerLot;if(organic)state.compost.organicStock-=organic;
+   const edition=b.fertEdition||0;
+   b.fertAd={stage:'waiting',due:Date.now()+30000,organic,price:[16,18,20][edition%3],grade:edition%3};b.fertEdition=edition+1;
+ }else if(ad?.stage==='offer'&&(action==='accept'||action==='decline')){
+   if(action==='accept')financeMove(ad.price,'fertilizerSale',{person:'yasmin',quantity:fertilizerLot});
+   else {state.stock.fertilizer+=fertilizerLot;if(ad.organic)state.compost.organicStock+=ad.organic}
+   b.fertResult=action==='accept'?ad.price:-1;delete b.fertAd;
+ }else return;
+ save();render();
+}
+function renderFertilizerOffer(){
+ const b=tradeBook(),t=finText,eligible=state.stock.fertilizer>=fertilizerThreshold;
+ fertilizerAlert();const ad=b.fertAd,card=$('fertOffer');
+ card.hidden=!state.staff.hired||(!eligible&&!ad&&!b.fertResult);
+ if(card.hidden)return;
+ const waiting=ad?.stage==='waiting',offered=ad?.stage==='offer';
+ const title=t('إعلان بيع السماد','Fertilizer sale ad');
+ $('fertOfferTitle').textContent=title+' · '+fertilizerLot+t(' وحدة',' units');
+ $('fertOfferInfo').textContent=waiting?t('الإعلان منشور. حجزنا ١٥ وحدة وبانتظار عرض الزبون.','Ad published. 15 units reserved while awaiting an offer.'):offered?t('عرض الزبون: ','Customer offer: ')+ad.price+t(' عملة · رأي ياسمين: ',' coins · Yasmin’s verdict: ')+[t('منيح','Fair'),t('جيد جداً','Very good'),t('ممتاز','Excellent')][ad.grade]:eligible?t('ياسمين: صار عنا فائض. ننشر إعلان ونحجز ١٥ وحدة للزبون؟','Yasmin: We have a surplus. Advertise and reserve 15 units?'):'';
+ $('fertResult').textContent=b.fertResult&&!ad?(b.fertResult>0?t('آخر بيع: قبضت ','Last sale: received ')+b.fertResult+t(' عملة',' coins'):t('رجع السماد المحجوز للمخزون.','Reserved fertilizer returned to stock.')):'';
+ for(const btn of card.querySelectorAll('button')){
+   const act=btn.dataset.act;btn.hidden=act==='publish'?!!ad||!eligible:!offered;
+   btn.textContent=act==='publish'?t('انشر إعلان السماد','Publish fertilizer ad'):act==='accept'?t('اقبل وبيع','Accept and sell'):t('ارفض العرض','Decline offer');
+   if(!btn.onclick)btn.onclick=()=>fertilizerAction(act);
+ }
+}
 function renderYasminDesk(){
  const bar=$('yasminDesk'),ar=state.lang==='ar';
  bar.hidden=!state.staff.hired;
+ renderFertilizerOffer();
+ const request=$('deskRequest'),req=state.staff.request;
+ request.hidden=!state.staff.hired||!req;
+ if(!request.hidden){
+   const text=req==='bonus'?finText('طلب بونص · ٣٠ عملة','Bonus request · 30 coins'):staffWords().request[req];
+   request.querySelector('span').textContent=text;
+   $('requestTitle').textContent='🔴 '+text;
+   if(!request.onclick)request.onclick=()=>$('staffRequest').scrollIntoView({block:'center',behavior:'smooth'});
+ }
  const buttons=Array.from(bar.children);
  for(const button of buttons){
    const panel=$(button.getAttribute('aria-controls')),badge=$(button.dataset.badge);
@@ -2250,7 +2301,7 @@ function renderYasminDesk(){
    if(panel.hidden)panel.open=false;
    button.setAttribute('aria-expanded',String(panel.open));
    const label=ar?button.dataset.ar:button.dataset.en;
-   const dot=button.querySelector('b');dot.hidden=badge.hidden;dot.textContent=badge.textContent;
+   const dot=button.querySelector('b');const count=(badge.hidden?0:Number(badge.textContent)||1)+(panel.id==='supplierPanel'?fertilizerAlert():0);dot.hidden=!count;dot.textContent=count;
    button.querySelector('span').textContent=label;
  }
  if(!bar.onclick)bar.onclick=e=>{
