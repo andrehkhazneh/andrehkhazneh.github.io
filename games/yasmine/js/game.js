@@ -181,7 +181,7 @@ function renderCat(){
   $('jamalTab').textContent=finText('جمال','Jamal');
   $('jamalTab').setAttribute('aria-pressed',String(activeArea==='office'));
   $('jamalStaffName').textContent=finText('جمال','Jamal');
-  $('jamalStaffInfo').textContent=finText('محاسب المشتل · التوظيف من المستوى ٦ مقابل ٤٠٠ عملة. الراتب ٢٠ كل ١٠ مبيعات.','Nursery accountant · Level 6, 400 coins to hire, wage 20 per 10 sales.');
+  $('jamalStaffInfo').textContent=finText('محاسب المشتل · التوظيف من المستوى 6 مقابل 400 عملة. الراتب 20 كل 10 مبيعات.','Nursery accountant · Level 6, 400 coins to hire, wage 20 per 10 sales.');
   $('jamalStaffGo').textContent=finText('افتح الحسابات','Open accounts');
   const openings=Number(!state.abu.hired&&state.sales>=ECONOMY_CONFIG.abuSales)+Number(!state.nana.hired&&state.sales>=12);
   $('workersBadge').hidden=openings===0;
@@ -465,7 +465,7 @@ function charityUI(){
  if(inbox.dataset.stamp!==stamp){inbox.dataset.stamp=stamp;inbox.replaceChildren(...ready.map(letterButton))}
 }
 function charityAmount(){
- const raw=$('charityAmount').value.trim().replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632));
+ const raw=$('charityAmount').value.trim().replace(/[\u0660-\u0669]/g,c=>String(c.charCodeAt(0)-1632));
  const amount=Number(raw);return /^\d+$/.test(raw)&&Number.isSafeInteger(amount)&&amount>0?amount:0;
 }
 
@@ -474,7 +474,7 @@ function financeWage(){
  if(++f.count>=10){f.count=0;if(state.money>=20)financeMove(-20,'accountant',{person:'ledger'});else {f.due=true;f.reportLimit=f.rows.length}}
 }
 const financialLabels={
- fertilizerSale:['بيع فائض السماد','Surplus fertilizer sale'],donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى ٢','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى ٣','Station tier 3'],
+ fertilizerSale:['بيع فائض السماد','Surplus fertilizer sale'],donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى 2','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى 3','Station tier 3'],
  abu:['أبو وردة','Abu Warda'],nana:['نانا','Nana'],ledger:['جمال','Jamal'],yasmin:['ياسمين','Yasmin']
 };
 function finText(ar,en){return state.lang==='en'?en:ar}
@@ -619,7 +619,7 @@ const jamalQuestions=[
   "Their deposits and withdrawals expose different sums to each period’s gains or losses. A fund’s published time-weighted result strips out that cash-flow timing."
  ],
  [
-  "ليش السند اللي دافع قسيمة ٨٪ ممكن يعطي المشتري عائد أقل من ٨٪؟",
+  "ليش السند اللي دافع قسيمة 8٪ ممكن يعطي المشتري عائد أقل من 8٪؟",
   "إذا اشتراه فوق قيمته الاسمية، بيستلم قسائم مرتفعة بس بيرجعله عند الاستحقاق مبلغ أقل من سعر الشراء. العائد للاستحقاق بياخد الفرق بالحسبان.",
   "Why can an 8% coupon bond yield less than 8%?",
   "A premium buyer gets the high coupons but receives less principal at maturity than the purchase price. Yield to maturity accounts for that difference."
@@ -661,7 +661,7 @@ const jamalQuestions=[
   "They may flag a roof replacement and a thin reserve fund. Owners could face a special assessment even if the unit itself looks immaculate."
  ],
  [
-  "عائد توزيعات سهم قفز من ٤٪ لـ٨٪. شو ممكن يكون صار؟",
+  "عائد توزيعات سهم قفز من 4٪ لـ8٪. شو ممكن يكون صار؟",
   "إذا آخر توزيع بقي نفسه وسعر السهم نزل للنص، النسبة المحسوبة بتتضاعف. هالرقم بيعتمد على توزيع سابق وقد يتغيّر التوزيع المقبل.",
   "How could a quoted dividend yield jump from 4% to 8%?",
   "If the price halves while the last dividend stays the same, the trailing yield doubles. The next dividend can still change."
@@ -1034,7 +1034,7 @@ const jamalQuestions=[
  ],
  [
   "ليش متوسط عائد سنتين ممكن يختلف عن نمو المصاري الفعلي؟",
-  "ربح ٥٠٪ ثم خسارة ٥٠٪ متوسطهن الحسابي صفر. بس الـ١٠٠ بتصير ١٥٠ ثم ٧٥، لأن الخسارة بتنحسب على رصيد أكبر.",
+  "ربح 50٪ ثم خسارة 50٪ متوسطهن الحسابي صفر. بس الـ100 بتصير 150 ثم 75، لأن الخسارة بتنحسب على رصيد أكبر.",
   "Why can average annual returns differ from actual growth?",
   "A 50% gain and a 50% loss average zero. But 100 grows to 150 and then falls to 75 because the loss hits a larger balance."
  ],
@@ -1207,10 +1207,10 @@ function renderFinance(){
  $('jamalAdvanced').firstChild.textContent=t('تقارير ودفتر الحسابات','Reports and ledger');
  panel.querySelector('.office-intro').hidden=!(invoiceGroup==='staff');
  const fmt=n=>(n>0?'+':'')+n;
- put('financeIntro',f.hired?(f.due?t('راتبي مستحق. فيك تراجع دفترك وتدفع من الفواتير.','Wage due. Your records are available below.'):t('راتبي الجاي بعد ','Next wage in ')+(10-f.count)+t(' مبيعات',' sales')):t('بسجّل مبيعاتك وبفرجيك وين راحت مصاري المشتل. راتبي ٢٠ عملة كل ١٠ مبيعات.','I track your sales and spending. My wage is 20 coins every 10 sales.'));
+ put('financeIntro',f.hired?(f.due?t('راتبي مستحق. فيك تراجع دفترك وتدفع من الفواتير.','Wage due. Your records are available below.'):t('راتبي الجاي بعد ','Next wage in ')+(10-f.count)+t(' مبيعات',' sales')):t('بسجّل مبيعاتك وبفرجيك وين راحت مصاري المشتل. راتبي 20 عملة كل 10 مبيعات.','I track your sales and spending. My wage is 20 coins every 10 sales.'));
  $('financeHire').hidden=f.hired||invoiceGroup!=='staff';$('financeHire').disabled=state.money<400||window.YasmineGardenCore.levelFor(state.sales)<6;
- put('financeHire',(window.YasmineGardenCore.levelFor(state.sales)<6?t('التوظيف بالمستوى ٦','Hiring opens at level 6'):t('وظف جمال','Hire Jamal'))+t(' · ٤٠٠ عملة',' · 400 coins'));
- const coins = n => n.toLocaleString(state.lang === 'en' ? 'en' : 'ar');
+ put('financeHire',(window.YasmineGardenCore.levelFor(state.sales)<6?t('التوظيف بالمستوى 6','Hiring opens at level 6'):t('وظف جمال','Hire Jamal'))+t(' · 400 عملة',' · 400 coins'));
+ const coins = n => n.toLocaleString(state.lang,{numberingSystem:'latn'});
  put('financeWalletLabel',t('رصيد المشتل','Nursery balance'));
  put('financeBalance',coins(state.money)+t(' عملة',' coins'));
  put('financeDue',debt ? t('مطلوب دفع ','Payment due: ')+coins(debt)+t(' عملة',' coins') : t('ما عليك دفعات','No payments due'));
@@ -1223,7 +1223,7 @@ function renderFinance(){
    const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');
    const status={pending:b.key.startsWith('request-')?t('بانتظار الموافقة','Awaiting approval'):t('مستحقة','Due'),paid:t('مدفوعة','Paid'),cancelled:t('ملغاة','Cancelled'),rejected:t('مرفوضة','Declined')};
    s.textContent=(b.seen?'':'● ')+finLabel(b.category)+' · '+b.amount+' · '+status[b.status];
-   p.textContent=['INV-'+b.id,finLabel(b.person),new Date(b.at).toLocaleString(state.lang),b.category==='invoice'&&b.amount===20?t('٥ حصص طعام ١٥ + نقل ٥','5 food portions 15 + transport 5'):'',b.transaction?'TX-'+b.transaction:''].filter(Boolean).join(' · ');
+   p.textContent=['INV-'+b.id,finLabel(b.person),new Date(b.at).toLocaleString(state.lang,{numberingSystem:'latn'}),b.category==='invoice'&&b.amount===20?t('5 حصص طعام 15 + نقل 5','5 food portions 15 + transport 5'):'',b.transaction?'TX-'+b.transaction:''].filter(Boolean).join(' · ');
    d.append(s,p);box.append(d);
    d.ontoggle=()=>{if(d.open&&!b.seen){b.seen=true;save();s.textContent=s.textContent.replace(/^● /,'');financeViewStamp=stamp.replace(openBills.map(x=>x.id+':'+(x===b?false:x.seen)).join(','),openBills.map(x=>x.id+':'+x.seen).join(','))}};
    const share=document.createElement('button');share.textContent=t('شارك صورة الفاتورة','Share invoice image');share.onclick=()=>shareOfficePage('INV-'+b.id,[finLabel(b.person),finLabel(b.category),b.amount+' 🪙',status[b.status]]);d.append(share);
@@ -1257,7 +1257,7 @@ function renderFinance(){
  }
  if(!f.hired)return;
  title('financeReports','تقرير الإيرادات والمصاريف','Income and spending');title('financeHistory','دفتر الحركات','Transaction ledger');title('financeAsk','اسأل جمال','Ask Jamal');
- const options={all:t('من بداية التسجيل','All recorded history'),today:t('اليوم','Today'),yesterday:t('أمس','Yesterday'),week:t('آخر ٧ أيام','Last 7 days'),month:t('آخر ٣٠ يوم','Last 30 days')};
+ const options={all:t('من بداية التسجيل','All recorded history'),today:t('اليوم','Today'),yesterday:t('أمس','Yesterday'),week:t('آخر 7 أيام','Last 7 days'),month:t('آخر 30 يوم','Last 30 days')};
  const select=$('financePeriods');select.replaceChildren(...Object.entries(options).map(([key,name])=>new Option(name,key,key===financePeriod,key===financePeriod)));
  const start=new Date(today);start.setDate(start.getDate()-({today:0,yesterday:1,week:6,month:29}[financePeriod]||0));
  if(f.due&&f.reportLimit==null)f.reportLimit=f.rows.length;
@@ -1289,7 +1289,7 @@ function renderFinance(){
    const matches=rows.filter(r=>(describe(r)+' TX-'+(r.id||'')).toLowerCase().includes(financeSearch.toLowerCase()));
    for(const r of matches.slice(-financePage).reverse()){
      const d=document.createElement('details'),s=document.createElement('summary'),p=document.createElement('p');
-     s.textContent=fmt(r.amount)+' · '+describe(r);p.textContent=[new Date(r.at).toLocaleString(state.lang),r.id?'TX-'+r.id:t('سجل قديم','Earlier record'),r.before!==undefined?t('الرصيد قبل ','Balance before ')+r.before+t(' وبعد ',' and after ')+r.after:'',r.invoice?'INV-'+r.invoice:''].filter(Boolean).join(' · ');
+     s.textContent=fmt(r.amount)+' · '+describe(r);p.textContent=[new Date(r.at).toLocaleString(state.lang,{numberingSystem:'latn'}),r.id?'TX-'+r.id:t('سجل قديم','Earlier record'),r.before!==undefined?t('الرصيد قبل ','Balance before ')+r.before+t(' وبعد ',' and after ')+r.after:'',r.invoice?'INV-'+r.invoice:''].filter(Boolean).join(' · ');
      d.append(s,p);box.append(d);
    }
    if(!matches.length)box.textContent=t('ما في حركات مطابقة.','No matching transactions.');
@@ -1590,11 +1590,11 @@ function renderUpgrade(){
   var button=$('upgradeAbu');
   button.hidden=!state.abu.hired||double;
   button.disabled=!enoughSales || state.money<upgrade.cost;
-  button.textContent=en?'Upgrade to level 2 · 200 coins':'طوّر أبو وردة للمستوى ٢ · ٢٠٠ عملة';
+  button.textContent=en?'Upgrade to level 2 · 200 coins':'طوّر أبو وردة للمستوى 2 · 200 عملة';
   var hint=$('upgradeHint');
   hint.hidden=!state.abu.hired;
-  if(double)hint.textContent=en?'Level 2 · Tends two pots':'المستوى ٢ · بيعتني بأصيصين';
-  else if(!enoughSales)hint.textContent=en?'Second pot unlocks at nursery level 3 ('+state.sales+'/25 sales).':'الأصيص التاني بيفتح بمستوى المشتل ٣ ('+state.sales+'/25 مبيعة).';
+  if(double)hint.textContent=en?'Level 2 · Tends two pots':'المستوى 2 · بيعتني بأصيصين';
+  else if(!enoughSales)hint.textContent=en?'Second pot unlocks at nursery level 3 ('+state.sales+'/25 sales).':'الأصيص التاني بيفتح بمستوى المشتل 3 ('+state.sales+'/25 مبيعة).';
   else hint.textContent=en?'Add a second pot for 200 coins.':'التطوير بيفتح أصيص تاني فاضي لتختار بذرته.';
 }
 function plotClock(seconds){
@@ -2251,6 +2251,23 @@ function fertilizerAlert(){
  if(ad.stage==='waiting'&&Date.now()>=ad.due)ad.stage='offer';
  return Number(ad.stage==='offer');
 }
+function fertilizerUnitEstimate(){
+ const rows=financeData().rows;
+ for(let i=rows.length-1;i>=0;i--){const row=rows[i];if(row.category==='fertilizer'&&row.amount<0)return -row.amount/(row.quantity||5)}
+ return 2;
+}
+function fertilizerQuote(ad){
+ const t=finText, paid=fertilizerLot-ad.organic, unit=ad.unitCost??fertilizerUnitEstimate();
+ const cost=paid*unit,margin=ad.price-cost,fmt=n=>Number(n.toFixed(2));
+ const grade=margin<0?t('خسارة','Loss'):margin===0?t('عالتكلفة','Break-even'):margin<=2?t('ربح بسيط','Small gain'):margin<=4?t('جيد','Good'):t('ممتاز','Excellent');
+ return [
+ t('سعر بيع الدفعة','Lot sale price')+' · '+ad.price+t(' عملة',' coins')+' ('+fmt(ad.price/fertilizerLot)+t(' للوحدة',' per unit')+')',
+ t('من المحطة','From compost')+' · '+ad.organic+' / '+fertilizerLot+t(' · كلفة الشراء صفر',' · zero purchase cost'),
+ t('باقي الدفعة','Remaining stock')+' · '+paid+' × '+fmt(unit)+t(' عملة (تقدير بسعر آخر شراء، أو سعر المتجر عند غيابه)',' coins (latest purchase price, or shop price if unavailable)'),
+ t('كلفة الشراء المقدّرة','Estimated purchase cost')+' · '+fmt(cost)+t(' عملة',' coins'),
+ t('رأي ياسمين','Yasmin’s verdict')+' · '+grade+' · '+t('بعد كلفة الشراء','after purchase cost')+' '+(margin>0?'+':'')+fmt(margin)+t(' عملة، قبل كلفة المحطة والرواتب',' coins, before station costs and wages')
+ ].join('\n');
+}
 function fertilizerAction(action){
  const b=tradeBook(),ad=b.fertAd;
  if(!state.staff.hired)return;
@@ -2258,7 +2275,7 @@ function fertilizerAction(action){
    const organic=Math.min(state.compost?.organicStock||0,fertilizerLot);
    state.stock.fertilizer-=fertilizerLot;if(organic)state.compost.organicStock-=organic;
    const edition=b.fertEdition||0;
-   b.fertAd={stage:'waiting',due:Date.now()+30000,organic,price:[16,18,20][edition%3],grade:edition%3};b.fertEdition=edition+1;
+   b.fertAd={stage:'waiting',due:Date.now()+30000,organic,unitCost:fertilizerUnitEstimate(),price:[16,18,20][edition%3],grade:edition%3};b.fertEdition=edition+1;
  }else if(ad?.stage==='offer'&&(action==='accept'||action==='decline')){
    if(action==='accept')financeMove(ad.price,'fertilizerSale',{person:'yasmin',quantity:fertilizerLot});
    else {state.stock.fertilizer+=fertilizerLot;if(ad.organic)state.compost.organicStock+=ad.organic}
@@ -2274,7 +2291,7 @@ function renderFertilizerOffer(){
  const waiting=ad?.stage==='waiting',offered=ad?.stage==='offer';
  const title=t('إعلان بيع السماد','Fertilizer sale ad');
  $('fertOfferTitle').textContent=title+' · '+fertilizerLot+t(' وحدة',' units');
- $('fertOfferInfo').textContent=waiting?t('الإعلان منشور. حجزنا ١٥ وحدة وبانتظار عرض الزبون.','Ad published. 15 units reserved while awaiting an offer.'):offered?t('عرض الزبون: ','Customer offer: ')+ad.price+t(' عملة · رأي ياسمين: ',' coins · Yasmin’s verdict: ')+[t('منيح','Fair'),t('جيد جداً','Very good'),t('ممتاز','Excellent')][ad.grade]:eligible?t('ياسمين: صار عنا فائض. ننشر إعلان ونحجز ١٥ وحدة للزبون؟','Yasmin: We have a surplus. Advertise and reserve 15 units?'):'';
+ $('fertOfferInfo').textContent=waiting?t('الإعلان منشور. حجزنا 15 وحدة وبانتظار عرض الزبون.','Ad published. 15 units reserved while awaiting an offer.'):offered?fertilizerQuote(ad):eligible?t('ياسمين: صار عنا فائض. ننشر إعلان ونحجز 15 وحدة للزبون؟','Yasmin: We have a surplus. Advertise and reserve 15 units?'):'';
  $('fertResult').textContent=b.fertResult&&!ad?(b.fertResult>0?t('آخر بيع: قبضت ','Last sale: received ')+b.fertResult+t(' عملة',' coins'):t('رجع السماد المحجوز للمخزون.','Reserved fertilizer returned to stock.')):'';
  for(const btn of card.querySelectorAll('button')){
    const act=btn.dataset.act;btn.hidden=act==='publish'?!!ad||!eligible:!offered;
@@ -2289,7 +2306,7 @@ function renderYasminDesk(){
  const request=$('deskRequest'),req=state.staff.request;
  request.hidden=!state.staff.hired||!req;
  if(!request.hidden){
-   const text=req==='bonus'?finText('طلب بونص · ٣٠ عملة','Bonus request · 30 coins'):staffWords().request[req];
+   const text=req==='bonus'?finText('طلب بونص · 30 عملة','Bonus request · 30 coins'):staffWords().request[req];
    request.querySelector('span').textContent=text;
    $('requestTitle').textContent='🔴 '+text;
    if(!request.onclick)request.onclick=()=>$('staffRequest').scrollIntoView({block:'center',behavior:'smooth'});
