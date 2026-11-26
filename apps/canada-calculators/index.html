@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حاسبات كندا | أندريه خزنه</title>
+<style>
+:root{--bg:#f5f1e9;--card:#fffdf8;--ink:#1f2430;--mute:#6b6a63;--line:#ddd5c4;--red:#b3172b;--red-soft:#f3dcdd}
+@media (prefers-color-scheme:dark){:root{--bg:#171a21;--card:#1f232c;--ink:#f1ede4;--mute:#a7a496;--line:#343a46;--red:#e8505f;--red-soft:#3a2328}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Arabic",Tahoma,sans-serif;line-height:1.7}
+main{max-width:640px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.6rem;margin:0 0 4px}
+.sub{color:var(--mute);margin:0 0 20px;font-size:.95rem}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs button{flex:1;padding:12px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;font-weight:500;border-radius:10px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--red);border-color:var(--red);color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+label{display:block;font-size:.9rem;color:var(--mute);margin:14px 0 4px}
+label:first-child{margin-top:0}
+input,select{width:100%;padding:12px;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+.row{display:flex;gap:10px}.row>div{flex:1}
+.result{margin-top:18px;padding:16px;border-radius:12px;background:var(--red-soft)}
+.big{font-size:2rem;font-weight:700;line-height:1.2}
+.big small{display:block;font-size:.85rem;font-weight:400;color:var(--mute);margin-bottom:2px}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.95rem}
+td{padding:7px 0;border-top:1px solid var(--line)}
+td:last-child{text-align:left;font-variant-numeric:tabular-nums}
+tr.tot td{font-weight:700}
+.note{color:var(--mute);font-size:.82rem;margin-top:16px}
+.hide{display:none}
+a{color:var(--red)} #lang{padding:8px 16px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer} details{margin-top:16px} summary{cursor:pointer} .tabs button{font-size:.9rem} @media(max-width:380px){.row{flex-wrap:wrap}.row>div{min-width:120px}}
+</style>
+<meta name="theme-color" content="#a71930"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><style> .brand{display:flex;align-items:center;gap:14px;margin:24px 0 8px}.brand img{width:64px;height:64px;border-radius:15px}.card{box-shadow:0 8px 24px #0000000c}.legal{padding:16px;border:1px solid var(--line);border-radius:14px;margin-top:20px}.install{font:inherit;padding:10px 16px;border-radius:10px;background:var(--red);color:white;border:0;cursor:pointer} .row>div{min-width:0}</style></head>
+<body>
+<main>
+<div class="row" style="align-items:center;justify-content:space-between"><a href="https://andrehkhazneh.github.io/#apps" data-en="← Back to website">العودة للموقع</a><button id="lang" type="button">English</button></div>
+<div class="brand"><img src="icon-192.png" alt=""><div><h1>حاسبات كندا</h1><small>Canada Calculators · V4.0</small></div></div>
+<p class="sub">احسب ضريبة المشتريات وراتبك الصافي بسرعة.</p>
+
+<div class="tabs" role="tablist">
+  <button role="tab" id="t1" aria-selected="true" aria-controls="p1">ضريبة المبيعات</button>
+  <button role="tab" id="t2" aria-selected="false" aria-controls="p2">الراتب الصافي – أونتاريو</button>
+</div>
+
+<section class="card" id="p1" role="tabpanel" aria-labelledby="t1">
+  <label for="prov">المقاطعة</label>
+  <select id="prov"></select>
+  <div class="row">
+    <div><label for="amt">المبلغ ($)</label><input id="amt" type="number" inputmode="decimal" min="0" step="0.01" value="100"></div>
+    <div><label for="tip">البقشيش (%)</label><input id="tip" type="number" inputmode="decimal" min="0" step="1" value="0"></div>
+  </div>
+  <label for="taxkind">نوع الضريبة (حسب أهلية المنتج)</label><select id="taxkind"><option value="all">النسبة العامة</option><option value="none">معفى بالكامل / صفرية</option><option value="federal">الجزء الفيدرالي فقط (5%) عند الأهلية</option><option value="provincial">الجزء الإقليمي فقط عند الأهلية</option><option value="custom">نسب مخصصة حسب أهلية المعاملة</option></select><div id="customBox" class="hide"><label for="customFed">النسبة الأولى (%)</label><input id="customFed" type="number" min="0" max="100" step="0.001" value="5"><label for="customProv">النسبة الثانية (%)</label><input id="customProv" type="number" min="0" max="100" step="0.001" value="0"></div><p class="note">الإعفاءات ليست تلقائية. تحقق من أهلية المنتج؛ البقشيش اختياري ويحسب قبل الضريبة.</p><label for="mode">المبلغ المُدخل</label>
+  <select id="mode"><option value="pre">قبل الضريبة</option><option value="post">شامل الضريبة</option></select>
+  <div class="result" aria-live="polite">
+    <div class="big"><small>الإجمالي</small><span id="s-total" dir="ltr"></span></div>
+    <table id="s-table"></table>
+  </div>
+</section>
+
+<section class="card hide" id="p2" role="tabpanel" aria-labelledby="t2"><label for="year">السنة الضريبية</label><select id="year"><option value="2026">2026</option><option value="2027">2027</option></select>
+  <div class="row">
+    <div><label for="gross">الدخل ($)</label><input id="gross" type="number" inputmode="decimal" min="0" step="0.01" value="60000"></div>
+    <div><label for="per">نوع الدخل</label>
+      <select id="per"><option value="1">سنوي</option><option value="12">شهري</option><option value="24">مرتين شهرياً</option><option value="26">كل أسبوعين</option><option value="52">أسبوعي</option><option value="h">بالساعة</option></select></div>
+  </div>
+  <div id="hrsBox" class="hide"><label for="hrs">ساعات العمل أسبوعيًا</label><input id="hrs" type="number" inputmode="decimal" min="0" value="40"></div>
+  <div id="otBox" class="hide"><label for="ot">ساعات إضافية أسبوعياً (فوق الساعات العادية)</label><input id="ot" type="number" min="0" max="168" value="0"><label for="mult">معامل أجر العمل الإضافي</label><input id="mult" type="number" min="1" max="10" step="0.1" value="1.5"></div><p id="otNote" class="note hide">أدخل الساعات المؤهلة للعمل الإضافي بنفسك؛ تختلف الأهلية حسب المهنة والقانون والاتفاق. يفترض الحساب 52 أسبوع عمل.</p>
+  <details><summary>ائتمانات TD1 إضافية (اختياري)</summary><label for="fc">مبالغ الائتمان الفيدرالية الإضافية (مثل DTC، دون الأساسي)</label><input id="fc" type="number" min="0" value="0"><label for="oc">مبالغ ائتمان أونتاريو الإضافية (دون الأساسي)</label><input id="oc" type="number" min="0" value="0"><p class="note">أدخل مبالغ المطالبة المؤهلة من TD1 وTD1ON، لا قيمة تخفيض الضريبة نفسها.</p><label for="children">عدد الأطفال المعالين المؤهلين لتخفيض أونتاريو</label><input id="children" type="number" min="0" max="30" step="1" value="0"><label for="disabled">عدد المعالين المؤهلين ذوي الإعاقة (قد يشمل طفلاً محسوباً أعلاه)</label><input id="disabled" type="number" min="0" max="30" step="1" value="0"><p class="note">لا تطالب بتخفيض المعال نفسه مع شخص آخر. تحقق من شروط الأهلية الرسمية.</p></details>
+  <div class="result" aria-live="polite">
+    <div class="big"><small id="n-label">الصافي السنوي</small><span id="n-net" dir="ltr"></span></div>
+    <div class="big" style="font-size:1.2rem;margin-top:8px"><small>متوسط الصافي كل أسبوعين (ليس شيك راتب فعلي)</small><span id="n-bw" dir="ltr"></span></div>
+    <table id="periods"></table><table id="n-table"></table>
+  </div>
+  <p class="note">تقدير سنوي لموظف في أونتاريو حسب السنة المختارة، وليس إقراراً ضريبياً أو شيك راتب. لا يشمل LIFT أو التقاعد أو النقابة أو المزايا أو جميع الائتمانات.</p>
+</section>
+
+<p class="note">أداة تقديرية للمعلومات العامة وليست استشارة ضريبية. تأكد من النسب من المصادر الرسمية قبل الاعتماد عليها.</p>
+<p class="note">الإصدار 4.0 — الرواتب 2026 و2027. آخر تحديث: 26 نوفمبر 2026. لا تحديث تلقائي للنسب. تخفيضات المعالين لعام 2027 غير مؤكدة ولذلك عطلت لهذه السنة.</p><p><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/payroll-deductions-t4127-payroll-deductions-formulas/t4127-jul-123rd-edition-effective-july-1-2026/t4127-jul-payroll-deductions-formulas.html">CRA – T4127 (2026)</a> · <a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan.html">CRA – T4127 (2027)</a> · <a href="https://www.ontario.ca/page/ontario-tax-reduction">Ontario Tax Reduction</a> · <a href="https://www.canada.ca/en/revenue-agency/services/e-services/digital-services-businesses/payroll-deductions-online-calculator.html">CRA – PDOC</a> · <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/charge-collect-which-rate.html">CRA – GST/HST</a></p><p class="note">أندريه خزنه | Andreh Khazneh</p><section class="legal"><details><summary>سياسة الخصوصية</summary><p class="note">الحسابات تتم داخل جهازك. لا يرسل التطبيق مدخلاتك المالية ولا يحفظها عمدا. يخزن المتصفح ملفات التطبيق للعمل دون اتصال. قد يسجل مزود الاستضافة بيانات الاتصال المعتادة مثل عنوان IP. الروابط الخارجية تخضع لسياسات أصحابها.</p></details><details><summary>إخلاء المسؤولية</summary><p class="note">هذه أداة تعليمية مستقلة وليست تابعة للحكومة الكندية ولا تقدم استشارة مالية أو ضريبية. النتائج تقديرية ولا تصلح بديلا عن كشوف الرواتب أو الإقرار الضريبي أو حاسبة CRA الرسمية. قد تتغير القوانين والنسب.</p></details><p><a href="https://github.com/andrehkhazneh/andrehkhazneh.github.io/issues/new" target="_blank" rel="noopener noreferrer">الإبلاغ عن خطأ عبر GitHub</a></p><p class="note">لا تدرج راتبك الحقيقي أو معلوماتك الشخصية في البلاغ العام. يتطلب GitHub حسابا وقد يلزم تفعيل قسم Issues.</p><details><summary>تثبيت التطبيق</summary><p class="note">على iPhone استخدم Safari ثم مشاركة ثم إضافة إلى الشاشة الرئيسية. على Android استخدم قائمة المتصفح ثم تثبيت التطبيق إن توفر.</p><button class="install hide" id="install">Install / تثبيت</button></details><p class="note">AI-assisted development · أندريه خزنه | Andreh Khazneh</p></section></main>
+
+<script>
+const $=id=>document.getElementById(id);
+const num=(id,max=1e9)=>Math.min(max,Math.max(0,Number.isFinite(+$(id).value)?+$(id).value:0));
+const fmt=n=>new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD'}).format(n);
+const pct=n=>(+(n*100).toFixed(3))+'%';
+
+/* tabs */
+['t1','t2'].forEach((id,i)=>$(id).addEventListener('click',()=>{
+  ['t1','t2'].forEach((t,j)=>{$(t).setAttribute('aria-selected',i===j);$('p'+(j+1)).classList.toggle('hide',i!==j)});
+}));
+
+/* ---------- Sales tax ---------- */
+// [name, GST/HST label, rate, PST/QST label, rate]
+const PROV={
+ AB:['ألبرتا','GST',.05,'',0],
+ BC:['كولومبيا البريطانية','GST',.05,'PST',.07],
+ MB:['مانيتوبا','GST',.05,'PST',.07],
+ NB:['نيو برونزويك','HST',.15,'',0],
+ NL:['نيوفاوندلاند ولابرادور','HST',.15,'',0],
+ NS:['نوفا سكوشا','HST',.14,'',0],
+ NT:['الأقاليم الشمالية الغربية','GST',.05,'',0],
+ NU:['نونافوت','GST',.05,'',0],
+ ON:['أونتاريو','HST',.13,'',0],
+ PE:['الأمير إدوارد','HST',.15,'',0],
+ QC:['كيبك','GST',.05,'QST',.09975],
+ SK:['ساسكاتشوان','GST',.05,'PST',.06],
+ YT:['يوكون','GST',.05,'',0]
+};
+Object.entries(PROV).forEach(([k,v])=>{const o=document.createElement('option');o.value=k;o.textContent=v[0];if(k==='ON')o.selected=true;$('prov').appendChild(o)});
+function sales(){
+  const p=[...PROV[$('prov').value]],amt=num('amt'),tipP=num('tip',1000)/100;
+  const kind=$('taxkind').value; $('customBox').classList.toggle('hide',kind!=='custom'); if(kind==='provincial'){p[4]=p[4]||Math.max(0,p[2]-.05);p[2]=0;p[3]=p[3]||'Provincial HST';}else if(kind==='custom'){p[1]=english?'Tax 1':'ضريبة 1';p[3]=english?'Tax 2':'ضريبة 2';p[2]=num('customFed',100)/100;p[4]=num('customProv',100)/100;}else if($('taxkind').value==='none'){p[2]=p[4]=0;}else if($('taxkind').value==='federal'){p[1]='GST';p[2]=.05;p[4]=0;} const rate=p[2]+p[4];
+  const cents=x=>Math.round((x+1e-9)*100); const input=cents(amt); const post=$('mode').value==='post'; const base=post?Math.round(input/(1+rate)):input; const pre=base/100; const a=post&&!p[4]?input-base:Math.min(cents(pre*p[2]),post?input-base:Infinity); const b=post?input-base-a:cents(pre*p[4]); const t1=a/100,t2=b/100,tip=cents(pre*tipP)/100;
+  const rows=[['المبلغ قبل الضريبة',fmt(pre)],[`${p[1]} (${pct(p[2])})`,fmt(t1)]];
+  if(p[4])rows.push([`${p[3]} (${pct(p[4])})`,fmt(t2)]);
+  if(tip)rows.push([`${english?"Tip on pre-tax amount":"بقشيش على المبلغ قبل الضريبة"} (${pct(tipP)})`,fmt(tip)]);
+  $('s-table').innerHTML=rows.map(r=>`<tr><td>${tr(r[0])}</td><td dir="ltr">${r[1]}</td></tr>`).join('');
+  $('s-total').textContent=fmt(pre+t1+t2+tip);
+}
+['prov','amt','tip','mode','taxkind','customFed','customProv'].forEach(id=>$(id).addEventListener('input',sales));
+
+/* ---------- Net pay (Ontario, 2026) ---------- */
+function bracketTax(inc,br){ // br: [[upTo,rate],...] last upTo=Infinity
+  let tax=0,prev=0;for(const [up,r] of br){if(inc>prev)tax+=(Math.min(inc,up)-prev)*r;prev=up}return tax}
+const FED=[[58523,.14],[117045,.205],[181440,.26],[258482,.29],[Infinity,.33]];
+const ONT=[[53891,.0505],[107785,.0915],[150000,.1116],[220000,.1216],[Infinity,.1316]];
+function healthPremium(i){
+  if(i<=20000)return 0;if(i<=25000)return Math.min(300,.06*(i-20000));if(i<=36000)return 300;
+  if(i<=38500)return Math.min(450,300+.06*(i-36000));if(i<=48000)return 450;
+  if(i<=48600)return Math.min(600,450+.25*(i-48000));if(i<=72000)return 600;
+  if(i<=72600)return Math.min(750,600+.25*(i-72000));if(i<=200000)return 750;
+  if(i<=200600)return Math.min(900,750+.25*(i-200000));return 900}
+function netpay(g,fc=0,oc=0,year=2026,children=0,disabled=0){
+ const y=year===2027; const federal=y?[[60044,.14],[120088,.205],[186157,.26],[265203,.29],[Infinity,.33]]:FED; const provincial=y?[[55023,.0505],[110049,.0915],[150000,.1116],[220000,.1216],[Infinity,.1316]]:ONT; const cppRate=y?.0575:.0595;
+  const cpp=Math.min(Math.max(g-3500,0),(y?73200:71100))*cppRate;
+  const cpp2=Math.min(Math.max(g-(y?76700:74600),0),y?10700:10400)*.04;
+  const ei=Math.min(g,y?70800:68900)*(y?.0164:.0163);
+  const cppEnh=cpp*.01/cppRate, cppBase=cpp-cppEnh;           // enhanced part is a deduction, base part a credit
+  const taxable=Math.max(g-cppEnh-cpp2,0);
+  const lo=y?186157:181440,hi=y?265203:258482, maxB=y?16879:16452,minB=y?15214:14829; const bpa=maxB-(maxB-minB)*Math.min(1,Math.max(0,(taxable-lo)/(hi-lo)));
+  const fedCredits=(bpa+Math.min(g,y?1540:1501)+cppBase+ei+fc)*.14;
+  const fed=Math.max(bracketTax(taxable,federal)-fedCredits,0);
+  const onBasic=Math.max(bracketTax(taxable,provincial)-((y?13261:12989)+cppBase+ei+oc)*.0505,0);
+  const surtax=.2*Math.max(onBasic-(y?5940:5818),0)+.36*Math.max(onBasic-(y?7603:7446),0);
+  const before=onBasic+surtax; const onRed=Math.min(before,Math.max(0,2*((y?306:300)+575*(y?0:children+disabled))-before));
+  const ont=before-onRed, hp=healthPremium(taxable);
+  const total=fed+ont+hp+cpp+cpp2+ei;
+  return {fed,ont:ont+hp,cpp:cpp+cpp2,ei,total,net:g-total};
+}
+function net(){
+  const per=$('per').value,v=num('gross'); $('children').disabled=$('disabled').disabled= $('year').value==='2027';
+  $('hrsBox').classList.toggle('hide',per!=='h');
+  $('otBox').classList.toggle('hide',per!=='h'); const g=per==='h'?v*(num('hrs',168)+Math.min(num('ot',168),168-num('hrs',168))*Math.max(1,num('mult',10)))*52:v*(+per);
+  $('otNote').classList.toggle('hide',per!=='h'); const r=netpay(g,num('fc'),num('oc'),+ $('year').value,+$('year').value===2027?0:Math.floor(num('children',30)),+$('year').value===2027?0:Math.floor(num('disabled',30))); $('periods').innerHTML=[['سنوي',1],['شهري',12],['مرتين شهرياً',24],['كل أسبوعين',26],['أسبوعي',52]].map(([k,d])=>`<tr><td>${tr(k)}</td><td dir="ltr">${fmt(r.net/d)}</td></tr>`).join('');
+  const labels={'1':'الصافي السنوي','12':'الصافي الشهري','24':'الصافي مرتين شهرياً','26':'الصافي كل أسبوعين','52':'الصافي الأسبوعي','h':'الصافي السنوي (محسوب من الساعات)'};
+  const div=per==='1'||per==='h'?1:+per;
+  $('n-label').textContent=tr(labels[per]);
+  $('n-net').textContent=fmt(r.net/div);
+  $('n-bw').textContent=fmt(r.net/26);
+  const rows=[['إجمالي الدخل السنوي',g],['ضريبة الدخل الفيدرالية',-r.fed],['ضريبة أونتاريو (مع Health Premium)',-r.ont],['مساهمة CPP / CPP2',-r.cpp],['تأمين العمل EI',-r.ei]];
+  const rate=g?(r.total/g):0;
+  $('n-table').innerHTML=rows.map(x=>`<tr><td>${tr(x[0])}</td><td dir="ltr">${fmt(x[1])}</td></tr>`).join('')+
+    `<tr class="tot"><td>${tr("الصافي السنوي")}</td><td dir="ltr">${fmt(r.net)}</td></tr><tr><td>${tr("نسبة الاستقطاع الكلية")}</td><td dir="ltr">${pct(rate)}</td></tr>`;
+}
+['gross','per','hrs','ot','mult','fc','oc','year','children','disabled'].forEach(id=>$(id).addEventListener('input',net));
+const dict={"حاسبات كندا": "Canada Calculators", "احسب ضريبة المشتريات وراتبك الصافي بسرعة.": "Estimate sales tax and take-home pay.", "ضريبة المبيعات": "Sales tax", "الراتب الصافي – أونتاريو": "Net pay – Ontario 2026", "المقاطعة": "Province / territory", "المبلغ ($)": "Amount ($)", "البقشيش (%)": "Tip (%)", "نوع الضريبة (حسب أهلية المنتج)": "Tax treatment (if eligible)", "النسبة العامة": "Standard rate", "معفى بالكامل / صفرية": "Fully exempt / zero-rated", "الضريبة الفيدرالية فقط (GST 5%)": "Federal GST only (5%)", "المبلغ المُدخل": "Amount entered", "قبل الضريبة": "Before tax", "شامل الضريبة": "Tax included", "الإجمالي": "Total", "الدخل ($)": "Income ($)", "نوع الدخل": "Income frequency", "سنوي": "Annual", "شهري": "Monthly", "مرتين شهرياً": "Semi-monthly", "كل أسبوعين": "Biweekly", "أسبوعي": "Weekly", "بالساعة": "Hourly", "ساعات العمل أسبوعيًا": "Regular weekly hours", "ساعات إضافية أسبوعياً (فوق الساعات العادية)": "Extra weekly hours (above regular hours)", "معامل أجر العمل الإضافي": "Overtime multiplier", "ائتمانات TD1 إضافية (اختياري)": "Additional TD1 credits (optional)", "مبالغ الائتمان الفيدرالية الإضافية (مثل DTC، دون الأساسي)": "Additional federal claim amounts (e.g. DTC, excluding basic)", "مبالغ ائتمان أونتاريو الإضافية (دون الأساسي)": "Additional Ontario claim amounts (excluding basic)", "أدخل مبالغ المطالبة المؤهلة من TD1 وTD1ON، لا قيمة تخفيض الضريبة نفسها.": "Enter eligible TD1/TD1ON claim amounts, not the tax savings.", "متوسط الصافي كل أسبوعين (ليس شيك راتب فعلي)": "Average biweekly net (not an actual paycheque)", "المبلغ قبل الضريبة": "Before tax", "إجمالي الدخل السنوي": "Annual gross income", "ضريبة الدخل الفيدرالية": "Federal income tax", "ضريبة أونتاريو (مع Health Premium)": "Ontario tax (including health premium)", "مساهمة CPP / CPP2": "CPP / CPP2 contributions", "تأمين العمل EI": "Employment insurance", "الصافي السنوي": "Annual net", "الصافي الشهري": "Monthly net", "الصافي مرتين شهرياً": "Semi-monthly net", "الصافي كل أسبوعين": "Biweekly net", "الصافي الأسبوعي": "Weekly net", "الصافي السنوي (محسوب من الساعات)": "Annual net (from hourly wages)", "نسبة الاستقطاع الكلية": "Total deduction rate", "العودة للموقع": "Back to website", "تقدير سنوي لموظف في أونتاريو حسب السنة المختارة، وليس إقراراً ضريبياً أو شيك راتب. لا يشمل LIFT أو التقاعد أو النقابة أو المزايا أو جميع الائتمانات.": "2026 Ontario estimate for a regular employee, excluding pension, union dues, benefits and other deductions. Use CRA PDOC for actual payroll.", "أداة تقديرية للمعلومات العامة وليست استشارة ضريبية. تأكد من النسب من المصادر الرسمية قبل الاعتماد عليها.": "General estimates only; not tax advice. Verify rates with official sources.", "الإصدار 4.0 — الرواتب 2026 و2027. آخر تحديث: 26 نوفمبر 2026. لا تحديث تلقائي للنسب. تخفيضات المعالين لعام 2027 غير مؤكدة ولذلك عطلت لهذه السنة.": "Payroll: 2026 only. Formula review: November 26, 2026. No automatic updates. Sales tax uses standard rates; verify eligibility and voluntary tips.", "ألبرتا": "Alberta", "كولومبيا البريطانية": "British Columbia", "مانيتوبا": "Manitoba", "نيو برونزويك": "New Brunswick", "نيوفاوندلاند ولابرادور": "Newfoundland and Labrador", "نوفا سكوشا": "Nova Scotia", "الأقاليم الشمالية الغربية": "Northwest Territories", "نونافوت": "Nunavut", "أونتاريو": "Ontario", "الأمير إدوارد": "Prince Edward Island", "كيبك": "Quebec", "ساسكاتشوان": "Saskatchewan", "يوكون": "Yukon"}; Object.assign(dict,{"الراتب الصافي – أونتاريو": "Net pay – Ontario", "السنة الضريبية": "Tax year", "أدخل الساعات المؤهلة للعمل الإضافي بنفسك؛ تختلف الأهلية حسب المهنة والقانون والاتفاق. يفترض الحساب 52 أسبوع عمل.": "Enter eligible overtime hours yourself; eligibility varies by occupation, law and agreement. Assumes 52 working weeks.", "عدد الأطفال المعالين المؤهلين لتخفيض أونتاريو": "Eligible dependent children for Ontario tax reduction", "عدد المعالين المؤهلين ذوي الإعاقة (قد يشمل طفلاً محسوباً أعلاه)": "Eligible dependants with disabilities (may include a child counted above)", "لا تطالب بتخفيض المعال نفسه مع شخص آخر. تحقق من شروط الأهلية الرسمية.": "Do not duplicate the same dependant claim with another person. Check official eligibility rules.", "الجزء الفيدرالي فقط (5%) عند الأهلية": "Federal portion only (5%), if eligible", "الجزء الإقليمي فقط عند الأهلية": "Provincial portion only, if eligible", "نسب مخصصة حسب أهلية المعاملة": "Custom rates based on transaction eligibility", "النسبة الأولى (%)": "First rate (%)", "النسبة الثانية (%)": "Second rate (%)", "الإعفاءات ليست تلقائية. تحقق من أهلية المنتج؛ البقشيش اختياري ويحسب قبل الضريبة.": "Exemptions are not automatic. Verify item eligibility; voluntary tips are calculated before tax.", "تقدير سنوي لموظف في أونتاريو حسب السنة المختارة، وليس إقراراً ضريبياً أو شيك راتب. لا يشمل LIFT أو التقاعد أو النقابة أو المزايا أو جميع الائتمانات.": "Annual Ontario employee estimate for the selected year, not a tax return or paycheque. Excludes LIFT, pensions, union dues, benefits and other credits.", "الإصدار 4.0 — الرواتب 2026 و2027. آخر تحديث: 26 نوفمبر 2026. لا تحديث تلقائي للنسب. تخفيضات المعالين لعام 2027 غير مؤكدة ولذلك عطلت لهذه السنة.": "Version 4.0 — payroll 2026 and 2027. Updated November 26, 2026. Rates do not update automatically. 2027 dependant reductions are disabled pending confirmation."}); let english=false; const tr=t=>english?(dict[t]||t):t;
+Object.assign(dict,{"سياسة الخصوصية": "Privacy policy", "الحسابات تتم داخل جهازك. لا يرسل التطبيق مدخلاتك المالية ولا يحفظها عمدا. يخزن المتصفح ملفات التطبيق للعمل دون اتصال. قد يسجل مزود الاستضافة بيانات الاتصال المعتادة مثل عنوان IP. الروابط الخارجية تخضع لسياسات أصحابها.": "Calculations run on your device. The app does not transmit or intentionally store your financial inputs. Your browser caches app files for offline use. The hosting provider may log ordinary connection data such as IP addresses. External links have their own policies.", "إخلاء المسؤولية": "Disclaimer", "هذه أداة تعليمية مستقلة وليست تابعة للحكومة الكندية ولا تقدم استشارة مالية أو ضريبية. النتائج تقديرية ولا تصلح بديلا عن كشوف الرواتب أو الإقرار الضريبي أو حاسبة CRA الرسمية. قد تتغير القوانين والنسب.": "This independent educational tool is not affiliated with the Canadian government and does not provide financial or tax advice. Estimates are not a substitute for pay statements, tax returns or the official CRA calculator. Laws and rates may change.", "الإبلاغ عن خطأ عبر GitHub": "Report an issue on GitHub", "لا تدرج راتبك الحقيقي أو معلوماتك الشخصية في البلاغ العام. يتطلب GitHub حسابا وقد يلزم تفعيل قسم Issues.": "Do not include real salary or personal information in public reports. GitHub requires an account and Issues may need to be enabled.", "تثبيت التطبيق": "Install app", "على iPhone استخدم Safari ثم مشاركة ثم إضافة إلى الشاشة الرئيسية. على Android استخدم قائمة المتصفح ثم تثبيت التطبيق إن توفر.": "On iPhone use Safari, Share, then Add to Home Screen. On Android use the browser menu and Install app if available."});
+const staticNodes=[...document.querySelectorAll('h1, .sub, label, option, [role=tab], summary, p.note, a, .big small')].filter(e=>e.id!=='n-label').map(e=>[e,e.textContent]);
+$('lang').onclick=()=>{english=!english;document.documentElement.lang=english?'en':'ar';document.documentElement.dir=english?'ltr':'rtl';$('lang').textContent=english?'العربية':'English';staticNodes.forEach(([e,t])=>e.textContent=tr(t));sales();net();};
+sales();net();
+</script>
+<script>let installPrompt;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;document.getElementById('install').classList.remove('hide')});document.getElementById('install').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;document.getElementById('install').classList.add('hide')}};if('serviceWorker' in navigator && location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(console.warn);</script></body>
+</html>
