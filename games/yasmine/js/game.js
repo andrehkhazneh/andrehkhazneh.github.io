@@ -1755,29 +1755,29 @@ function tickStaff(){
 // Palette stops use the same two-real-seconds-per-game-minute clock as the HUD.
 // The repeated midnight stop makes the last hour blend into the next day.
 var daylightStops = [
-  // Hour, phase, upper sky, horizon, page, panels, celestial disc, scene exposure
-  [0,  'night',     '#101b45','#35456b','#1d2b40','#293d51','#fff3cf',0.71],
-  [4,  'dawn',      '#38365e','#8e728b','#323449','#485062','#f2dfd2',0.78],
-  [6,  'sunrise',   '#ab99b2','#ffc392','#b5a29f','#dcc8b9','#ffe6ac',0.90],
-  [8,  'morning',   '#8ac9e9','#ffe9bd','#f4efd9','#fcf7e9','#ffe19a',1.00],
-  [12, 'day',       '#72c3f0','#d8eee2','#ecf3df','#f9fcf5','#fff2b7',1.00],
-  [16, 'afternoon', '#84b8d8','#f8d597','#f1e6d1','#fbf1de','#ffdc90',0.98],
-  [18, 'sunset',    '#b486a4','#ffab79','#dac0ac','#f2d8be','#ffc781',0.93],
-  [20, 'dusk',      '#524e80','#ae829c','#5c566e','#716b7d','#f4d5bc',0.83],
-  [22, 'night',     '#1c294f','#495575','#243247','#304257','#fff1cc',0.74],
-  [24, 'night',     '#101b45','#35456b','#1d2b40','#293d51','#fff3cf',0.71]
+  // Hour, phase, upper sky, horizon, page, panels, celestial disc, scene exposure, navigation face
+  [0,  'night',     '#101b45','#35456b','#1d2b40','#293d51','#fff3cf',0.71,'#28575e'],
+  [4,  'dawn',      '#38365e','#8e728b','#323449','#485062','#f2dfd2',0.78,'#495e69'],
+  [6,  'sunrise',   '#ab99b2','#ffc392','#b5a29f','#dcc8b9','#ffe6ac',0.90,'#e8bbaa'],
+  [8,  'morning',   '#8ac9e9','#ffe9bd','#f4efd9','#fcf7e9','#ffe19a',1.00,'#cadcba'],
+  [12, 'day',       '#72c3f0','#d8eee2','#ecf3df','#f9fcf5','#fff2b7',1.00,'#b9d8ae'],
+  [16, 'afternoon', '#84b8d8','#f8d597','#f1e6d1','#fbf1de','#ffdc90',0.98,'#dacda9'],
+  [18, 'sunset',    '#b486a4','#ffab79','#dac0ac','#f2d8be','#ffc781',0.93,'#edbb95'],
+  [20, 'dusk',      '#524e80','#ae829c','#5c566e','#716b7d','#f4d5bc',0.83,'#786f80'],
+  [22, 'night',     '#1c294f','#495575','#243247','#304257','#fff1cc',0.74,'#315c64'],
+  [24, 'night',     '#101b45','#35456b','#1d2b40','#293d51','#fff3cf',0.71,'#28575e']
 ];
 var skyLabels = {
   ar:{night:'ليل', dawn:'فجر', sunrise:'شروق', morning:'صباح', day:'نهار', afternoon:'عصر', sunset:'غروب', dusk:'غسق'},
   en:{night:'Night', dawn:'Dawn', sunrise:'Sunrise', morning:'Morning', day:'Day', afternoon:'Afternoon', sunset:'Sunset', dusk:'Dusk'}
 };
 var lastSkyMinute;
-function blendSkyColor(from,to,amount){
-  var rgb=[1,3,5].map(function(i){
+function blendSkyChannels(from,to,amount){
+  return [1,3,5].map(function(i){
     var a=parseInt(from.slice(i,i+2),16), b=parseInt(to.slice(i,i+2),16);
     return Math.round(a+(b-a)*amount);
   });
-  return 'rgb('+rgb.join(',')+')';
+
 }
 function updateSky(){
   var mode=state.dayMode||'auto';
@@ -1791,8 +1791,16 @@ function updateSky(){
     var mix=(hour-a[0])/(b[0]-a[0]);
     var body=document.body;
     ['--sky-top','--sky-horizon','--cycle-page','--cycle-panel','--cycle-disc'].forEach(function(name,index){
-      body.style.setProperty(name,blendSkyColor(a[index+2],b[index+2],mix));
+      body.style.setProperty(name,'rgb('+blendSkyChannels(a[index+2],b[index+2],mix).join(',')+')');
     });
+    var face=blendSkyChannels(a[8],b[8],mix);
+    var linear=face.map(function(channel){
+      var value=channel/255;
+      return value<=0.04045 ? value/12.92 : Math.pow((value+0.055)/1.055,2.4);
+    });
+    var luminance=0.2126*linear[0]+0.7152*linear[1]+0.0722*linear[2];
+    body.style.setProperty('--nav-face','rgb('+face.join(',')+')');
+    body.style.setProperty('--nav-ink',luminance>0.18?'#09120f':'#fffefa');
     body.style.setProperty('--cycle-light',(a[7]+(b[7]-a[7])*mix).toFixed(3));
     body.dataset.sky=a[1];
     $('scene').dataset.sky=a[1];

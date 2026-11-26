@@ -11,8 +11,7 @@ body[data-sky] main {
   color: var(--cycle-ink) !important;
 }
 body[data-sky] :is(.panel:not(.hud),#staffArea,#settingsPanel,#daySettings,#employeesPanel,.staff-request,.staff-dialogue,.abu-notice),
-body[data-sky] .hud.hud-3d > div,
-body[data-sky] #gameNav :is(#workersTab,#staffTab,#jamalTab,#collectionsTab) {
+body[data-sky] .hud.hud-3d > div {
   background: var(--cycle-panel) !important;
   border-color: var(--cycle-edge) !important;
   color: var(--cycle-ink) !important;
@@ -38,4 +37,34 @@ body[data-sky] #scene .potting-bench,
 body[data-sky] #scene #abuWorker img,
 body[data-sky] #scene .nursery-plot {
   filter: brightness(var(--cycle-light));
+}
+
+/* The navigation skin takes precedence over the older individual tile colors. */
+@layer gardenNavigation {
+  #gameNav > button {
+    --face: var(--nav-face, #b9d8ae);
+    --rim: color-mix(in srgb, var(--face) 66%, #15282b);
+    --lip: 3px;
+    --shadow: 4px;
+    --selection: transparent;
+    color: var(--nav-ink, #09120f) !important;
+    background: linear-gradient(165deg, color-mix(in srgb, var(--face) 94%, white), var(--face) 55%, color-mix(in srgb, var(--face) 95%, black)) !important;
+    border: 1px solid color-mix(in srgb, var(--face) 73%, white) !important;
+    box-shadow: inset 0 1px 1px #ffffff80, inset 0 0 0 2px var(--selection),
+      0 var(--lip) 0 var(--rim), 0 var(--shadow) 5px #10262240 !important;
+    transition: transform 90ms ease-out, box-shadow 90ms ease-out !important;
+  }
+  #gameNav > button[aria-pressed="true"] {
+    --selection: color-mix(in srgb, currentColor 48%, transparent);
+    text-decoration: underline !important;
+    text-underline-offset: .22em;
+  }
+  #gameNav > button:active {
+    --lip: 1px;
+    --shadow: 1px;
+    transform: translateY(2px) !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #gameNav > button { transition: none !important; }
+  }
 }
