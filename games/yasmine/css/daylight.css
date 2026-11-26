@@ -41,7 +41,7 @@ body[data-sky] #scene .nursery-plot {
 
 /* The navigation skin takes precedence over the older individual tile colors. */
 @layer gardenNavigation {
-  #gameNav > button {
+  #gameNav button {
     --face: var(--nav-face, #b9d8ae);
     --rim: color-mix(in srgb, var(--face) 66%, #15282b);
     --lip: 3px;
@@ -54,17 +54,17 @@ body[data-sky] #scene .nursery-plot {
       0 var(--lip) 0 var(--rim), 0 var(--shadow) 5px #10262240 !important;
     transition: transform 90ms ease-out, box-shadow 90ms ease-out !important;
   }
-  #gameNav > button[aria-pressed="true"] {
+  #gameNav button[aria-pressed="true"] {
     --selection: color-mix(in srgb, currentColor 48%, transparent);
     text-decoration: underline !important;
     text-underline-offset: .22em;
   }
-  #gameNav > button:active {
+  #gameNav button:active {
     --lip: 1px;
     --shadow: 1px;
     transform: translateY(2px) !important;
   }
   @media (prefers-reduced-motion: reduce) {
-    #gameNav > button { transition: none !important; }
+    #gameNav button { transition: none !important; }
   }
 }
