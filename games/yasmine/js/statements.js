@@ -33,14 +33,14 @@ function render(box,group,f,en,cat,name,title,wages){
  if(group==='campaign'){
    const sales=f.rows.filter(r=>r.category==='sales'&&r.person==='yasmin');
    const revenue=sales.reduce((n,r)=>n+r.amount,0),cost=sales.reduce((n,r)=>n+r.seedCost,0);
-   line(t('مجموع مبيعات الطلبيات','Order sales'),revenue);
-   line(t('ثمن بذور النباتات المسلّمة','Delivered seed costs'),cost);
-   const fertilizer=f.rows.filter(r=>r.category==='fertilizerSale').reduce((sum,r)=>sum+r.amount,0);
-   if(fertilizer)line(t('مبيعات فائض السماد','Surplus fertilizer sales'),fertilizer);
-   total=revenue+fertilizer-cost;label=t('ربح الطلبيات بعد ثمن البذور','Order margin after seeds');
-   const saved=f.rows.reduce((n,r)=>n+(r.savings||0),0);
-   line(t('توفير عروض الشراء','Supplier savings'),saved);
-   note=t('الربح هو المبيعات ناقص ثمن البذور، قبل السماد والرواتب. التوفير بيحسب العروض المشتراة وبيظهر لحاله.','Margin is sales minus seeds, before fertilizer and wages. Savings count purchased deals separately.');
+   const bags=f.rows.filter(r=>r.category==='fertilizerSale');
+   const fert=bags.reduce((n,r)=>n+r.amount,0),knownCost=bags.reduce((n,r)=>n+(r.fertilizerCost||0),0);
+   total=revenue+fert-cost-knownCost;
+   line(t('ثمن البذور','Seed cost'),cost);line(t('بيع النبات','Plant sales'),revenue);
+   line(t('بيع السماد','Fertilizer sales'),fert);line(t('صافي الأرباح','Net earnings'),total);
+   line(t('عدد العروض عن طريق ياسمين','Offers through Yasmin'),f.offerCount??sales.length+bags.length);
+   label='';note=t('الصافي بعد البذور وكلفة السماد المقدّرة المسجّلة، وقبل الرواتب والمحطة. العروض القديمة غير المسجّلة تشمل المبيعات المعروفة فقط.','Net of seeds and recorded estimated fertilizer costs, before wages and station costs. Earlier untracked offers include known sales only.');
+   if(bags.some(r=>r.fertilizerCost==null))note+=t(' كلفة السماد بالمبيعات القديمة غير متوفرة.',' Cost was unavailable for earlier fertilizer sales.');
  }else if(group==='garden'){
    line(t('ثمن البذور اللي اشتريتها','Seed purchases'),a.seeds);
    line(t('قبضت من بيع النباتات','Plant sales received'),a.sales);
@@ -67,6 +67,7 @@ function render(box,group,f,en,cat,name,title,wages){
  box.innerHTML='<div class="paper-brand"></div><h3></h3><div class="paper-period"></div><table><thead><tr><th></th><th></th></tr></thead><tbody></tbody></table><div class="paper-total"><strong></strong><bdi></bdi></div><details><summary></summary><div class="paper-note"></div></details><footer><span></span><b></b></footer>';
  const put=(selector,value)=>{box.querySelector(selector).textContent=value};
  put('.paper-brand',name);put('h3',title);put('.paper-period',t('من بداية التسجيل','Since recording began'));
+ box.querySelector('thead').hidden=group!=='staff';box.querySelector('.paper-total').hidden=group==='campaign';
  put('th',t('البيان','Description'));put('th:last-child',t('المبلغ بالعملة','Coins'));
  for(const [index,[text,value]] of lines.entries()){
    const row=box.querySelector('tbody').insertRow(),description=row.insertCell();
