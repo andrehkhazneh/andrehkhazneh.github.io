@@ -475,7 +475,7 @@ function financeWage(){
 }
 const financialLabels={
  apiarySeed:['بذور المنحلة','Apiary seeds'],apiaryFlower:['بيع نبات المنحلة','Apiary plant sale'],honeySale:['بيع العسل','Honey sale'],fertilizerSale:['بيع فائض السماد','Surplus fertilizer sale'],donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى 2','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى 3','Station tier 3'],
- abu:['أبو وردة','Abu Warda'],nana:['نانا','Nana'],ledger:['جمال','Jamal'],yasmin:['ياسمين','Yasmin']
+ warda:['وردة','Warda'],abu:['أبو وردة','Abu Warda'],nana:['نانا','Nana'],ledger:['جمال','Jamal'],yasmin:['ياسمين','Yasmin']
 };
 function finText(ar,en){return state.lang==='en'?en:ar}
 function finLabel(k){return financialLabels[k]?finText(...financialLabels[k]):k}
@@ -2176,6 +2176,10 @@ function apiarySales(){
 }
 function wardaName(kind){return nectarPlants[kind][state.lang==='en'?'en':'ar']}
 function jarArt(i){return '<span class="honey-jar" aria-hidden="true" style="--jar-x:'+i*100/3+'%"></span>'}
+function wardaWage(){
+ const w=wardaData();w.wageCount=(w.wageCount||0)+1;
+ if(w.wageCount>=3){w.wageCount=0;financeMove(-25,'salary',{person:'warda'});}
+}
 function apiaryAct(action,i,batch){
  const w=wardaData(),p=nectarPlants[i];apiaryTick();
  if(!p)return;
@@ -2188,7 +2192,7 @@ function apiaryAct(action,i,batch){
    const bed=w.bed;if(!bed||bed.id!==batch||bed.kind!==i||bed.sold||Date.now()<bed.nectarEnd)return;
    bed.sold=true;financeMove(p.plant,'apiaryFlower',{kind:i});
  }else if(action==='jar'){
-   if(w.jars[i]<1)return;w.jars[i]--;financeMove(p.honey,'honeySale',{kind:i});
+   if(w.jars[i]<1)return;w.jars[i]--;financeMove(p.honey,'honeySale',{kind:i});wardaWage();
  }else return;
  apiaryTick();save();render();
 }
@@ -2201,7 +2205,7 @@ function honeyAd(action,slot,i){
    w.jars[i]--;w.edition++;w.ads[slot]={kind:i,price,due:Date.now()+30000,stage:'waiting'};
  }else{
    if(!ad||ad.stage!=='offer')return;
-   if(action==='accept')financeMove(ad.price,'honeySale',{person:'yasmin',kind:ad.kind});
+   if(action==='accept'){financeMove(ad.price,'honeySale',{person:'yasmin',kind:ad.kind});wardaWage();}
    else if(action==='decline')w.jars[ad.kind]++;else return;
    w.ads[slot]=null;
  }
@@ -2220,9 +2224,9 @@ function renderApiary(){
  $('wardaEmployeeName').textContent=t('وردة','Warda');
  $('wardaEmployeeRole').textContent=t('مسؤولة المنحلة','Beekeeper');
  $('wardaEmployeeDuty').textContent=$('wardaStaffRole').textContent;
- const terms=t('متاحة من المستوى 1 · تعمل بلا راتب','Available from level 1 · No salary');
- $('wardaEmployeeTerms').textContent=terms;
- $('wardaStaffRole').textContent+=' '+terms;
+ const terms=t('متاحة من المستوى 1 · راتب 25 عملة كل 3 مبيعات عسل','Available from level 1 · 25 coins per 3 honey sales');
+ $('wardaEmployeeTerms').textContent=terms+' · '+t('الراتب القادم بعد ','Next wage in ')+(3-(w.wageCount||0))+t(' مبيعات عسل',' honey sales');
+ $('wardaStaffRole').textContent+=' '+$('wardaEmployeeTerms').textContent;
  $('wardaGo').textContent=t('زور المنحلة','Visit apiary');
  if(area.hidden)return;
  $('apiaryTitle').textContent=t('وردة · المنحلة','Warda · Apiary');
