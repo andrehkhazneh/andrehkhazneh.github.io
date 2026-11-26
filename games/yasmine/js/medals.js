@@ -31,7 +31,7 @@ function loadImage(src){
 }
 function accomplishment(row,en,firstPerson=false){
  const [id,,,,,target]=row;
- const n=target.toLocaleString(en?'en':'ar');
+ const n=target.toLocaleString(en?'en':'ar-u-nu-latn');
  if(id.startsWith('sales'))return en?(firstPerson?'I completed ':'You completed ')+n+' sales.':'أتممت '+n+' عملية بيع.';
  if(id.startsWith('geo'))return en?(firstPerson?'I answered ':'You answered ')+n+' geography questions correctly.':'جاوبت صح على '+n+' سؤال جغرافيا.';
  const subject=firstPerson?'I ':'You ';
