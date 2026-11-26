@@ -1749,7 +1749,7 @@ $('caseClose').onclick=function(){state.catSpy.dismissed=true;save();render();};
 $('catSpy').onclick=function(){
  if(state.cat.sleeping||Date.now()<catBusyUntil||state.cat.away||state.catSpy.status==='running'||!state.abu.hired||Date.now()<(Number(state.catSpy.cooldownUntil)||0))return;
  $('catMissions').open=false;
- state.catSpy={status:'running',report:'',end:Date.now()+8000,cooldownUntil:Date.now()+8000+120000};
+ state.catSpy={status:'running',script:nextSpyScript(),report:'',end:Date.now()+8000,cooldownUntil:Date.now()+8000+120000};
  activeArea='nursery';sound('notify');save();render();
  updateSpyScene();$('scene').scrollIntoView({behavior:'smooth',block:'center'});
 };
@@ -1781,7 +1781,97 @@ const detectiveNotes=[
  ["سمعت أبو وردة يقلّها: الزبون جاي، وقّفي دغري! فكرتو كشفني. طلع عم يحكي مع توليبة مايلة.", "“Customer coming. Stand up straight!” said John. Thought I’d been spotted. He was talking to a drooping flower."],
  ["أبو وردة مغمّض عيونه. قرّبت أتأكد إذا نايم. قال: بس تخلّصي التقرير، فيكي تبطّلي تخرخري بإذني؟", "John had his eyes shut. I crept closer to see if he was asleep. “When you finish that report, could you stop purring in my ear?”"]
 ];
+const spyScripts=[
+ [
+  "الشاهدة جوريّة",
+  "A rose takes the stand",
+  "مين ورا الصندوق؟",
+  "Who’s behind the planter?",
+  "عملت حالي وردة. سقاني.",
+  "I pretended to be a rose. He watered me.",
+  "هربت قبل ما يحطلي سماد.",
+  "I left before he got the fertilizer."
+ ],
+ [
+  "دوام مسائي",
+  "Night shift",
+  "منيح إنك جيتي!",
+  "Glad you’re here!",
+  "رحت راقب أبو وردة، سلّمني المشتل وقال «إذا إجت ياسمين، أنا صارلي دقيقة رايح».",
+  "I went to spy on Abu Warda. He left me in charge. “If Yasmin asks, I just stepped out.”",
+  "صارلي عم راقب محلّه.",
+  "Now I’m watching the shop."
+ ],
+ [
+  "الاسم الحركي",
+  "Undercover alias",
+  "بسّ بسّ بسّ!",
+  "Pspsps!",
+  "أول «بسّ» تجاهلتها. التانية كمان. عالتالتة طلعت لحالي.",
+  "I ignored the first pspsps. And the second. On the third, my legs went over without me.",
+  "يا ريت يغيّروا كلمة السر.",
+  "We really need a new password."
+ ],
+ [
+  "الشاهد الوحيد",
+  "One eyewitness",
+  "مين أكل النعنع؟",
+  "Who ate the mint?",
+  "سألني مين أكل النعنع. فتحت تمّي قول «ما بعرف»… علقت ورقة بشاربي.",
+  "He asked who ate the mint. I opened my mouth to say “no idea.” A leaf fell off my whisker.",
+  "بطلب محامي.",
+  "I want a lawyer."
+ ],
+ [
+  "بدل أتعاب",
+  "Expenses claim",
+  "قديش دافعينلك؟",
+  "What are they paying you?",
+  "قلتله حبّة مكافأة. مدّ إيدو بجيبتو وقال «بعطيكي حبّتين وبتكتبي إني عم اشتغل».",
+  "I said one treat. He reached into his pocket. “I’ll give you two if you write that I’m working.”",
+  "أبو وردة عم يشتغل كتير.",
+  "Abu Warda is working VERY hard."
+ ],
+ [
+  "العميلة البديلة",
+  "The stand-in",
+  "عَ مين الدور اليوم؟",
+  "Whose turn is it today?",
+  "لقيت أبو وردة حاطط صحن حليب ورا الصندوق. قلتله «كيف عرفت؟» قال «المبارح كانت قطة الجيران».",
+  "He’d left milk behind my planter. “How did you know?” I asked. “Yesterday it was the tabby from next door.”",
+  "حتى بالتجسس عندي منافسة.",
+  "Even this job has competition."
+ ],
+ [
+  "اختبار الصوت",
+  "Sound check",
+  "سمعت شي؟",
+  "Did you hear that?",
+  "كل ما يطلّ صوب الصندوق بحبس نفسي. زبطت الخطة لحدّ ما بطني قال مياو.",
+  "Every time he looked over, I held my breath. It worked until my stomach meowed.",
+  "بالمهمة الجاية بتطعّموني قبل.",
+  "Next time, feed me first."
+ ],
+ [
+  "تسليم التقرير",
+  "Special delivery",
+  "سلّميلي عالمدير!",
+  "Say hi to the boss!",
+  "مدّلي ورقة وقال «طالما رايحة تسلّمي التقرير، خدي هالفاتورة معك».",
+  "He handed me a bill. “Since you’re going back to file your report, take this too.”",
+  "طلعت جاسوسة، رجعت ساعي بريد.",
+  "Went out a spy. Came back the mail carrier."
+ ]
+];
+function nextSpyScript(){return ((state.lastSpyScript??-1)+1)%spyScripts.length}
+function spyDisplay(spy,ar){
+ const script=spyScripts[spy.script];
+ if(!script)return {title:'',body:(detectiveNotes[spy.reportIndex]||detectiveNotes[0])[ar?0:1],end:''};
+ const i=ar?0:1;
+ return {title:script[i],body:script[4+i],end:script[6+i]};
+}
 function finishInvestigation(spy){
+ if(spy.script!=null)state.lastSpyScript=spy.script;
  const choices=[0,1,2,3];
  if(nurseryPots().some(p=>!p.active))choices.push(4);
  if(nurseryPots().some(isReady))choices.push(5);
@@ -1792,8 +1882,8 @@ function finishInvestigation(spy){
  spy.status='done';spy.report='file';sound('notify');save();
 }
 function caseText(spy,ar){
- const note=detectiveNotes[spy.reportIndex]||detectiveNotes[0];
- return (ar?'ملف ':'Case ')+String(spy.caseNumber||1).padStart(3,'0')+' · '+displayName('catName')+' — '+note[ar?0:1];
+ const note=spyDisplay(spy,ar);
+ return (ar?'ملف ':'Case ')+String(spy.caseNumber||1).padStart(3,'0')+' · '+displayName('catName')+' — '+note.body+' '+note.end;
 }
 function renderCatExtras(){
  $('catMissionsLabel').textContent=state.lang==='ar'?'مهمّات القطة':'Cat missions';
@@ -1814,7 +1904,13 @@ function renderCatExtras(){
  card.hidden=!spy.report||spy.dismissed===true||spy.status==='running';
  if(!card.hidden){
    $('caseTitle').textContent=(ar?'دفتر '+displayName('catName')+' · ملف ':'Detective '+displayName('catName')+' · Case ')+String(spy.caseNumber||1).padStart(3,'0');
-   $('caseNote').textContent=(detectiveNotes[spy.reportIndex]||detectiveNotes[0])[ar?0:1];
+   const note=spyDisplay(spy,ar);
+   if(note.title)$('caseTitle').textContent=note.title+' · '+String(spy.caseNumber||1).padStart(3,'0');
+   const stamp=[spy.caseNumber,spy.script,spy.reportIndex,ar].join('|');
+   if($('caseNote').dataset.stamp!==stamp){
+     const punch=document.createElement('strong');punch.textContent=note.end;punch.style.display='block';punch.style.marginBlockStart='.5em';
+     $('caseNote').replaceChildren(note.body,punch);$('caseNote').dataset.stamp=stamp;
+   }
    $('caseClose').ariaLabel=ar?'إغلاق التقرير':'Close case file';
  }
  $('catSpy').style.opacity=$('catSpy').disabled?'0.55':'';
@@ -1837,12 +1933,17 @@ var spyCaption=document.createElement('div');spyCaption.id='spyCaption';spyCapti
 var spyVisualStarted=0;
 function updateSpyScene(){
  var spy=state.catSpy, running=spy.status==='running',ar=state.lang==='ar';
- if(!running){spyMimi.hidden=true;spyCaption.hidden=true;spyCover.hidden=true;spyVisualStarted=0;return}
+ if(!running){delete $('scene').dataset.spyBeat;spyMimi.hidden=true;spyCaption.hidden=true;spyCover.hidden=true;spyVisualStarted=0;return}
  spyMimi.hidden=false;spyCaption.hidden=false;spyCover.hidden=false;
  var remain=spy.end-Date.now();
  var spyButton=$('catSpy');
  if(spyButton)spyButton.textContent=(ar?'🐾 '+displayName("catName")+' عم تتجسس... ':'🐾 '+displayName("catName")+' is spying... ')+Math.max(0,Math.ceil(remain/1000))+' '+(ar?'ثانية':'s');
- spyCaption.textContent=remain>4000?(ar?'🐾 '+displayName("catName")+' عم تتسلّل لتراقب أبو وردة...':'🐾 '+displayName("catName")+' is sneaking up on John...'):(ar?'🤫 ششش... '+displayName("catName")+' عم تتلصّص!':'🤫 Shhh... '+displayName("catName")+' is spying!');
+ const elapsed=8000-remain, beat=elapsed<2500?'approach':elapsed<4000?'peek':elapsed<6000?'caught':'retreat';
+ $('scene').dataset.spyBeat=beat;
+ spyMimi.dataset.end=String(spy.end);
+ const script=spyScripts[spy.script]||spyScripts[0];
+ spyCaption.hidden=beat!=='caught';
+ if(!spyCaption.hidden)spyCaption.textContent=(ar?'أبو وردة: «':'Abu Warda: “')+script[ar?2:3]+(ar?'»':'”');
  if(!spyVisualStarted){spyVisualStarted=Date.now();spyMimi.className='';requestAnimationFrame(function(){spyMimi.className='spy-in spy-peek'})}
  if(remain<2200)spyMimi.className='spy-out';
 }
