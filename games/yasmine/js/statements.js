@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 function amounts(rows){
- const totals={seeds:0,sales:0,food:0,treat:0,goods:0,oldShop:0,transport:0,emergency:0,abu:0,nana:0,yasmin:0,ledger:0,oldSalary:0,managerSalary:0};
+ const totals={seeds:0,sales:0,food:0,treat:0,goods:0,oldShop:0,transport:0,emergency:0,abu:0,nana:0,warda:0,yasmin:0,ledger:0,oldSalary:0,managerSalary:0};
  for(const r of rows){
    const paid=-r.amount;
    switch(r.category){
@@ -16,7 +16,7 @@ function amounts(rows){
      case 'salary': {
        // Before names were recorded, these were the only two salary postings.
        const person=r.person || ({15:'abu',20:'nana'})[paid];
-       totals[person==='yasmin'?'managerSalary':['abu','nana'].includes(person)?person:'oldSalary']+=paid;
+       totals[person==='yasmin'?'managerSalary':['abu','nana','warda'].includes(person)?person:'oldSalary']+=paid;
        break;
      }
      case 'bonus': totals.yasmin+=paid;break;
@@ -57,7 +57,8 @@ function render(box,group,f,en,cat,name,title,wages){
  }else{
    line(t('أبو وردة · راتب البستاني','Abu Warda · Gardener wages'),a.abu);line(t('نانا · راتب مربية القطط','Nana · Cat caretaker wages'),a.nana);
    line(t('ياسمين · راتب المديرة','Yasmin · Manager wages'),a.managerSalary);line(t('ياسمين · بونص المديرة','Yasmin · Manager bonuses'),a.yasmin);line(t('جمال · راتب المحاسب','Jamal · Accountant wages'),a.ledger);
-   total=a.managerSalary+a.abu+a.nana+a.yasmin+a.ledger+a.oldSalary;
+   line(t('وردة · راتب مسؤولة المنحلة','Warda · Beekeeper wages'),a.warda);
+   total=a.warda+a.managerSalary+a.abu+a.nana+a.yasmin+a.ledger+a.oldSalary;
    label=t('مجموع المدفوع للموظفين','Total wages and bonuses paid');
    note=t('نجمع الرواتب والبونص المدفوع. الراتب المستحق بينضاف وقت الدفع. التوظيف والتطوير مسجّلين لحالهم بالدفتر.','Includes paid wages and bonuses. Wages due count once paid. Hiring and upgrades are separate ledger entries.');
    if(a.oldSalary)note+=t(' المجموع بيشمل دفعات سابقة إضافية بقيمة ',' The total includes additional earlier payments of ')+fmt(a.oldSalary)+t(' عملة.',' coins.');
