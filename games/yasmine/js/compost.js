@@ -73,13 +73,13 @@ function render(state,h){
  el('compostArt').style.backgroundPosition=(Math.max(c.tier-1,0)*50)+'% center';el('compostArt').dataset.phase=batch?(done?'ready':'working'):c.tier?'empty':'locked';
  put('compostInventory',txt('🍂 أوراق ','🍂 Leaves ')+c.leaves+'/'+t.capacity+txt(' · 🌿 بقايا ',' · 🌿 Scraps ')+c.scraps+'/'+t.capacity+txt(' · سماد بالمخزون ',' · Fertilizer in stock ')+state.stock.fertilizer);
  const mins=recipe.seconds/60;
- const duration=en?mins+(mins===1?' minute':' minutes'):['','دقيقة','دقيقتين','٣ دقايق'][mins];
+ const duration=en?mins+(mins===1?' minute':' minutes'):['','دقيقة','دقيقتين','3 دقايق'][mins];
  put('compostRecipe',done?txt('دفعتك جاهزة: ','Ready to collect: ')+batch.units+txt(' سماد',' fertilizer'):batch?txt('عم يتحضّر السماد · باقي ','Composting · ')+clock(left):txt('بتصنع ','Make ')+recipe.yield+txt(' سماد خلال ',' fertilizer in ')+duration);
  const needL=Math.max(0,recipe.leaves-c.leaves),needS=Math.max(0,recipe.scraps-c.scraps);
  el('compostNeeds').hidden=!!batch||!c.tier;
  put('compostLeaves',txt('🍂 أوراق يابسة · معك ','🍂 Dry leaves · Have ')+c.leaves+txt('، المطلوب ',' · Need ')+recipe.leaves);
  put('compostScraps',txt('🌿 بقايا نباتات · معك ','🌿 Plant scraps · Have ')+c.scraps+txt('، المطلوب ',' · Need ')+recipe.scraps);
- const instructions=needL||needS?[txt('المواد بتتجمع لحالها كل ٣٠ ثانية لعب. البيع بيسرّع التجميع.','Materials arrive every 30 seconds of play. Selling plants speeds this up.')]:[];
+ const instructions=needL||needS?[txt('المواد بتتجمع لحالها كل 30 ثانية لعب. البيع بيسرّع التجميع.','Materials arrive every 30 seconds of play. Selling plants speeds this up.')]:[];
  put('compostHint',!c.tier?(level<4?txt('بتفتح المحطة بالمستوى 4. فيك تجمع المواد من هلّق.','Unlocks at level 4. You can already gather materials.'):txt('اشتري الصندوق لتصنع السماد من الأوراق وبقايا النباتات.','Buy the bin to make fertilizer from leaves and scraps.')):batch&&!done?txt('فيك تسكّر اللعبة وترجع تجمع دفعتك.','You can close the game and collect your batch later.'):batch?'':instructions.join(' '));
  const action=el('compostAction'),upgrade=el('compostUpgrade'),buy=el('compostBuy');
  action.hidden=!done&&!canStart(c);action.disabled=action.hidden;
