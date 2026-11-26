@@ -178,7 +178,7 @@ function renderCat(){
   $('workersTab').setAttribute('aria-expanded',String(activeArea==='workers'));
   $('workersTab').firstChild.textContent=finText('الموظفين ','Staff ');
   $('officeArea').hidden=activeArea!=='office';
-  $('jamalTab').textContent=finText('جمال','Jamal');
+  $('jamalTab').textContent=finText('المحاسبة','Accounting');
   $('jamalTab').setAttribute('aria-pressed',String(activeArea==='office'));
   $('jamalStaffName').textContent=finText('جمال','Jamal');
   $('jamalStaffInfo').textContent=finText('محاسب المشتل · التوظيف من المستوى 6 مقابل 400 عملة. الراتب 20 كل 10 مبيعات.','Nursery accountant · Level 6, 400 coins to hire, wage 20 per 10 sales.');
@@ -187,7 +187,7 @@ function renderCat(){
   $('workersBadge').hidden=openings===0;
   $('workersBadge').textContent=openings;
   $('staffTab').setAttribute('aria-pressed',String(activeArea==='staff'));
-  $('staffTab').firstChild.textContent=state.lang==='ar'?'ياسمين ':'Yasmin ';
+  $('staffTab').firstChild.textContent=state.lang==='ar'?'الإدارة ':'Management ';
   $('nurseryTab').setAttribute('aria-pressed',String(nursery));
   $('catTab').setAttribute('aria-pressed',String(activeArea==='cat'));
   $('nurseryTab').textContent=(displayName("nurseryName")||words.nursery);var nurseryAction=ready?'sell':nurseryPots().some(p=>!p.active)?'plant':null;$('nurseryBadge').hidden=!nurseryAction;$('abuNotice').hidden=!nurseryAction||activeArea!=='nursery';$('abuNotice').textContent=nurseryAction==='sell'?(state.lang==='ar'?'👨‍🌾 أبو وردة: النبتة جاهزة للبيع!':'👨‍🌾 John: Plant ready to sell!'):(state.lang==='ar'?'👨‍🌾 أبو وردة: في أصيص فاضي، ازرع بذرة جديدة!':'👨‍🌾 John: Plant a new seed!');
@@ -1198,7 +1198,7 @@ function renderFinance(){
  const home=!invoiceGroup;
  renderJamalQuestions(home);
  put('jamalName',t('جمال · محاسب المشتل','Jamal · Nursery accountant'));
- const labels={apiary:t('المنحلة','Apiary'),staff:t('رواتب','Wages'),campaign:t('مبيعات','Sales'),cat:t('القطة','Cat'),garden:t('المشتل','Nursery'),donations:t('تبرع','Donations')};
+ const labels={apiary:t('مناحل العسل','Honey Apiary'),staff:t('رواتب','Wages'),campaign:t('مبيعات','Sales'),cat:t('القطة','Cat'),garden:t('المشتل','Nursery'),donations:t('تبرع','Donations')};
  $('jamalInvoices').hidden=!home;$('jamalInvoices').querySelector('summary').textContent=t('🧾 الفواتير','🧾 Invoices');
  for(const b of $('jamalMenu').children)b.textContent=labels[b.dataset.group];
  $('jamalMenu').hidden=!home;panel.querySelector('.jamal-art').hidden=!home;
@@ -2224,20 +2224,20 @@ function renderApiary(){
  const w=wardaData(),t=finText,bed=w.bed,now=Date.now(),area=$('apiaryArea');
  const hasPlant=bed&&!bed.sold&&now>=bed.nectarEnd;
  const jarCount=w.jars.reduce((a,b)=>a+b,0);
- $('apiaryTab').textContent=t('المنحلة','Apiary');
+ $('apiaryTab').textContent=t('مناحل العسل','Honey Apiary');
  const badge=$('apiaryBadge');badge.hidden=!hasPlant&&!jarCount;badge.textContent=Number(!!hasPlant)+jarCount;
  area.hidden=activeArea!=='apiary';$('apiaryTab').setAttribute('aria-pressed',String(!area.hidden));
- $('wardaStaffTitle').textContent=t('وردة · مسؤولة المنحلة','Warda · Beekeeper');
+ $('wardaStaffTitle').textContent=t('وردة · مسؤولة مناحل العسل','Warda · Beekeeper');
  $('wardaStaffRole').textContent=t('بنت أبو وردة. بتعتني بزهر الرحيق وبتجهّز العسل للبيع.','Abu Warda’s daughter grows nectar flowers and prepares honey for sale.');
  $('wardaEmployeeName').textContent=t('وردة','Warda');
- $('wardaEmployeeRole').textContent=t('مسؤولة المنحلة','Beekeeper');
+ $('wardaEmployeeRole').textContent=t('مسؤولة مناحل العسل','Beekeeper');
  $('wardaEmployeeDuty').textContent=$('wardaStaffRole').textContent;
  const terms=t('متاحة من المستوى 1 · راتب 25 عملة كل 3 مبيعات عسل','Available from level 1 · 25 coins per 3 honey sales');
  $('wardaEmployeeTerms').textContent=terms+' · '+t('الراتب القادم بعد ','Next wage in ')+(3-(w.wageCount||0))+t(' مبيعات عسل',' honey sales');
  $('wardaStaffRole').textContent+=' '+$('wardaEmployeeTerms').textContent;
- $('wardaGo').textContent=t('زور المنحلة','Visit apiary');
+ $('wardaGo').textContent=t('زور مناحل العسل','Visit apiary');
  if(area.hidden)return;
- $('apiaryTitle').textContent=t('وردة · المنحلة','Warda · Apiary');
+ $('apiaryTitle').textContent=t('وردة · مناحل العسل','Warda · Apiary');
  const mode=area.dataset.mode||'seeds';
  const words={flower:t('بيع نبات','Sell plant'),jar:t('بيع العسل','Sell honey'),seeds:t('متجر بذور','Seed shop')};
  for(const b of $('apiaryTools').children){b.textContent=words[b.dataset.mode];b.setAttribute('aria-pressed',String(mode===b.dataset.mode))}
