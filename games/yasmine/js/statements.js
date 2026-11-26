@@ -35,7 +35,9 @@ function render(box,group,f,en,cat,name,title,wages){
    const revenue=sales.reduce((n,r)=>n+r.amount,0),cost=sales.reduce((n,r)=>n+r.seedCost,0);
    line(t('مجموع مبيعات الطلبيات','Order sales'),revenue);
    line(t('ثمن بذور النباتات المسلّمة','Delivered seed costs'),cost);
-   total=revenue-cost;label=t('ربح الطلبيات بعد ثمن البذور','Order margin after seeds');
+   const fertilizer=f.rows.filter(r=>r.category==='fertilizerSale').reduce((sum,r)=>sum+r.amount,0);
+   if(fertilizer)line(t('مبيعات فائض السماد','Surplus fertilizer sales'),fertilizer);
+   total=revenue+fertilizer-cost;label=t('ربح الطلبيات بعد ثمن البذور','Order margin after seeds');
    const saved=f.rows.reduce((n,r)=>n+(r.savings||0),0);
    line(t('توفير عروض الشراء','Supplier savings'),saved);
    note=t('الربح هو المبيعات ناقص ثمن البذور، قبل السماد والرواتب. التوفير بيحسب العروض المشتراة وبيظهر لحاله.','Margin is sales minus seeds, before fertilizer and wages. Savings count purchased deals separately.');
