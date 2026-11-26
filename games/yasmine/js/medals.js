@@ -14,11 +14,16 @@ const designs = {
  geo200: ['#665095', '#f2d5ff'],
  plants: ['#507337', '#e7ec9e']
 };
+const apiaryMedals={"honey1":["🍯","#a76a39","#ffe0a0","إنتاج أول مرطبان عسل","Produce your first honey jar"],"honey10":["🐝","#687987","#e7eff8","إنتاج 10 مرطبانات عسل","Produce 10 honey jars"],"honeyKinds":["🌻","#53743b","#ffe18b","إنتاج الأنواع الأربعة من العسل","Produce all four honey varieties"],"honey25":["💰","#a66b12","#ffe18b","بيع 25 مرطبان عسل","Sell 25 honey jars"],"honeyWages":["🤝","#416c9b","#dcecff","دفع راتب وردة 10 مرات","Pay Warda 10 times"],"honey100":["🏵️","#82488c","#ffe5a1","إنتاج 100 مرطبان عسل","Produce 100 honey jars"],"honeyRevenue":["💎","#347e92","#d4ffff","تحقيق إيرادات 5000 عملة من العسل","Earn 5,000 coins in honey revenue"],"honey500":["👑","#805019","#fff0a1","بيع 500 مرطبان عسل","Sell 500 honey jars"]};
+for(const [id,m] of Object.entries(apiaryMedals))designs[id]=[m[1],m[2]];
+function honeyArtwork(id){const [icon,dark,light]=apiaryMedals[id];const svg='<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="'+light+'"/><stop offset="1" stop-color="'+dark+'"/></linearGradient></defs><path d="M190 20H285L340 230H235Z" fill="'+dark+'"/><path d="M355 20H450L405 230H300Z" fill="'+light+'"/><path d="M320 145L535 270V495L320 620L105 495V270Z" fill="url(#g)" stroke="'+dark+'" stroke-width="18"/><circle cx="320" cy="380" r="155" fill="'+dark+'" stroke="'+light+'" stroke-width="12"/><text x="320" y="435" text-anchor="middle" font-size="160">'+icon+'</text></svg>';return 'data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(svg)));}
 const gameUrl='https://andrehkhazneh.github.io/games/yasmine-preview.html';
 function artwork(id){
+ if(apiaryMedals[id])return honeyArtwork(id);
  return id==='plants'?'yasmine/images/plant-lover.webp':'yasmine/images/medals/'+id+'.webp';
 }
 function fullArtwork(id){
+ if(apiaryMedals[id])return honeyArtwork(id);
  return 'yasmine/images/medals/hd/'+id+'.webp';
 }
 function loadImage(src){
@@ -31,6 +36,7 @@ function loadImage(src){
 }
 function accomplishment(row,en,firstPerson=false){
  const [id,,,,,target]=row;
+ if(apiaryMedals[id])return (en?'Achievement: ':'الإنجاز: ')+apiaryMedals[id][en?4:3];
  const n=target.toLocaleString(en?'en':'ar-u-nu-latn');
  if(id.startsWith('sales'))return en?(firstPerson?'I completed ':'You completed ')+n+' sales.':'أتممت '+n+' عملية بيع.';
  if(id.startsWith('geo'))return en?(firstPerson?'I answered ':'You answered ')+n+' geography questions correctly.':'جاوبت صح على '+n+' سؤال جغرافيا.';
@@ -46,6 +52,7 @@ function accomplishment(row,en,firstPerson=false){
 }
 function condition(row,en){
  const n=row[5], id=row[0];
+ if(apiaryMedals[id])return apiaryMedals[id][en?4:3];
  if(id.startsWith('sales'))return en?'Complete '+n+' sales':'أكمل '+n+' عملية بيع';
  if(id.startsWith('geo'))return en?'Answer '+n+' geography questions correctly':'جاوب صح على '+n+' سؤال جغرافيا مع أبو وردة';
  return ({
@@ -93,7 +100,7 @@ function showContents(){
  const entries=rows.map((row,i)=>{
    const won=awards[row[0]];
    const state=won?(won.unread?(en?'New':'جديد'):(en?'Earned':'مكتسب')):(en?'Not earned':'غير مكتسب');
-   return '<button class="album-entry'+(won?.unread?' unread':'')+'" data-medal="'+row[0]+'"><img alt="" src="'+artwork(row[0])+'"><span>'+row[en?3:2]+'<small>'+state+'</small></span><bdi>'+String(i+1).padStart(2,'0')+'</bdi></button>';
+   return (row[0]==='honey1'?'<h3 style="grid-column:1/-1">'+(en?'Apiary and honey':'المنحلة والعسل')+'</h3>':'')+'<button class="album-entry'+(won?.unread?' unread':'')+'" data-medal="'+row[0]+'"><img alt="" src="'+artwork(row[0])+'"><span>'+row[en?3:2]+'<small>'+state+'</small></span><bdi>'+String(i+1).padStart(2,'0')+'</bdi></button>';
  });
  dialog.innerHTML='<header><h2 id="medalHeading" tabindex="-1">'+(en?'Contents':'الفهرس')+'</h2><button class="medal-close">'+(en?'Close':'إغلاق')+'</button></header><div class="album-entries">'+entries.join('')+'</div>';
  dialog.querySelector('.medal-close').onclick=()=>dialog.close();
