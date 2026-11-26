@@ -532,6 +532,632 @@ function openOffice(){activeArea='office';invoiceGroup='';financeViewStamp='';re
 $('jamalTab').onclick=()=>{if(activeArea==='office'){activeArea='overview';render()}else openOffice()};
 $('jamalStaffGo').onclick=openOffice;
 let financePeriod='all',financePage=40,financeSearch='',financeViewStamp='';
+const jamalQuestions=[
+ [
+  "ممكن تقبض إيجار وتخسر بنفس السنة؟",
+  "إي. إذا الإيجار ١٢٠٠ بالشهر ومصاريف التشغيل والفوائد ١٣٠٠، بيطلع عندك عجز ١٠٠ بالشهر حتى لو المستأجر دفع بوقته.",
+  "Can a rented home lose money each month?",
+  "If rent brings in 1,200 and running costs plus interest come to 1,300, the monthly shortfall is 100 even when the tenant pays on time."
+ ],
+ [
+  "إذا معك سهم واحد، شو إلك بالشركة؟",
+  "إلك حصة صغيرة بملكيتها. حقوق التصويت وتوزيعات الأرباح بتعتمد على نوع السهم وقرارات الشركة.",
+  "What does owning one share mean?",
+  "You own a small stake in the company. Voting rights and dividends depend on the share class and company decisions."
+ ],
+ [
+  "ليش سعر الفضة بيتأثر بالمصانع؟",
+  "الفضة بتوصل الكهربا منيح وبتدخل بالإلكترونيات والخلايا الشمسية. تغيّر طلب المصانع واحد من العوامل اللي بتحرّك سعرها.",
+  "Why do factories matter to silver prices?",
+  "Silver conducts electricity well and is used in electronics and solar cells. Industrial demand is one influence on its price."
+ ],
+ [
+  "شو هي المحفظة الاستثمارية؟",
+  "هي مجموع الاستثمارات اللي بيملكها شخص أو جهة، حتى لو موزعة على أكتر من حساب.",
+  "What is an investment portfolio?",
+  "It is the collection of investments a person or organization owns, even across several accounts."
+ ],
+ [
+  "لما تشتري سند، مين عم يستدين من مين؟",
+  "الجهة اللي أصدرت السند بتكون عم تستدين، وحامل السند دائن إلها. شروط السند بتحدد الدفعات وموعد السداد.",
+  "Who borrows when a bond is issued?",
+  "The issuer borrows and the bondholder is its creditor. The bond terms set payment and repayment dates."
+ ],
+ [
+  "كيف صندوق واحد بيملك عشرات الشركات؟",
+  "الصندوق بيجمع أموال مستثمرين وبيشتري فيها مجموعة أصول. وحدتك بتمثّل حصة من هالمجموعة.",
+  "How can one fund hold dozens of companies?",
+  "A fund pools investors’ money to buy a collection of assets. A unit represents a share of the pool."
+ ],
+ [
+  "شو يعني وديعة لأجل؟",
+  "هي مبلغ مودع لمدة متفق عليها. الشروط بتحدد الفائدة وإمكانية السحب قبل نهاية المدة.",
+  "What is a term deposit?",
+  "Money is deposited for an agreed period. The terms specify interest and whether early withdrawal is allowed."
+ ],
+ [
+  "شو يعني تضخّم؟",
+  "هو ارتفاع عام بمستوى الأسعار مع الوقت. إذا نفس السلّة صارت أغلى، نفس المصاري بتشتري كمية أقل منها.",
+  "What is inflation?",
+  "It is a rise in the general price level over time. When the same basket costs more, the same money buys less of it."
+ ],
+ [
+  "شو يعني سعر الصرف؟",
+  "هو سعر عملة بوحدات من عملة تانية. إذا الدولار الأميركي بيساوي ١٫٤٠ كندي، عشرة أميركي بيساووا ١٤ كندي قبل الرسوم.",
+  "What is an exchange rate?",
+  "It is one currency's price in another. At 1.40 Canadian dollars per US dollar, ten US dollars equal 14 Canadian dollars before fees."
+ ],
+ [
+  "شو يعني تقلّب السعر؟",
+  "هو مقدار تغيّر السعر خلال فترة. أصل بيتنقّل بين ٨٠ و١٢٠ بيتعرّض حامله لحركة أكبر من أصل بيتراوح بين ٩٩ و١٠١ على نفس الأساس.",
+  "What is price volatility?",
+  "It describes how much prices fluctuate. On the same starting scale, swings between 80 and 120 are larger than swings between 99 and 101."
+ ],
+ [
+  "شو بيصير بالشقة وهي فاضية؟",
+  "دخل الإيجار بيوقف، بس مصاريف متل التأمين والصيانة ممكن تضل ماشية.",
+  "What changes when a rental sits empty?",
+  "Rent stops coming in. Bills such as insurance and maintenance can keep coming."
+ ],
+ [
+  "ممكن شركة تربح وسهمها ينزل؟",
+  "إي. إذا السوق كان متوقّع ربح أكبر، النتيجة ممكن تخيّب التوقعات وينزل السعر.",
+  "Can a profitable company’s stock fall?",
+  "Yes. If investors expected much higher earnings, even a profit may disappoint and the share price can fall."
+ ],
+ [
+  "سبيكة الذهب بتدفع دخل شهري؟",
+  "السبيكة بحد ذاتها ما بتدفع فائدة أو توزيعات. نتيجة امتلاكها بتتعلق بتغيّر سعرها وتكاليف الاحتفاظ فيها.",
+  "Does a gold bar pay monthly income?",
+  "The bar itself pays no interest or dividends. The outcome depends on its price change and holding costs."
+ ],
+ [
+  "شو يعني وزن استثمار بالمحفظة؟",
+  "إذا قيمة المحفظة ١٠٠٠ ومنها ٢٥٠ أسهم، وزن الأسهم فيها ٢٥٪.",
+  "What does portfolio weight mean?",
+  "If shares make up 250 of a 1,000 portfolio, their weight is 25%."
+ ],
+ [
+  "شو يعني استحقاق السند؟",
+  "هو التاريخ المحدد لرد أصل الدين وفق شروط السند، بشرط قدرة الجهة المصدرة على السداد.",
+  "What is a bond’s maturity date?",
+  "It is the scheduled date for principal repayment under the terms of the bond, assuming the issuer can pay."
+ ],
+ [
+  "شو يعني صندوق متداول بالبورصة؟",
+  "وحداته بتنشرى وتنباع بالبورصة خلال ساعات التداول. سعر الوحدة ممكن يختلف شوي عن حصتها من قيمة الأصول.",
+  "What is an exchange-traded fund?",
+  "Its units trade on an exchange during trading hours. Their price can differ from their share of the underlying asset value."
+ ],
+ [
+  "شو الفرق بين الفائدة البسيطة والمركبة؟",
+  "بالبسيطة بتنحسب الفائدة على الأصل. بالمركبة، الفائدة المضافة للرصيد بتبلّش هي كمان تكسب فائدة.",
+  "How does compound interest differ from simple interest?",
+  "Simple interest is calculated on principal. With compounding, interest added to the balance can itself earn interest."
+ ],
+ [
+  "إذا خفّ التضخم، بترخص الأغراض فوراً؟",
+  "نزوله من ٥٪ لـ٢٪ بيعني إن الأسعار عم ترتفع أبطأ. المستوى العام ممكن يضل أعلى من السنة الماضية.",
+  "Does slower inflation mean prices have fallen?",
+  "A fall from 5% inflation to 2% means prices are rising more slowly. The overall level can still be higher than last year."
+ ],
+ [
+  "ليش المبلغ اللي بيوصل بالحوالة أقل من الحساب عالآلة؟",
+  "شركة التحويل ممكن تاخد رسم أو تستخدم سعر صرف مختلف عن السعر المرجعي. التنين بيأثّروا بالمبلغ النهائي.",
+  "Why might a transfer deliver less than a calculator suggests?",
+  "A service may charge a fee or use a rate different from the reference rate. Both affect what arrives."
+ ],
+ [
+  "ليش خسارة ٥٠٪ بدها ربح ١٠٠٪ لتتعوّض؟",
+  "إذا نزلت القيمة من ١٠٠ لـ٥٠، لازم تربح ٥٠ فوق الخمسين الباقية لترجع لـ١٠٠. قاعدة الحساب صارت أصغر.",
+  "Why does a 50% loss take a 100% gain to recover?",
+  "A fall from 100 to 50 leaves 50. Recovering the missing 50 means doubling the remaining amount."
+ ],
+ [
+  "ليش بيتين بنفس المساحة إلهم سعرين؟",
+  "قرب المواصلات، حالة البناء والطلب بالحي ممكن يغيّروا السعر حتى لو المساحة وحدة.",
+  "Why can two homes of the same size have different prices?",
+  "Transit access, building condition and demand in each neighbourhood can all affect price."
+ ],
+ [
+  "شو يعني توزيع أرباح؟",
+  "لما الشركة توزّع جزء من أموالها على المساهمين. إذا وزّعت عملتين لكل سهم ومعك ٣ أسهم، حصتك ٦.",
+  "What is a dividend?",
+  "It is a payment a company makes to shareholders. A dividend of two coins per share pays six coins on three shares."
+ ],
+ [
+  "ليش سعر الخاتم أعلى من قيمة ذهبه؟",
+  "السعر ممكن يشمل أجرة الصياغة والتصميم وهامش المتجر. عند إعادة البيع ممكن ينحسب على وزن الذهب وعياره.",
+  "Why can a ring cost more than its gold?",
+  "Retail prices can include workmanship, design and a shop margin. A resale offer may be based on metal weight and purity."
+ ],
+ [
+  "ممكن وزن الأسهم يتغيّر بلا ما تشتري شي؟",
+  "إي. إذا ارتفعت قيمتها وبقيت باقي الاستثمارات محلها، بتاخد حصة أكبر من المحفظة.",
+  "Can a portfolio’s weights change without a trade?",
+  "Yes. If shares rise while other holdings stay flat, shares become a larger portion of the portfolio."
+ ],
+ [
+  "شو هي قسيمة السند؟",
+  "هي الفائدة المحددة بشروطه. قسيمة سنوية ثابتة ٤٪ على قيمة اسمية ١٠٠٠ تعني ٤٠ بالسنة.",
+  "What is a bond coupon?",
+  "It is the interest specified in the bond terms. A fixed 4% annual coupon on a face value of 1,000 pays 40 a year."
+ ],
+ [
+  "شو بيعمل صندوق المؤشر؟",
+  "بيحاول يتتبّع أداء مؤشر محدد حسب قواعده. الرسوم وطريقة التنفيذ ممكن يخلّوا عائد الصندوق يختلف شوي عن المؤشر.",
+  "What does an index fund do?",
+  "It seeks to track a specified index. Fees and implementation can cause its return to differ from the index."
+ ],
+ [
+  "إذا الفائدة السنوية ٥٪، كل شهر بتاخد ٥٪؟",
+  "النسبة السنوية بتخص سنة كاملة. مبلغ الشهر بيعتمد على طريقة الحساب وعدد الأيام أو فترات التركيب.",
+  "Does a 5% annual rate pay 5% each month?",
+  "The rate refers to a full year. Monthly interest depends on the calculation method and the days or compounding periods involved."
+ ],
+ [
+  "ليش ممكن تحس الغلا أكتر من الرقم المعلن؟",
+  "المؤشر بيعتمد على سلّة متوسطة. إذا مصروفك بيركّز على بنود غليت بسرعة، تجربتك ممكن تختلف.",
+  "Why might someone's bills rise faster than headline inflation?",
+  "The index uses an average basket. A household spending more on fast-rising items can experience a different rate."
+ ],
+ [
+  "شو بيصير للمستورد إذا ضعفت عملته؟",
+  "إذا سعر البضاعة بعملة المورّد ثابت، المستورد بيحتاج وحدات أكتر من عملته ليسدد نفس الفاتورة.",
+  "What can a weaker currency mean for an importer?",
+  "If the supplier’s price in foreign currency stays fixed, the importer needs more local currency to pay the same bill."
+ ],
+ [
+  "شو يعني مخاطر السيولة؟",
+  "هي صعوبة البيع بسرعة بسعر قريب من القيمة المتوقعة. إذا المشترين قلّة، البائع المستعجل ممكن يقبل خصم كبير.",
+  "What is liquidity risk?",
+  "It is the difficulty of selling promptly near an expected value. With few buyers, a rushed seller may have to accept a steep discount."
+ ],
+ [
+  "شو يعني ملكيتك الصافية بالبيت؟",
+  "إذا قيمة البيت ٣٠٠ ألف وباقي عليه قرض ٢٠٠ ألف، حصتك الصافية ١٠٠ ألف قبل تكاليف البيع.",
+  "How much equity is in a home?",
+  "A home worth 300,000 with 200,000 still owed has 100,000 in equity before selling costs."
+ ],
+ [
+  "السهم الأرخص بيعني الشركة أرخص؟",
+  "عدد الأسهم مهم. شركة عندها مليون سهم بسعر ٢ قيمتها السوقية أكبر من شركة عندها ألف سهم بسعر ٢٠.",
+  "Does a lower share price mean a cheaper company?",
+  "Share count matters. A million shares at 2 give a higher market value than a thousand shares at 20."
+ ],
+ [
+  "شو الفرق بين ذهب ١٨ و٢٤ قيراط؟",
+  "عيار ١٨ يعني ١٨ جزء ذهب من أصل ٢٤، أي ٧٥٪. عيار ٢٤ هو الأعلى نقاوة بهالمقياس.",
+  "How pure is 18-karat gold?",
+  "Eighteen parts out of 24 are gold, or 75%. Twenty-four karats is the highest purity on this scale."
+ ],
+ [
+  "شو يعني توزيع الأصول؟",
+  "هو تقسيم المحفظة بين فئات مثل الأسهم والسندات والنقد. محفظتين بنفس القيمة ممكن يختلف سلوكهن بسبب هالتوزيع.",
+  "What is asset allocation?",
+  "It is the mix of asset classes such as stocks, bonds and cash. Two portfolios of equal size can behave differently because of their mix."
+ ],
+ [
+  "ليش سند قديم ممكن ينزل سعره لما ترتفع الفوائد؟",
+  "إذا السندات الجديدة المماثلة عم تدفع فائدة أعلى، السند القديم ذو القسيمة الثابتة ممكن ينباع بأقل ليجذب مشتري.",
+  "Why can higher interest rates lower an older bond’s price?",
+  "When comparable new bonds offer higher rates, an older fixed coupon may need a lower price to attract a buyer."
+ ],
+ [
+  "كل صندوق متداول بيتبع مؤشر؟",
+  "في صناديق متداولة بإدارة نشطة. المدير بيختار شو يشتري ويبيع ضمن سياسة الصندوق.",
+  "Does every ETF follow an index?",
+  "Some ETFs are actively managed. A manager chooses what to buy and sell within the fund’s mandate."
+ ],
+ [
+  "شو يعني تاريخ تجديد الوديعة؟",
+  "هو الموعد اللي ممكن تبدأ فيه مدة جديدة بعد انتهاء القديمة. سعر الفائدة للمدة الجديدة ممكن يختلف.",
+  "What is a deposit renewal date?",
+  "It is when a new term may begin after the old one ends. The new term may carry a different rate."
+ ],
+ [
+  "شو يعني قوّة شرائية؟",
+  "هي كمية السلع والخدمات اللي بيشتريها مبلغ معين. إذا الرغيف تضاعف سعره، نفس المبلغ بيجيب نص عدد الأرغفة.",
+  "What is purchasing power?",
+  "It is what a sum of money can buy. If a loaf doubles in price, the same amount buys half as many loaves."
+ ],
+ [
+  "ممكن سهم أجنبي يربح ببلده ويخسر بعملتك؟",
+  "إي. إذا ارتفع السهم شوي وانخفضت عملته أكتر مقابل عملتك، قيمته بعد التحويل ممكن تنزل.",
+  "Can a foreign share rise locally but fall in your currency?",
+  "Yes. A small local gain can be outweighed by a fall in the foreign currency when translated back."
+ ],
+ [
+  "شو يعني مخاطر التركز؟",
+  "إذا جزء كبير من المال مربوط بشركة أو قطاع واحد، مشكلة بهالمكان ممكن تأثّر بقوّة على النتيجة كلها.",
+  "What is concentration risk?",
+  "When a large share is tied to one company or sector, trouble there can have an outsized effect on the total."
+ ],
+ [
+  "ليش بيع أرض ممكن ياخد وقت؟",
+  "لازم يلتقي بائع ومشتري على سعر، وبعد الاتفاق في إجراءات نقل ملكية. هاد جزء من مخاطر السيولة بالعقار.",
+  "Why can selling land take time?",
+  "Buyer and seller need to agree on a price, then complete the transfer. That delay is part of property’s liquidity risk."
+ ],
+ [
+  "شو بصير إذا السهم انقسم لتنين؟",
+  "بتقسيم سهم مقابل سهمين، عادةً بيتعدّل السعر للنص وبيصير معك ضعف العدد. التقسيم لحاله ما بيضاعف قيمة حصتك.",
+  "What happens in a two-for-one stock split?",
+  "You get twice as many shares, with the price adjusted to about half. The split alone leaves your stake worth the same."
+ ],
+ [
+  "ليش التاجر بيبيع السبيكة بسعر وبيشتريها بسعر تاني؟",
+  "الفرق بين عرض البيع والشراء اسمه فارق السعر. حتى لو سعر السوق ثابت، هالفرق بيأثر على نتيجة البيع السريع.",
+  "Why does a dealer quote two bullion prices?",
+  "The gap between the selling and buying quote is the spread. It can affect a quick resale even if the market price stays flat."
+ ],
+ [
+  "ليش عشرة أسهم ممكن يضلّوا مرتبطين ببعض؟",
+  "إذا كل الشركات من نفس القطاع، خبر واحد ممكن يأثر عليهن سوا. التنويع بيتعلّق كمان بمصادر الخطر.",
+  "Why might ten stocks still move together?",
+  "If all ten are in the same industry, one piece of news can affect them all. Diversification also depends on the sources of risk."
+ ],
+ [
+  "شو الفرق بين القيمة الاسمية وسعر السند؟",
+  "الاسمية مرجع لسداد أصل الدين وحساب القسيمة. سعر التداول هو المبلغ اللي بيتفق عليه البائع والمشتري اليوم.",
+  "What is face value compared with a bond’s price?",
+  "Face value is a reference for principal repayment and the coupon. The trading price is what a buyer and seller agree on today."
+ ],
+ [
+  "شو يعني صافي قيمة أصول الوحدة؟",
+  "منطرح التزامات الصندوق من قيمة أصوله ومنقسّم الباقي على عدد الوحدات. الناتج حصة الوحدة من صافي الأصول.",
+  "What is net asset value per unit?",
+  "Subtract fund liabilities from assets, then divide by the number of units. The result is the net asset value per unit."
+ ],
+ [
+  "ليش رصيد الحساب المتاح أحياناً أقل من الرصيد الظاهر؟",
+  "إيداع شيك قيد التحصيل أو حجز مؤقت للدفعة ممكن يخلّي جزء من الرصيد غير متاح للسحب فوراً.",
+  "Why can an available balance be smaller than the displayed balance?",
+  "A cheque clearing period or a temporary payment hold can make some funds unavailable for immediate withdrawal."
+ ],
+ [
+  "إذا الراتب زاد ٣٪ والأسعار زادت ٥٪، شو تغيّر؟",
+  "الراتب بالأرقام كبر، بس قدرته على شراء السلّة نفسها نقصت لأن تكلفتها زادت أسرع.",
+  "What if pay rises 3% while prices rise 5%?",
+  "The paycheque grew in money terms, but its buying power for that basket fell because the basket’s cost grew faster."
+ ],
+ [
+  "ليش محل الصرافة كاتب شراء وبيع؟",
+  "من وجهة نظر الصرّاف، الشراء هو السعر اللي بياخد فيه العملة منك والبيع هو السعر اللي بيعطيك ياها فيه.",
+  "Whose buying and selling prices are on the exchange board?",
+  "They are the dealer’s quotes. The dealer buys currency from a customer at one rate and sells currency to a customer at the other."
+ ],
+ [
+  "ليش الأداء القديم ما بيحسم عائد السنة الجاية؟",
+  "الأرقام القديمة بتوصف ظروف مضت. الأسعار والمنافسة والتكاليف ممكن تتغيّر حتى لو الاستثمار نفسه ما تغيّر اسمه.",
+  "Why don't past results settle next year’s return?",
+  "Past figures describe earlier conditions. Prices, competition and costs can change even when the investment’s name stays the same."
+ ],
+ [
+  "شو الفرق بين الإيجار الإجمالي والصافي؟",
+  "الإجمالي كل الإيجار المقبوض. إذا قبضت ألف ودفعت ٣٠٠ مصاريف تشغيل، بيبقى ٧٠٠ قبل التمويل والضريبة.",
+  "How much of the rent is left after operating costs?",
+  "Collect 1,000 and spend 300 running the property, and 700 remains before financing and taxes."
+ ],
+ [
+  "مين بيقبض لما تشتري سهم بالبورصة؟",
+  "بصفقة عادية بين مستثمرين، البائع بيقبض ثمن السهم. الشركة بتجمع مال لما تصدر أسهم وتبيعها.",
+  "Who gets the money when a share trades?",
+  "In a typical exchange trade, the seller receives the proceeds. A company raises money when it issues and sells shares."
+ ],
+ [
+  "السعر الفوري للذهب هو نفسه سعر السبيكة بالمحل؟",
+  "السعر الفوري مرجع للمعدن بالتسليم القريب. السبيكة بالمحل ممكن يزيد سعرها بسبب السك والنقل وهامش التاجر.",
+  "Is a shop’s bullion price the spot price?",
+  "Spot is a reference for metal delivered promptly. Minting, transport and the dealer’s margin can add a premium."
+ ],
+ [
+  "شو يعني إعادة توازن المحفظة؟",
+  "هي تعديل الحصص لترجع للتوزيع المختار. ممكن تتم بتوجيه أموال جديدة للفئة اللي صغر وزنها.",
+  "What is portfolio rebalancing?",
+  "It means adjusting weights back toward a chosen mix. New contributions can be directed toward a category whose weight has fallen."
+ ],
+ [
+  "كيف سند بلا قسيمة بيعطي عائد؟",
+  "ممكن ينباع بأقل من قيمته الاسمية. إذا اشتريته بـ٩٠ وسدده المصدر بـ١٠٠ عند الاستحقاق، الفرق ١٠ قبل التكاليف.",
+  "How can a zero-coupon bond earn a return?",
+  "It can sell at a discount. Buy for 90 and receive 100 at maturity, and the difference is 10 before costs."
+ ],
+ [
+  "كيف رسوم الصندوق بتبين بالعائد؟",
+  "مصاريف الإدارة المدفوعة من أصول الصندوق بتخفّض قيمتها. ممكن يبان أثرها بالعائد من دون فاتورة منفصلة للمستثمر.",
+  "How do fund expenses affect returns?",
+  "Expenses paid from fund assets reduce their value. Investors may see the effect in returns without receiving a separate bill."
+ ],
+ [
+  "شو يعني سحب على المكشوف؟",
+  "بيصير لما البنك يسمح بدفعة أكبر من الرصيد المتاح. الفرق بيصير مبلغ مستحق وممكن تنحسب عليه فائدة أو رسوم.",
+  "What is an overdraft?",
+  "It occurs when a bank allows a payment beyond the available balance. The difference is owed and may carry fees or interest."
+ ],
+ [
+  "شو يعني عائد حقيقي؟",
+  "هو العائد بعد أخذ التضخم بالحسبان. إذا استثمار زاد ١٠٪ ونفس السلّة غليت ١٠٪، قدرته الشرائية بقيت نفسها قبل الرسوم والضرائب.",
+  "What is a real return?",
+  "It is a return adjusted for inflation. If an investment and the basket both rise 10%, purchasing power is unchanged before fees and taxes."
+ ],
+ [
+  "إذا عكسنا اتجاه التحويل، كيف بيتغيّر الرقم؟",
+  "إذا وحدة من عملة أ تساوي وحدتين من ب، وحدة ب تساوي نص وحدة أ، على نفس السعر ومن دون رسوم.",
+  "What happens when you reverse a currency quote?",
+  "If one A equals two B, one B equals half an A at the same rate without fees."
+ ],
+ [
+  "شو يعني تراجع من القمّة؟",
+  "إذا أعلى قيمة كانت ٢٠٠ والقيمة الحالية ١٦٠، التراجع عن القمّة ٢٠٪. الحساب من أعلى نقطة وصلتلها القيمة.",
+  "What is a drawdown?",
+  "A fall from a peak of 200 to 160 is a 20% drawdown. It measures the drop from the earlier high."
+ ],
+ [
+  "إذا سعر البيت زاد، الربح صار بالجيب؟",
+  "الزيادة بتضل تقديرية لحد البيع. السعر النهائي ورسوم البيع بيأثروا بالمبلغ اللي بيقبضه المالك.",
+  "Does a higher home valuation put cash in the owner's pocket?",
+  "A valuation is an estimate. The sale price and selling costs determine how much cash the owner receives."
+ ],
+ [
+  "شو يعني طرح عام أولي؟",
+  "هي أول مرة شركة بتطرح أسهمها للبيع للعموم. ممكن يشمل الطرح أسهماً جديدة وأسهم مالكين سابقين.",
+  "What is an IPO?",
+  "An initial public offering is a company’s first public sale of shares. It may include new shares and shares sold by existing owners."
+ ],
+ [
+  "ليش قطعتين فضة بنفس الوزن ممكن يختلف سعرهن؟",
+  "إذا اختلفت النقاوة بتختلف كمية الفضة الصافية. والقطعة النادرة ممكن يكون إلها قيمة عند هواة الجمع.",
+  "Why can two silver coins of equal weight cost different amounts?",
+  "Purity affects how much silver they contain. A rare coin may also carry a collector’s premium."
+ ],
+ [
+  "محفظتين فيهن نفس الأسهم ممكن يعطوا نتائج مختلفة؟",
+  "إي. إذا سهم تضاعف، أثره أكبر بمحفظة كان وزنه فيها ٤٠٪ من محفظة كان وزنه فيها ٢٪.",
+  "Can portfolios with the same stocks produce different returns?",
+  "Yes. A stock that doubles has a larger impact when it started at 40% of the portfolio than at 2%."
+ ],
+ [
+  "شو بيقيس التصنيف الائتماني؟",
+  "هو رأي بقدرة الجهة على الوفاء بالتزاماتها. التصنيف ممكن يتغيّر وما بيضمن السداد.",
+  "What is a credit rating?",
+  "It is an opinion about the ability to meet financial obligations. Ratings can change and do not guarantee repayment."
+ ],
+ [
+  "ممكن صندوقين مختلفين يملكوا نفس الشركات؟",
+  "إي. صندوق سوق واسع وصندوق تكنولوجيا ممكن يتشاركوا بأسهم كبيرة، فبتزيد حصة هالشركات عند مالك الصندوقين.",
+  "Can two different funds hold the same companies?",
+  "A broad market fund and a technology fund may overlap. Holding both can increase exposure to those shared companies."
+ ],
+ [
+  "حساب عليه فائدة ممكن ينقص رصيده؟",
+  "إذا كسب ٣ فائدة واندفع منه ٥ رسوم، الرصيد بينقص ٢ بهالفترة حتى بلا أي سحب تاني.",
+  "Can an interest-paying account shrink?",
+  "If it earns 3 in interest and incurs 5 in fees, the balance falls by 2 even without withdrawals."
+ ],
+ [
+  "سعر الصنف ثابت بس العبوة صغرت، شو صار بسعر الكيلو؟",
+  "إذا السعر نفسه والوزن نزل من كيلو لـ٨٠٠ غرام، سعر الكيلو ارتفع ٢٥٪.",
+  "What if a package gets smaller at the same price?",
+  "If weight drops from one kilogram to 800 grams at the same price, the price per kilogram rises 25%."
+ ],
+ [
+  "شو يعني عملة بسعر صرف عائم؟",
+  "سعرها بيتحرك بالسوق مع العرض والطلب. الأخبار والتجارة وتوقعات الفائدة ممكن تغيّر هالتوازن.",
+  "What is a floating exchange rate?",
+  "Its market value moves with supply and demand. News, trade and interest-rate expectations can affect that balance."
+ ],
+ [
+  "ممكن تنويع المحفظة ويضل فيها خطر؟",
+  "إي. توزيع المال على شركات مختلفة بيخفّف أثر مشكلة بشركة واحدة، بس هبوط واسع بالسوق ممكن يأثّر على أغلبها.",
+  "Can a diversified portfolio still lose value?",
+  "Spreading money across companies can reduce the impact of one company’s trouble. A broad market decline can still affect many of them."
+ ],
+ [
+  "كيف القرض بيكبّر أثر نزول سعر البيت؟",
+  "بيت قيمته ١٠٠ وعليه قرض ٨٠، حصة صاحبه ٢٠. إذا صار سعره ٩٠ والدين نفسه، حصته بتنزل للنص.",
+  "How can borrowing magnify a fall in house prices?",
+  "With a property worth 100 and debt of 80, the owner has 20 in equity. A price drop to 90 cuts that equity in half if the debt stays the same."
+ ],
+ [
+  "مين بيندفعله أول إذا الشركة أفلست؟",
+  "بشكل عام، الدائنين إلهم الأولوية على أصحاب الأسهم العادية. أحياناً ما بيبقى للمساهمين شي.",
+  "Who gets paid first if a company fails?",
+  "Creditors generally rank ahead of common shareholders. Sometimes nothing remains for shareholders."
+ ],
+ [
+  "شو المقصود بأونصة الذهب؟",
+  "بالأسواق غالباً المقصود الأونصة الترويسية، وزنها حوالي ٣١٫١ غرام. أونصة الوزن اليومية أخف منها.",
+  "How heavy is a gold ounce?",
+  "Precious metals are usually quoted per troy ounce, about 31.1 grams. An everyday ounce weighs less."
+ ],
+ [
+  "كيف منحسب عائد محفظة بسيطة؟",
+  "إذا نصها ربح ١٠٪ والنص التاني بقي ثابت، عائدها ٥٪ قبل الرسوم وبلا أي إيداع أو سحب.",
+  "How do two holdings combine into one return?",
+  "If half gains 10% and half stays flat, the portfolio gains 5% before fees, assuming no deposits or withdrawals."
+ ],
+ [
+  "شو بيصير إذا بعت سند قبل موعده؟",
+  "بتقبض سعره بالسوق وقت البيع. ممكن يكون أعلى أو أقل من اللي دفعته ولو المصدر مستمر بدفع القسائم.",
+  "What happens if a bond is sold early?",
+  "It sells at the market price then available. That can be above or below the purchase price even when the issuer keeps paying coupons."
+ ],
+ [
+  "شو يعني صندوق قطاعي؟",
+  "بيركّز على مجال معيّن مثل الطاقة أو الصحة. خبر بيخص القطاع ممكن يأثّر على عدد كبير من حيازاته بنفس الوقت.",
+  "What is a sector fund?",
+  "It concentrates on one industry area, such as energy or health care. Sector news can affect many of its holdings at once."
+ ],
+ [
+  "كل شي بينباع بالبنك مشمول بتأمين الودائع الكندي؟",
+  "تغطية CDIC إلها شروط وبتخص ودائع مؤهلة عند مؤسسات أعضاء. الأسهم وصناديق الاستثمار خارج هالتغطية.",
+  "Does Canadian deposit insurance cover everything sold at a bank?",
+  "CDIC covers eligible deposits at member institutions subject to its rules. Stocks and investment funds are outside that coverage."
+ ],
+ [
+  "ليش ارتفاع سعر البندورة لحاله ما بيقيس التضخم؟",
+  "موسم ضعيف ممكن يغلّي صنف واحد. قياس التضخم بيتابع تغيّر أسعار سلّة أوسع من السلع والخدمات.",
+  "Why isn't a tomato price spike an inflation reading?",
+  "A poor harvest can raise one item’s price. Measuring inflation involves a much broader basket of goods and services."
+ ],
+ [
+  "شو يعني ربط عملة بعملة تانية؟",
+  "السلطات بتحاول تحافظ على سعر محدد أو نطاق قريب منه مقابل العملة المرجعية. سياسة الربط نفسها ممكن تتغيّر.",
+  "What is a currency peg?",
+  "Authorities seek to maintain a rate or range against a reference currency. The peg policy itself can change."
+ ],
+ [
+  "شو يعني خطر الطرف المقابل؟",
+  "هو احتمال إن الطرف التاني بالعقد يعجز عن تنفيذ التزامه، مثل جهة وعدت بدفعة وما قدرت تسددها.",
+  "What is counterparty risk?",
+  "It is the chance that the other party to a contract cannot meet its obligation, such as making an agreed payment."
+ ],
+ [
+  "كل دفعة قرض عقاري بتروح فائدة؟",
+  "بالقرض اللي بينسدد تدريجياً، جزء من الدفعة بيسدد أصل الدين وجزء بيروح فائدة. الجزء الأول بيخفّض المبلغ المستحق.",
+  "Where does a mortgage payment go?",
+  "On an amortizing mortgage, part pays interest and part repays principal. The principal portion reduces the outstanding debt."
+ ],
+ [
+  "شو يعني ربح السهم الواحد؟",
+  "بمثال بسيط، إذا الربح المتاح للأسهم العادية ١٠٠ ومتوسط عددها ٢٠، ربح السهم ٥. توزيعه قرار منفصل.",
+  "What are earnings per share?",
+  "If earnings available to common shareholders are 100 and the average share count is 20, earnings per share are 5. Paying a dividend is a separate decision."
+ ],
+ [
+  "سهم منجم ذهب بيتحرك تماماً متل الذهب؟",
+  "السهم بيتأثر بسعر الذهب وبشغل الشركة كمان. ارتفاع تكلفة استخراج المعدن ممكن يضغط على أرباح المنجم.",
+  "Does a gold miner’s share track gold exactly?",
+  "It reflects the mining business as well as gold prices. Rising extraction costs can squeeze the miner’s profits."
+ ],
+ [
+  "المحفظة كبرت بعد إيداع جديد، هاد كله ربح؟",
+  "إذا كان فيها ١٠٠ وحطّيت ٢٠ وصار الرصيد ١٢٠، الزيادة بهالمثال إيداع. لقياس الأداء منميّز الإيداعات عن تغيّر قيمة الاستثمارات.",
+  "Does a larger balance always mean an investing gain?",
+  "Start at 100, deposit 20 and finish at 120: the increase came from the deposit. Performance calculations distinguish cash flows from gains."
+ ],
+ [
+  "شو بيختلف بالسند ذي الفائدة المتغيّرة؟",
+  "الفائدة بتتعدّل بمواعيد محددة حسب مرجع مذكور بالشروط. لذلك مبلغ الدفعة الجاية ممكن يتغيّر.",
+  "How does a floating-rate bond work?",
+  "Its rate resets at specified dates using a reference set in the terms. The next interest payment can change."
+ ],
+ [
+  "كيف بتنحسب عادة قيمة شراء وحدة صندوق مشترك تقليدي؟",
+  "عادة بيُنفّذ الطلب على صافي قيمة الوحدة اللي بتنحسب بعد استلام الطلب، وغالباً الحساب بيصير بنهاية يوم التداول.",
+  "How are traditional mutual fund orders usually priced?",
+  "Orders usually receive the next calculated net asset value after receipt, often calculated at the end of the trading day."
+ ],
+ [
+  "شو يعني فائدة ترويجية على حساب توفير؟",
+  "هي فائدة خاصة لفترة أو لأرصدة بتنطبق عليها شروط العرض. بعد انتهاء الفترة ممكن يرجع الحساب لسعره العادي.",
+  "What is a promotional savings rate?",
+  "It is a special rate for a period or for balances meeting offer conditions. The regular rate may apply once the promotion ends."
+ ],
+ [
+  "شو يعني انكماش بالأسعار؟",
+  "هو هبوط بالمستوى العام للأسعار خلال فترة. تنزيلات بمحل واحد ما بتكفي لنعرف إذا الاقتصاد عم يمرّ فيه.",
+  "What is price deflation?",
+  "It is a decline in the general price level over a period. A sale at one store cannot establish that for an economy."
+ ],
+ [
+  "ليش شركة بتتفق اليوم على سعر صرف لدفعة بعد شهر؟",
+  "عقد الصرف الآجل بيثبّت سعر التحويل المتفق عليه لهالدفعة. هيك بتعرف تكلفتها حتى لو تغيّر سعر السوق لاحقاً.",
+  "Why agree on a rate for a payment next month?",
+  "A currency forward fixes the agreed exchange rate for that payment. This makes its cost known even if the market later moves."
+ ],
+ [
+  "ليش توقيت الحاجة للمصاري بيفرق؟",
+  "استثمار ممكن يتعافى بعد فترة، بس إذا صاحبه اضطر يبيعه خلال الهبوط، سعر هاليوم هو اللي بيحدد حصيلة البيع.",
+  "Why does the timing of a cash need matter?",
+  "An investment might recover later, but if the owner must sell during a decline, that day’s price determines the proceeds."
+ ],
+ [
+  "كيف منحسب عائد الإيجار الإجمالي؟",
+  "إيجار سنوي ١٢ ألف على عقار سعره ٣٠٠ ألف بيعطي ٤٪ عائد إجمالي، قبل خصم المصاريف.",
+  "How is gross rental yield calculated?",
+  "Annual rent of 12,000 divided by a property price of 300,000 gives a gross yield of 4%, before expenses."
+ ],
+ [
+  "ليش سعر السهم بيتغيّر خلال النهار؟",
+  "الصفقات بتصير بالأسعار اللي بيتفق عليها المشترين والبياعين. أخبار جديدة أو تغيّر الطلب ممكن يغيّر سعر الصفقة الجاية.",
+  "Why does a stock price move during the day?",
+  "Trades happen at prices buyers and sellers accept. News or changing demand can move the price of the next trade."
+ ],
+ [
+  "شو يعني نسبة الذهب للفضة؟",
+  "إذا أونصة الذهب سعرها ٢٠٠٠ وأونصة الفضة ٢٥ بنفس العملة، النسبة ٨٠. يعني سعر أونصة ذهب بيساوي سعر ٨٠ أونصة فضة بهاللحظة.",
+  "What is the gold-to-silver ratio?",
+  "At 2,000 per ounce of gold and 25 per ounce of silver in the same currency, the ratio is 80. One ounce of gold then costs as much as 80 ounces of silver."
+ ],
+ [
+  "شو يعني معيار مقارنة للمحفظة؟",
+  "هو مرجع متل مؤشر منقارن فيه الأداء. إذا المحفظة سندات قصيرة الأجل، مؤشر لنفس النوع بيعطي مقارنة أوضح.",
+  "What is a portfolio benchmark?",
+  "It is a reference used to compare performance. A short-term bond index gives a more meaningful comparison for a short-term bond portfolio."
+ ],
+ [
+  "شو يعني سند قابل للاستدعاء؟",
+  "شروطه بتسمح للمصدر يسدده بكير بمواعيد وأسعار محددة. وقتها بتتوقف دفعات الفائدة المستقبلية عليه.",
+  "What is a callable bond?",
+  "Its terms allow the issuer to repay it early on specified dates and at specified prices. Future interest payments on it then end."
+ ],
+ [
+  "لما صندوق يوزّع مبلغ، بيزيد ثراء مالكه فوراً؟",
+  "إذا باقي العوامل ثابتة، صافي قيمة الوحدة بينخفض بقيمة التوزيع لكل وحدة. جزء من القيمة انتقل من الصندوق للنقد.",
+  "Does a fund distribution instantly create wealth?",
+  "All else equal, net asset value per unit falls by the distribution per unit. Part of the value has moved from the fund into cash."
+ ],
+ [
+  "ليش كشف الحساب فيه تاريخين لنفس الشراء؟",
+  "واحد ممكن يكون يوم الشراء، والتاني يوم تسجيل العملية بالحساب بعد معالجتها.",
+  "Why can a purchase show two bank dates?",
+  "One can be the transaction date and the other the posting date, when the processed payment is recorded."
+ ],
+ [
+  "ليش الإيجار إله أثر أكبر من قلم بمؤشر الأسعار؟",
+  "البنود إلها أوزان حسب حصتها من إنفاق الأسر. تغيّر سعر بند بياخد حصة كبيرة بيأثّر أكتر من تغيّر مماثل ببند صغير.",
+  "Why can rent influence a price index more than pencils?",
+  "Items are weighted by their share of household spending. An equal percentage change has more effect for a heavily weighted item."
+ ],
+ [
+  "صندوق بيتداول بالكندي، يعني كل أصوله كندية؟",
+  "عملة التداول هي العملة اللي بتدفع فيها ثمن الوحدة. الصندوق ممكن يملك أصول ببلدان وعملات مختلفة.",
+  "Does a fund trading in Canadian dollars own only Canadian assets?",
+  "Trading currency is the currency used to buy the unit. The fund can hold assets in other countries and currencies."
+ ],
+ [
+  "شو يعني اختبار ضغط للمحفظة؟",
+  "هو حساب افتراضي بيستكشف شو ممكن يصير تحت ظروف صعبة، مثل هبوط الأسهم وارتفاع الفوائد سوا. نتيجته سيناريو ممكن، مو توقّع أكيد.",
+  "What is a portfolio stress test?",
+  "It explores how holdings might behave under difficult conditions, such as falling shares and rising rates together. The result is a scenario, not a forecast."
+ ]
+];
+function renderJamalQuestions(home){
+ let box=$('jamalQuestions');
+ if(!box){
+   box=document.createElement('details');box.id='jamalQuestions';box.className='panel';
+   box.innerHTML='<summary></summary><article aria-live="polite"><small></small><h3></h3><p></p></article><button type="button"></button>';
+   const menu=$('jamalMenu');menu.before(box);
+   box.querySelector('button').onclick=()=>{
+     state.jamalQuestionIndex=(questionIndex()+1)%jamalQuestions.length;
+     save();renderJamalQuestions(true);
+   };
+ }
+ function questionIndex(){
+   const i=state.jamalQuestionIndex;
+   return Number.isInteger(i)&&i>=0&&i<jamalQuestions.length?i:0;
+ }
+ box.hidden=!home;
+ if(!home){box.open=false;return}
+ const i=questionIndex(),en=state.lang==='en',card=jamalQuestions[i];
+ box.querySelector('summary').textContent=en?'💡 Ask Jamal':'💡 اسأل جمال';
+ box.querySelector('small').textContent=(en?'Question ':'سؤال ')+(i+1)+(en?' of ':' من ')+jamalQuestions.length;
+ box.querySelector('h3').textContent=card[en?2:0];
+ box.querySelector('p').textContent=card[en?3:1];
+ box.querySelector('button').textContent=en?'Next question':'سؤال تاني';
+}
 function renderFinance(){
  const f=financeData();syncBills();
  let panel=$('financePanel');
@@ -566,6 +1192,7 @@ function renderFinance(){
  const title=(id,ar,en)=>{$(id).firstElementChild.textContent=t(ar,en)};
  const names={donations:t('💌 فواتير التبرع','💌 Donation receipts'),campaign:t('مبيعات المشتل عن طريق ياسمين','Nursery sales through Yasmin'),garden:t('حسابات المشتل','Nursery accounts'),cat:t('مصاريف ','Expenses · ')+displayName('catName'),staff:t('رواتب الموظفين ومكافآتهم','Staff wages and bonuses')};
  const home=!invoiceGroup;
+ renderJamalQuestions(home);
  put('jamalName',t('جمال · محاسب المشتل','Jamal · Nursery accountant'));
  for(const b of $('jamalMenu').children)b.textContent=names[b.dataset.group];
  $('jamalMenu').hidden=!home;panel.querySelector('.jamal-art').hidden=!home;
