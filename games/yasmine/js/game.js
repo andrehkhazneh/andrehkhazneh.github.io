@@ -1860,7 +1860,7 @@ $('plot1').onclick=()=>selectPot(1);
 $('upgradeAbu').onclick=upgradeAbu;
 function collectionDate(){return new Date(Date.UTC(2020,0,1)+Math.max(0,Math.floor((Date.now()-state.gameEpoch)/2880000))*86400000).toISOString().slice(0,10).split('-').reverse().join('/')}
 function collectionData(){return state.collection||(state.collection={plants:{},awards:{},feeds:0})}
-function recordCollections(){var c=collectionData();nurseryPots().forEach(function(p){if(!isReady(p)){p.collectionRecorded=false;return}if(!p.collectionRecorded){var v=c.plants[p.kind]||(c.plants[p.kind]={count:0,best:0,date:collectionDate()});v.count++;if(v.count===1){v.unread=true;v.announced=false;}v.best=Math.max(v.best,Math.round(p.quality));p.collectionRecorded=true}else if(c.plants[p.kind])c.plants[p.kind].best=Math.max(c.plants[p.kind].best,Math.round(p.quality))});var en=state.lang==='en',n=Object.keys(c.plants).length;var rows=[['sales50','🥉','التاجر الصغير','Junior merchant',state.sales,50,25],['sales100','🥈','التاجر المحترف','Expert merchant',state.sales,100,50],['sales500','🥇','ملك المشاتل','Nursery king',state.sales,500,150],['level5','🏅','مشتل مزدهر','Thriving nursery',window.YasmineGardenCore.levelFor(state.sales),5,30],['team','👥','فريق متكامل','Full team',[state.staff,state.abu,state.nana].filter(x=>x.hired).length,3,30],['cat50','🐱','صديق القطط','Cat friend',c.feeds,50,30],['heart50','💖','حديقة الأمل','Garden of hope',c.heartCount||0,50,30],['geo25','🥉','الرحّالة الصغير','Junior traveler',c.geoCorrect||0,25,25],['geo100','🥈','مستكشف العالم','World explorer',c.geoCorrect||0,100,75],['geo200','🥇','خبير الجغرافيا','Geography expert',c.geoCorrect||0,200,150],['plants','🌻','عاشق النباتات','Plant lover',n,Object.keys(crops).length,50]];rows.forEach(function(a){if(a[4]>=a[5]&&!c.awards[a[0]]){c.awards[a[0]]={date:collectionDate(),unread:true,announced:false};financeMove(a[6],'awards');window.YasmineMedals.celebrate(a,en,function(){activeArea='achievements';render()})}});return rows}
+function recordCollections(){var c=collectionData();nurseryPots().forEach(function(p){if(!isReady(p)){p.collectionRecorded=false;return}if(!p.collectionRecorded){var v=c.plants[p.kind]||(c.plants[p.kind]={count:0,best:0,date:collectionDate()});v.count++;if(v.count===1){v.unread=true;v.announced=false;}v.best=Math.max(v.best,Math.round(p.quality));p.collectionRecorded=true}else if(c.plants[p.kind])c.plants[p.kind].best=Math.max(c.plants[p.kind].best,Math.round(p.quality))});var en=state.lang==='en',n=Object.keys(c.plants).length;var rows=[['sales50','🥉','التاجر الصغير','Junior merchant',state.sales,50,25],['sales100','🥈','التاجر المحترف','Expert merchant',state.sales,100,50],['sales500','🥇','ملك المشاتل','Nursery king',state.sales,500,150],['level5','🏅','مشتل مزدهر','Thriving nursery',window.YasmineGardenCore.levelFor(state.sales),5,30],['team','👥','فريق متكامل','Full team',[state.staff,state.abu,state.nana].filter(x=>x.hired).length,3,30],['cat50','🐱','صديق القطط','Cat friend',c.feeds,50,30],['heart50','💖','حديقة الأمل','Garden of hope',c.heartCount||0,50,30],['geo25','🥉','الرحّالة الصغير','Junior traveler',c.geoCorrect||0,25,25],['geo100','🥈','مستكشف العالم','World explorer',c.geoCorrect||0,100,75],['geo200','🥇','خبير الجغرافيا','Geography expert',c.geoCorrect||0,200,150],['plants','🌻','عاشق النباتات','Plant lover',n,Object.keys(crops).length,50]];var w=wardaData();rows.push(["honey1","🍯","أول قطرة عسل","First drop of honey",w.produced||0,1,10],["honey10","🐝","صديق النحل","Bee friend",w.produced||0,10,25],["honeyKinds","🌻","رحيق الطبيعة","Nature's nectar",Object.keys(w.producedKinds||{}).length||0,4,40],["honey25","💰","تاجر العسل","Honey merchant",w.soldCount||0,25,50],["honeyWages","🤝","المدير الوفي","Loyal manager",w.wagesPaid||0,10,50],["honey100","🏵️","ملكة المنحلة","Queen of the apiary",w.produced||0,100,100],["honeyRevenue","💎","الذهب السائل","Liquid gold",w.revenue||0,5000,150],["honey500","👑","إمبراطور العسل","Honey emperor",w.soldCount||0,500,250]);rows.forEach(function(a){if(a[4]>=a[5]&&!c.awards[a[0]]){c.awards[a[0]]={date:collectionDate(),unread:true,announced:false};financeMove(a[6],'awards');window.YasmineMedals.celebrate(a,en,function(){activeArea='achievements';render()})}});return rows}
 function renderCollections(){var rows=recordCollections(),c=collectionData(),en=state.lang==='en';var a=$('achievementsArea'),b=$('encyclopediaArea');if(!a||!b)return;a.hidden=activeArea!=='achievements';b.hidden=activeArea!=='encyclopedia';const library=['collections','achievements','encyclopedia'].includes(activeArea);
  $('collectionsMenu').hidden=!library;$('collectionsTab').textContent=en?'Medals & plants':'الإنجازات والموسوعة';
  $('collectionsTab').setAttribute('aria-pressed',String(library));
@@ -2165,7 +2165,7 @@ function wardaData(){
 }
 function apiaryTick(now=Date.now()){
  const w=wardaData(),bed=w.bed;
- if(bed&&now>=bed.nectarEnd+15000&&!bed.jarMade){w.jars[bed.kind]++;bed.jarMade=true}
+ if(bed&&now>=bed.nectarEnd+15000&&!bed.jarMade){w.jars[bed.kind]++;bed.jarMade=true;w.produced=(w.produced||0)+1;(w.producedKinds||={})[bed.kind]=true}
  if(bed?.sold&&bed.jarMade)w.bed=null;
  for(const ad of w.ads)if(ad&&ad.stage==='waiting'&&now>=ad.due){ad.stage='offer';countYasminOffer(ad)}
 }
@@ -2176,9 +2176,9 @@ function apiarySales(){
 }
 function wardaName(kind){return nectarPlants[kind][state.lang==='en'?'en':'ar']}
 function jarArt(i){return '<span class="honey-jar" aria-hidden="true" style="--jar-x:'+i*100/3+'%"></span>'}
-function wardaWage(){
- const w=wardaData();w.wageCount=(w.wageCount||0)+1;
- if(w.wageCount>=3){w.wageCount=0;financeMove(-25,'salary',{person:'warda'});}
+function wardaWage(price){
+ const w=wardaData();w.soldCount=(w.soldCount||0)+1;w.revenue=(w.revenue||0)+price;w.wageCount=(w.wageCount||0)+1;
+ if(w.wageCount>=3){w.wageCount=0;financeMove(-25,'salary',{person:'warda'});w.wagesPaid=(w.wagesPaid||0)+1;}
 }
 function apiaryAct(action,i,batch){
  const w=wardaData(),p=nectarPlants[i];apiaryTick();
@@ -2192,7 +2192,7 @@ function apiaryAct(action,i,batch){
    const bed=w.bed;if(!bed||bed.id!==batch||bed.kind!==i||bed.sold||Date.now()<bed.nectarEnd)return;
    bed.sold=true;financeMove(p.plant,'apiaryFlower',{kind:i});
  }else if(action==='jar'){
-   if(w.jars[i]<1)return;w.jars[i]--;financeMove(p.honey,'honeySale',{kind:i});wardaWage();
+   if(w.jars[i]<1)return;w.jars[i]--;financeMove(p.honey,'honeySale',{kind:i});wardaWage(p.honey);
  }else return;
  apiaryTick();save();render();
 }
@@ -2205,7 +2205,7 @@ function honeyAd(action,slot,i){
    w.jars[i]--;w.edition++;w.ads[slot]={kind:i,price,due:Date.now()+30000,stage:'waiting'};
  }else{
    if(!ad||ad.stage!=='offer')return;
-   if(action==='accept'){financeMove(ad.price,'honeySale',{person:'yasmin',kind:ad.kind});wardaWage();}
+   if(action==='accept'){financeMove(ad.price,'honeySale',{person:'yasmin',kind:ad.kind});wardaWage(ad.price);}
    else if(action==='decline')w.jars[ad.kind]++;else return;
    w.ads[slot]=null;
  }
