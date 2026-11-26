@@ -328,16 +328,12 @@ html body #settingsPanel .cfg-row[open]>summary:before,html body #settingsPanel 
 #compostStation{color:var(--cycle-ink);margin-block:12px}
 #compostStatus{font-size:.88em}#compostBadge{background:#aa1e38;color:white;border:2px solid white;border-radius:100px;padding:0 .42em}
 .compost-body{display:grid;grid-template-columns:minmax(84px,30%) 1fr;gap:.8rem;align-items:center}
-#compostArt{width:100%;aspect-ratio:1;background:url(yasmine/images/compost-stations.webp) left center/300% 100%;border-radius:12px}
-#compostArt[data-phase=locked]{filter:saturate(.45)}#compostArt[data-phase=ready]{outline:3px solid #82aa54}
-#compostArt[data-phase=working]::after,#compostArt[data-phase=ready]::after{content:"🍂";background:#fff4d9;border-radius:50%;padding:.2rem}
-#compostArt[data-phase=ready]::after{content:"✓";color:#264c31}
 #compostStation button,#compostProgress{width:100%;margin-block:.3rem}
 #compostStation p:empty{display:none}
 #scene .compost-leaf{position:absolute;z-index:11;width:44px;height:44px;min-height:44px;padding:0;border:1px solid #9d7749;background:#fff5db!important;color:#513922!important;border-radius:50%;font-size:24px;touch-action:manipulation}
 </style><style>
 #compostStation>summary #compostStatus{display:block;margin-inline-start:1.1rem;font-weight:400}
-#compostStation .compost-body{grid-template-columns:66px 1fr;gap:12px;margin-block:14px 8px}
+#compostStation .compost-body{grid-template-columns:1fr;gap:8px;margin-block:12px 8px}
 #compostStation #compostRecipe{font-weight:700;line-height:1.5;margin:0}
 #compostNeeds p{margin:0;padding:8px 0;border-bottom:1px solid var(--cycle-edge,#899783);line-height:1.5}
 #compostStation .compost-more{margin-top:14px}
@@ -442,7 +438,7 @@ html body #catArea #mouseChaseResult:not([hidden]){display:grid!important;grid-t
 #yasminRequestCard{margin:.75rem 0}html body #staffArea #deskRequest{display:flex;align-items:center;gap:.45rem;width:100%;direction:rtl;margin:0}
 #deskRequest span{flex:1;text-align:start}#deskRequest em,#deskRequest i{font-style:normal}
 #yasminRequestCard #staffRequest{margin:0;padding:.65rem;border:0}#yasminRequestCard #requestTitle,#yasminRequestCard[data-kind=bonus] #requestText,#yasminRequestCard[hidden],#yasminRequestCard #staffRequest[hidden],#fertCostDetails[hidden]{display:none!important}
-</style><link rel="stylesheet" href="yasmine/css/apiary.css?v=warda-gold-2"></head><body><main>
+</style><link rel="stylesheet" href="yasmine/css/apiary.css?v=warda-gold-2"><link rel="stylesheet" href="yasmine/css/compost-scene.css?v=1"></head><body><main>
 <section id="catEmergencyPanel" hidden aria-labelledby="welfareTitle">
 <div class="welfare-heading"><strong id="welfareTitle"></strong><b id="welfareTime" dir="ltr" hidden></b></div>
 <p id="catEmergencyText" aria-live="polite"></p>
@@ -471,7 +467,10 @@ html body #catArea #mouseChaseResult:not([hidden]){display:grid!important;grid-t
 <div class="panel" id="seedPanel" hidden><h2 id="shopTitle">🛒 متجر البذور</h2><p class="info" id="shopInfo">اشتري بذرة جديدة بعد البيع، وجرّب أنواع مختلفة.</p><button id="orderPlant" hidden></button><div class="shop" id="shop"></div><button id="emergencySeedBtn" type="button" hidden>🌱 بذرة إسعافية مجانية</button><p id="emergencySeedHint" class="info" hidden></p></div>
 <div class="panel" id="missionPanel" hidden><div class="row"><b id="missionTitle">🎯 مهمة المشتل</b><span id="mission">بيع 3 نباتات</span></div><p class="info" id="missionInfo">كل عملية بيع بتزيد مصاريك وبتقرّبك من توسيع المشتل.</p><button id="reset">إعادة التجربة</button></div>
 <details id="compostStation" class="panel"><summary><strong id="compostTitle">محطة السماد العضوي</strong> <span id="compostStatus"></span> <b id="compostBadge" hidden>1</b></summary>
-<div class="compost-body"><div aria-hidden="true" id="compostArt"></div><p id="compostRecipe"></p></div>
+<div class="compost-body"><div aria-hidden="true" id="compostArt">
+  <span class="compost-crate"><i class="compost-lid"></i><i class="compost-steam"></i></span>
+  <span class="compost-sack"></span><span class="compost-lantern"></span>
+</div><p id="compostRecipe"></p></div>
 
 <p id="compostHint"></p><progress max="1" id="compostProgress" hidden></progress>
 <button type="button" id="compostAction" hidden></button><button type="button" id="compostBuy" hidden></button>
@@ -600,7 +599,7 @@ html body #catArea #mouseChaseResult:not([hidden]){display:grid!important;grid-t
 <script src="yasmine/js/garden.js?v=plots1"></script>
 <script src="yasmine/js/cat-scene.js?v=garden-walk2"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/field-guide.js?v=offer-digits-5"></script><script src="yasmine/js/medals.js?v=apiary-medals-1"></script><script src="yasmine/js/compost.js?v=offer-digits-5"></script><script src="yasmine/js/statements.js?v=warda-wage-1"></script><script src="yasmine/js/game.js?v=raised-nav-1"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/field-guide.js?v=offer-digits-5"></script><script src="yasmine/js/medals.js?v=apiary-medals-1"></script><script src="yasmine/js/compost.js?v=garden-scene-1"></script><script src="yasmine/js/statements.js?v=warda-wage-1"></script><script src="yasmine/js/game.js?v=raised-nav-1"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');

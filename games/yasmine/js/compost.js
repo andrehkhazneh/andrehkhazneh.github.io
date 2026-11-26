@@ -70,7 +70,9 @@ function render(state,h){
  const panel=el('compostStation');
  put('compostTitle',txt('محطة السماد العضوي','Organic Compost Station'));
  put('compostStatus',status);el('compostBadge').hidden=!(done||canStart(c));
- el('compostArt').style.backgroundPosition=(Math.max(c.tier-1,0)*50)+'% center';el('compostArt').dataset.phase=batch?(done?'ready':'working'):c.tier?'empty':'locked';
+ const art=el('compostArt');
+ const phase=batch?(done?'ready':'working'):c.tier?'empty':'locked';
+ if(art.dataset.phase!==phase)art.dataset.phase=phase;
  put('compostInventory',txt('🍂 أوراق ','🍂 Leaves ')+c.leaves+'/'+t.capacity+txt(' · 🌿 بقايا ',' · 🌿 Scraps ')+c.scraps+'/'+t.capacity+txt(' · سماد بالمخزون ',' · Fertilizer in stock ')+state.stock.fertilizer);
  const mins=recipe.seconds/60;
  const duration=en?mins+(mins===1?' minute':' minutes'):['','دقيقة','دقيقتين','3 دقايق'][mins];
@@ -114,6 +116,12 @@ function render(state,h){
  route.onclick=()=>{h.open();panel.open=true;panel.scrollIntoView({block:'center'})};
  action.onclick=()=>{const s=h.state();if(performance.now()-lastAction<650)return;let message;
    if(data(s).batch){const amount=collect(s,Date.now());if(!amount)return;
+     if(!root.matchMedia('(prefers-reduced-motion: reduce)').matches){
+       art.querySelector('.compost-sack').animate([
+         {opacity:1,transform:'translateY(0)'},
+         {opacity:0,transform:'translateY(-55%)'}
+       ],{duration:480,easing:'ease-out'});
+     }
      message=s.lang==='en'?'Collected '+amount+' · Stock: '+s.stock.fertilizer:'انضاف '+amount+' سماد · صار عندك '+s.stock.fertilizer;
    }else{if(!start(s,Date.now()))return;message=s.lang==='en'?'Batch started.':'بلّشت الدفعة.'}
    lastAction=performance.now();h.save();h.render();feedback(message);
