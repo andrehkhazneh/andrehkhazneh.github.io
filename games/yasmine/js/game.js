@@ -1246,7 +1246,7 @@ function renderFinance(){
  put('jamalAccess',t('وظّف جمال من قسم الرواتب لتفتح كشوفك المحفوظة.','Hire Jamal under Staff wages to see your recorded statements.'));
  if(invoiceGroup==='apiary'){
    sheet.hidden=false;$('jamalAccess').hidden=true;$('jamalHeading').hidden=false;
-   const [flowers,honey]=apiarySales();sheet.innerHTML='<dl class="offer-terms" id="apiaryTotals"></dl>';
+   const [flowers,honey]=apiarySales();sheet.innerHTML='<header class="apiary-receipt-title"><span aria-hidden="true">⬡ 🐝 ⬡</span><h3></h3></header><dl class="offer-terms" id="apiaryTotals"></dl>';sheet.querySelector('h3').textContent=t('كشف مبيعات المنحلة','Apiary sales statement');$('jamalHeading').hidden=true;
    offerTerms('apiaryTotals',[[t('مبيع نباتات المنحلة','Apiary plant sales'),flowers],[t('مبيع العسل','Honey sales'),honey],[t('المجموع الكلي','Total sales'),flowers+honey]]);return;
  }
  if(invoiceGroup==='donations'){sheet.hidden=false;$('jamalAccess').hidden=true;$('jamalHeading').hidden=false;renderDonationLedger(sheet);return}
@@ -2212,11 +2212,17 @@ function renderApiary(){
  const w=wardaData(),t=finText,bed=w.bed,now=Date.now(),area=$('apiaryArea');
  const hasPlant=bed&&!bed.sold&&now>=bed.nectarEnd;
  const jarCount=w.jars.reduce((a,b)=>a+b,0);
- $('apiaryTab').firstElementChild.textContent=t('🐝 المنحلة','🐝 Apiary');
- const badge=$('apiaryTab').lastElementChild;badge.hidden=!hasPlant&&!jarCount;badge.textContent=Number(!!hasPlant)+jarCount;
+ $('apiaryTab').textContent=t('المنحلة','Apiary');
+ const badge=$('apiaryBadge');badge.hidden=!hasPlant&&!jarCount;badge.textContent=Number(!!hasPlant)+jarCount;
  area.hidden=activeArea!=='apiary';$('apiaryTab').setAttribute('aria-pressed',String(!area.hidden));
  $('wardaStaffTitle').textContent=t('وردة · مسؤولة المنحلة','Warda · Beekeeper');
  $('wardaStaffRole').textContent=t('بنت أبو وردة. بتعتني بزهر الرحيق وبتجهّز العسل للبيع.','Abu Warda’s daughter grows nectar flowers and prepares honey for sale.');
+ $('wardaEmployeeName').textContent=t('وردة','Warda');
+ $('wardaEmployeeRole').textContent=t('مسؤولة المنحلة','Beekeeper');
+ $('wardaEmployeeDuty').textContent=$('wardaStaffRole').textContent;
+ const terms=t('متاحة من المستوى 1 · تعمل بلا راتب','Available from level 1 · No salary');
+ $('wardaEmployeeTerms').textContent=terms;
+ $('wardaStaffRole').textContent+=' '+terms;
  $('wardaGo').textContent=t('زور المنحلة','Visit apiary');
  if(area.hidden)return;
  $('apiaryTitle').textContent=t('وردة · المنحلة','Warda · Apiary');
@@ -2239,7 +2245,7 @@ function renderApiary(){
    el.append(label,btn);box.append(el);
  }
  if(mode==='seeds'){
-   nectarPlants.forEach((p,i)=>row(i,p.icon+' '+wardaName(i),t('ازرع · ','Sow · ')+p.cost,'sow',!!bed||state.money<p.cost));
+   nectarPlants.forEach((p,i)=>row(i,p.icon+' '+wardaName(i),t('ازرع بـ ','Sow for ')+p.cost+t(' عملات',' coins'),'sow',!!bed||state.money<p.cost));
  }else if(mode==='flower'){
    if(hasPlant)row(bed.kind,t('زبون طالب ','Buyer wants ')+wardaName(bed.kind),t('بيع · ','Sell · ')+nectarPlants[bed.kind].plant,'flower',false);
    else box.textContent=t('بيوصل زبون النبتة بعد زيارة النحل الرابعة.','A flower buyer arrives after the fourth bee visit.');
