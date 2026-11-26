@@ -1,0 +1,19 @@
+#apiaryArea,.warda-staff,#honeyMarket{--warda-art:url(../images/warda-apiary.webp)}
+.warda-scene,.warda-portrait,.honey-jar{background-image:var(--warda-art);background-repeat:no-repeat}
+.warda-scene{position:relative;overflow:hidden;aspect-ratio:1.9;background-size:100% auto;background-position:top;border-radius:16px}
+.warda-portrait{width:68px;height:74px;display:inline-block;border-radius:14px;background-size:245% auto;background-position:left top;vertical-align:middle}
+.honey-jar{width:65px;aspect-ratio:0.55;background-size:400% auto;background-position:var(--jar-x) 99%;display:inline-block;flex:none;border-radius:8px}
+.warda-bee{position:absolute;left:82%;top:47%;font-size:1rem;animation:warda-flight 4s ease-in-out infinite alternate;pointer-events:none}
+.warda-bee:nth-child(2){top:64%;animation-delay:-1.3s}.warda-bee:nth-child(3){top:53%;animation-delay:-2.4s}
+@keyframes warda-flight{0%,10%{left:82%;transform:translateY(0)}48%{transform:translateY(-12px)}90%,100%{left:47%;transform:translateY(10px)}}
+@media(prefers-reduced-motion:reduce){.warda-bee{animation:none}}
+.apiary-tools,.plant-lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.4rem;margin-block:.7rem}.plant-lanes{grid-template-columns:repeat(2,minmax(0,1fr))}
+.apiary-tools button,.plant-lanes button{min-width:0;font:inherit;padding:.55rem .15rem}.apiary-tools [aria-pressed=true],.plant-lanes [aria-pressed=true]{outline:2px solid #ac843b}
+.apiary-row{display:flex;align-items:center;gap:.6rem;padding:.55rem .2rem;border-bottom:1px solid #927e5c66}.apiary-row strong{flex:1}.apiary-row button{padding:.5rem}
+#gameNav #collectionsTab{grid-column:1/-1!important}
+#apiaryTab{position:relative}.apiary-count{background:#a61a38;color:white;border-radius:20px;padding:.02em .45em;font-size:.85em}
+#apiaryArea [hidden],#apiaryArea[hidden],#honeyMarket [hidden]{display:none!important}
+
+#apiaryTab{background-image:linear-gradient(90deg,#39240de6,transparent),url('../images/warda-apiary.webp')!important;background-size:cover,150% auto!important;background-position:center,right 23%!important;color:white!important;text-shadow:0 1px 3px #261705!important}
+#apiaryBed{position:absolute;inset-inline-start:38%;bottom:5%;min-width:3.2rem;text-align:center;font-size:1.65rem;filter:drop-shadow(0 2px 2px #583c17)}
+#wardaProgress{width:100%;accent-color:#b38229;height:.7rem}

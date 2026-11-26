@@ -35,11 +35,12 @@ function render(box,group,f,en,cat,name,title,wages){
    const revenue=sales.reduce((n,r)=>n+r.amount,0),cost=sales.reduce((n,r)=>n+r.seedCost,0);
    const bags=f.rows.filter(r=>r.category==='fertilizerSale');
    const fert=bags.reduce((n,r)=>n+r.amount,0),knownCost=bags.reduce((n,r)=>n+(r.fertilizerCost||0),0);
-   total=revenue+fert-cost-knownCost;
+   const honey=f.rows.filter(r=>r.category==='honeySale'&&r.person==='yasmin').reduce((n,r)=>n+r.amount,0);
+   total=revenue+fert+honey-cost-knownCost;
    line(t('ثمن البذور','Seed cost'),cost);line(t('بيع النبات','Plant sales'),revenue);
-   line(t('بيع السماد','Fertilizer sales'),fert);line(t('صافي الأرباح','Net earnings'),total);
+   line(t('بيع السماد','Fertilizer sales'),fert);if(honey)line(t('بيع عسل وردة','Warda’s honey sales'),honey);line(t('صافي الأرباح','Net earnings'),total);
    line(t('عدد العروض عن طريق ياسمين','Offers through Yasmin'),f.offerCount??sales.length+bags.length);
-   label='';note=t('الصافي بعد البذور وكلفة السماد المقدّرة المسجّلة، وقبل الرواتب والمحطة. العروض القديمة غير المسجّلة تشمل المبيعات المعروفة فقط.','Net of seeds and recorded estimated fertilizer costs, before wages and station costs. Earlier untracked offers include known sales only.');
+   label='';note=t('الصافي بعد البذور وكلفة السماد المقدّرة المسجّلة، وقبل الرواتب والمحطة وبذور المنحلة. العروض القديمة غير المسجّلة تشمل المبيعات المعروفة فقط.','Net of seeds and recorded estimated fertilizer costs, before wages, station costs and apiary seeds. Earlier untracked offers include known sales only.');
    if(bags.some(r=>r.fertilizerCost==null))note+=t(' كلفة السماد بالمبيعات القديمة غير متوفرة.',' Cost was unavailable for earlier fertilizer sales.');
  }else if(group==='garden'){
    line(t('ثمن البذور اللي اشتريتها','Seed purchases'),a.seeds);
