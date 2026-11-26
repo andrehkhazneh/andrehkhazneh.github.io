@@ -13,7 +13,18 @@
   const drops = Array.from({length:52}, (_,i)=>({
     x:(i*.61803399)%1, y:(i*.3819)%1, speed:.72+(i%7)*.09
   }));
-  let visible=false, request=0, start=null;
+  let visible=false, request=0;
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+  const smooth=n=>{n=Math.min(1,Math.max(0,n));return n*n*(3-2*n)};
+  function pose(t){
+    const creep=smooth(t/2.3), lean=smooth((t-2.5)/.8),duck=smooth((t-4)/.23),escape=smooth((t-6.25)/1.65);
+    const x=1.14-.638*creep-.11*lean+.11*duck+.66*escape;
+    const face=t<6.25?-1:1;
+    const steps=(1.14-x)*64;
+    const stride=t<2.3||t>6.25?Math.abs(Math.sin(steps)):0;
+    return {x,face,step:Math.floor(Math.abs(steps)*1.4)%8,
+      height:.68+.19*lean-.29*duck+.37*escape, bob:stride*.006};
+  }
   function draw(now){
     request=0;
     const w=scene.clientWidth,h=scene.clientHeight,ratio=Math.min(devicePixelRatio||1,2);
@@ -24,17 +35,13 @@
     const spying=!spy.hidden, raining=scene.dataset.weather==='rain';
     if(!visible||document.hidden||(!raining&&!spying))return;
     if(spying && walk.naturalWidth){
-      const t=Math.min(8,(now-(start??now))/1000);
-      const outbound=t<5.4;
-      const progress=outbound?Math.min(1,t/3.1):Math.max(0,1-(t-5.4)/2.6);
-      // A brief step past the planter reveals her face before she ducks back.
-      const peek=t>=3.1&&t<=5.4?Math.sin(Math.PI*(t-3.1)/2.3)**2:0;
-      const x=w*(1.13-progress*.64-.125*peek),floor=h*.94,size=Math.min(w*.26,h*.39);
-      const frame=frames[Math.floor(progress*w*.64/(size*.38)*8)%8];
-      const fw=walk.width/4,fh=walk.height/2;
-      ctx.save();ctx.translate(x,floor);ctx.scale(outbound?-1:1,1);
-      ctx.fillStyle='rgba(63,44,23,.16)';ctx.beginPath();ctx.ellipse(0,0,size*.30,size*.035,0,0,2*Math.PI);ctx.fill();
-      ctx.drawImage(walk,(frame%4)*fw,Math.floor(frame/4)*fh,fw,fh,-size*.5,-size*1.10,size,size*1.33);
+      const t=Math.max(0,Math.min(8,8-(Number(spy.dataset.end)-Date.now())/1000));
+      const p=pose(reduced.matches?(t<4?3.6:4.5):t);
+      const size=Math.min(w*.215,h*.32),height=size*1.27*p.height;
+      const fw=walk.width/4,fh=walk.height/2,frame=frames[p.step];
+      ctx.save();ctx.translate(w*p.x,h*(.939-p.bob));ctx.scale(p.face,1);
+      ctx.fillStyle='rgba(63,44,23,.17)';ctx.beginPath();ctx.ellipse(0,0,size*.32,size*.032,0,0,2*Math.PI);ctx.fill();
+      ctx.drawImage(walk,(frame%4)*fw,Math.floor(frame/4)*fh,fw,fh,-size*.5,-height*.91,size,height);
       ctx.restore();
     }
     if(raining){
@@ -49,7 +56,6 @@
     request=requestAnimationFrame(draw);
   }
   function sync(){
-    if(spy.hidden)start=null;else if(start===null)start=performance.now();
     cancelAnimationFrame(request);request=requestAnimationFrame(draw);
   }
   const changes=new MutationObserver(sync);
