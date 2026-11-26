@@ -367,12 +367,113 @@ function financeMove(amount,category,context={}){
  }
  f.rows.push(row);state.money=after;
 }
+const charities = [
+ ['🥘','مائدة الحارة','Neighbourhood Table','بتحضّر وجبات للعائلات','Prepares family meals','خضرة وعدس للمطبخ','vegetables and lentils for the kitchen','رز لوجبات العائلات','rice for family meals'],
+ ['🐾','كفوف صغيرة','Little Paws','بتعتني بالحيوانات الشاردة','Cares for stray animals','أكل للقطط','food for stray cats','ضمادات للحيوانات المصابة','bandages for injured animals'],
+ ['🎒','شنطة بكرا','Tomorrow’s Schoolbag','بتجهز طلاب المدارس','Equips schoolchildren','دفاتر للطلاب','notebooks for pupils','أقلام للصف','pencils for the classroom'],
+ ['🧣','دفء الشتاء','Winter Warmth','بتساعد العائلات بأيام البرد','Helps families through winter','بطانيات للعائلات','blankets for families','كنزات شتوية للصغار','warm sweaters for children'],
+ ['👵','ونسة أهل','Good Company','بتنظم زيارات ومشاوير لكبار السن','Organizes visits and outings for seniors','تذاكر باص للمشاوير','bus tickets for outings','ضيافة لزيارة جماعية','refreshments for a group visit'],
+ ['🌳','ظل الحارة','Neighbourhood Shade','بتزرع الشجر بساحات الحي','Plants trees in local squares','غراس للساحة','saplings for the square','خراطيم لري الشجر','hoses to water the trees'],
+ ['🩺','عيادة الحي','Community Clinic','بتأمن مستلزمات العناية لأهل الحي','Provides community care supplies','مستلزمات إسعاف','first aid supplies','شاش معقم للعيادة','sterile gauze for the clinic'],
+ ['📚','رف الحكايات','Story Shelf','بتجهز زوايا قراءة للأطفال','Creates reading corners for children','قصص مصورة للأطفال','picture books for children','رفوف لمكتبة الصغار','shelves for the children’s library'],
+ ['🏠','سقف وأمان','Safe Roof','بتساعد بتصليح بيوت العائلات','Helps families repair their homes','زجاج لشبابيك مكسورة','glass for broken windows','مواد عزل للسقف','waterproofing for a roof'],
+ ['🌱','بذرة رزق','Seeds of Livelihood','بتساعد العائلات تزرع خضرتها بالبيت','Helps families grow vegetables at home','بذور خضرة للعائلات','vegetable seeds for families','أدوات زراعة يدوية','hand tools for home gardens']
+];
+function charityPrefs(){
+ return state.charity||(state.charity={mode:'manual',cursor:0,offer:null,next:state.sales+10});
+}
+function donationRows(){return financeData().rows.filter(r=>r.category==='donation')}
+function letterReady(r){return Date.now()>=r.at+180000}
+function unreadLetters(){return donationRows().filter(r=>!r.letterRead&&letterReady(r))}
+function charityAlerts(){
+ const p=charityPrefs();
+ if(p.mode==='off')return 0;
+ if(p.mode==='suggest'&&state.staff.hired&&p.offer===null&&state.sales>=p.next){
+   p.offer=p.cursor;p.cursor=(p.cursor+1)%charities.length;save();
+ }
+ return unreadLetters().length+Number(p.offer!==null);
+}
+function charityName(index){const c=charities[index];return c[0]+' '+finText(c[1],c[2])}
+function purpose(index,variant){const c=charities[index],i=5+2*variant;return finText(c[i],c[i+1])}
+function currentPurpose(index){return donationRows().filter(r=>r.charity===index).length%2}
+function letterButton(row){
+ const box=document.createElement('details'),label=document.createElement('summary'),body=document.createElement('p');
+ label.textContent='💌 '+finText('رسالة من ','Letter from ')+charityName(row.charity);
+ const amount=-row.amount,item=purpose(row.charity,row.variant);
+ body.textContent=row.variant===0?finText('شكراً من القلب! تبرعك بـ '+amount+' عملة ساعدنا نشتري '+item+'.','Thank you! Your '+amount+' coins helped us buy '+item+'.'):finText('وصلتنا مساهمتك، وخصصنا منها مبلغ '+amount+' عملة لشراء '+item+'. يسلموا إيديك!','We received your contribution and put your '+amount+' coins toward '+item+'. Thank you!');
+ box.append(label,body);box.ontoggle=()=>{if(box.open&&!row.letterRead){row.letterRead=true;save();render()}};return box;
+}
+function renderDonationLedger(sheet){
+ const rows=donationRows().reverse(),total=rows.reduce((n,r)=>n-r.amount,0);
+ sheet.replaceChildren();const h=document.createElement('h3');
+ h.textContent=finText('إجمالي تبرعاتك','Total donated')+' · 🪙 '+total;sheet.append(h);
+ for(const r of rows){
+   const card=document.createElement('section'),title=document.createElement('strong'),p=document.createElement('p');
+   title.textContent=charityName(r.charity)+' · 🪙 '+(-r.amount);
+   p.textContent=r.gameDate+' · '+purpose(r.charity,r.variant);card.append(title,p);
+   if(letterReady(r))card.append(letterButton(r));sheet.append(card);
+ }
+ if(!rows.length)sheet.append(finText('أول تبرع بتعمله رح تظهر فاتورته هون.','Your first donation receipt will appear here.'));
+}
+function charityUI(){
+ const t=finText,p=charityPrefs();let panel=$('charityPanel');
+ if(!panel){
+   const style=document.createElement('style');
+   style.textContent=`#charityPanel{margin-block:.8rem;padding:1rem;border-radius:16px}#charityPanel summary{cursor:pointer;font-weight:750;min-height:2rem}#charityPanel label,#settingsPanel label:has(#charityMode){display:grid;gap:.35rem;margin-block:.65rem}#charityPanel select,#charityPanel input,#charityMode{width:100%;box-sizing:border-box;padding:.6rem .75rem;border-radius:.65rem;font:inherit}#charityMission{padding:.8rem;border-inline-start:3px solid #b59a60;background:rgba(140,158,104,.14);border-radius:.4rem}#charityBalance,#charityStatus{font-weight:650}#charityStatus:empty{display:none}#charityLetters details,#jamalSheet section:has(details){padding:.7rem;margin-block:.5rem;border:1px solid #8887;border-radius:12px}#charityPanel[hidden]{display:none!important}`;
+   document.head.append(style);
+   const settings=document.createElement('label');settings.className='cfg-row';
+   settings.innerHTML='<span id="charityModeTitle"></span> <select id="charityMode"></select>';$('settingsPanel').append(settings);
+   panel=document.createElement('details');panel.id='charityPanel';panel.className='panel';
+   panel.innerHTML='<summary><strong id="charityTitle"></strong> <b id="charityBadge" class="offer-alert"></b></summary><p id="charityInvite"></p><button id="charitySkip" type="button"></button><label><span id="charityPickLabel"></span> <select id="charityPick"></select></label><p id="charityMission"></p><label><span id="charityAmountLabel"></span> <input id="charityAmount" type="text" inputmode="numeric" autocomplete="off" size="8"></label><p id="charityBalance" aria-live="polite"></p><button type="button" id="charityGive"></button><p role="status" id="charityStatus"></p><div id="charityLetters"></div>';
+   $('supplierPanel').after(panel);
+   $('charityMode').onchange=e=>{p.mode=e.target.value;p.next=state.sales+10;p.offer=null;panel.open=false;save();render()};
+   $('charitySkip').onclick=()=>{p.offer=null;p.next=state.sales+10;save();render()};
+   $('charityPick').onchange=()=>{$('charityStatus').textContent='';charityUI()};
+   $('charityAmount').oninput=()=>{$('charityStatus').textContent='';charityUI()};
+   $('charityGive').onclick=()=>{
+     const amount=charityAmount(),index=Number($('charityPick').value);
+     if(!state.staff.hired||p.mode==='off'||!amount||amount>state.money)return;
+     financeMove(-amount,'donation',{charity:index,variant:currentPurpose(index),gameDate:collectionDate(),letterRead:false});
+     if(p.offer===index){p.offer=null;p.next=state.sales+10}
+     $('charityAmount').value='';$('charityStatus').textContent=finText('وصل تبرعك إلى ','Donation received by ')+charityName(index)+' · 🪙 '+amount;
+     save();render();
+   };
+ }
+ const mode=$('charityMode'),pick=$('charityPick');
+ if(mode.dataset.lang!==state.lang){
+   mode.dataset.lang=state.lang;
+   mode.replaceChildren(new Option(t('بتبرع وقت ما بدي','Donate manually'),'manual'),new Option(t('ياسمين تقترح عليّ','Suggestions from Yasmin'),'suggest'),new Option(t('إيقاف التبرعات','Turn off donations'),'off'));
+   const selected=pick.selectedIndex;pick.replaceChildren(...charities.map((c,i)=>new Option(charityName(i),i)));pick.selectedIndex=Math.max(0,selected);
+ }
+ mode.value=p.mode;$('charityModeTitle').textContent=t('💌 التبرعات','💌 Donations');
+ panel.hidden=!state.staff.hired||p.mode==='off';if(panel.hidden)return;
+ const count=charityAlerts(),letters=unreadLetters(),offer=p.offer;
+ if(panel.dataset.offer!==String(offer)){panel.dataset.offer=String(offer);if(offer!==null)pick.value=String(offer)}
+ const index=Number(pick.value),c=charities[index],amount=charityAmount();
+ $('charityTitle').textContent=letters.length?t('وصلتك رسالة من ','Letter from ')+charityName(letters[0].charity):t('💌 التبرع للجمعيات الخيرية','💌 Donate to charity');
+ $('charityBadge').hidden=!count;$('charityBadge').textContent=count;
+ $('charityInvite').hidden=$('charitySkip').hidden=offer===null;
+ if(offer!==null)$('charityInvite').textContent=t('ياسمين: بتحب تساهم اليوم مع ','Yasmin: Would you like to support ')+charityName(offer)+'؟';
+ $('charitySkip').textContent=t('مو هالمرة','Skip this time');
+ $('charityPickLabel').textContent=t('اختار الجمعية','Choose a charity');
+ $('charityMission').textContent=t(c[3],c[4])+'. '+t('عم نجمع لشراء ','Collecting for ')+purpose(index,currentPurpose(index))+'.';
+ $('charityAmountLabel').textContent=t('مبلغ التبرع','Donation amount');
+ $('charityBalance').textContent=amount>state.money?t('رصيدك ما بيكفي','Insufficient balance'):amount?t('رصيدك بعد التبرع ','Remaining balance ')+(state.money-amount):t('رصيدك ','Balance ')+state.money;
+ $('charityGive').disabled=!amount||amount>state.money;$('charityGive').textContent=t('تبرع','Donate')+(amount?' · 🪙 '+amount:'');
+ const inbox=$('charityLetters'),ready=donationRows().filter(letterReady).reverse(),stamp=state.lang+'|'+ready.map(r=>r.id).join(',');
+ if(inbox.dataset.stamp!==stamp){inbox.dataset.stamp=stamp;inbox.replaceChildren(...ready.map(letterButton))}
+}
+function charityAmount(){
+ const raw=$('charityAmount').value.trim().replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632));
+ const amount=Number(raw);return /^\d+$/.test(raw)&&Number.isSafeInteger(amount)&&amount>0?amount:0;
+}
+
 function financeWage(){
  const f=financeData();if(!f.hired||f.due)return;
  if(++f.count>=10){f.count=0;if(state.money>=20)financeMove(-20,'accountant',{person:'ledger'});else {f.due=true;f.reportLimit=f.rows.length}}
 }
 const financialLabels={
- sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى ٢','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى ٣','Station tier 3'],
+ donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى ٢','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى ٣','Station tier 3'],
  abu:['أبو وردة','Abu Warda'],nana:['نانا','Nana'],ledger:['جمال','Jamal'],yasmin:['ياسمين','Yasmin']
 };
 function finText(ar,en){return state.lang==='en'?en:ar}
@@ -439,7 +540,7 @@ function renderFinance(){
    panel.innerHTML='<summary></summary><div class="office-intro"><img src="yasmine/images/nabih.webp" alt="" width="84" height="84"><p id="financeIntro"></p></div><button id="financeHire" type="button"></button><section class="office-wallet"><small id="financeWalletLabel"></small><strong id="financeBalance"></strong><span id="financeDue"></span></section><details id="financeBills"><summary></summary><div></div></details><div id="financeBook"><details id="financeReports"><summary></summary><select id="financePeriods"></select><p id="financeTotals"></p><div id="financeCategories"></div><details><summary id="financeCostsTitle"></summary><p id="financeCosts"></p></details><details><summary id="financePlantsTitle"></summary><p id="financePlants"></p></details><button id="financeShare"></button></details><details id="financeHistory"><summary></summary><input id="financeSearch" type="search"><div id="financeRows"></div><button id="financeMore"></button></details><details id="financeAsk"><summary></summary><p id="financeAdvice"></p><button id="financeTalk"></button></details><details><summary id="compostLedgerTitle"></summary><p id="compostLedgerStats"></p></details></div>';
    panel.firstElementChild.remove();
    panel.querySelector('.office-intro img').remove();
-   panel.insertAdjacentHTML('afterbegin','<h2 id="jamalName"></h2><img class="jamal-art" src="yasmine/images/jamal-desk.webp" alt=""><div id="jamalMenu"><button data-group="garden"></button><button data-group="campaign"></button><button data-group="cat"></button><button data-group="staff"></button></div><div id="jamalSub" class="jamal-subhead"><h3 id="jamalHeading"></h3><button id="jamalBack"></button></div><article id="jamalSheet" class="statement" hidden></article><p id="jamalAccess" hidden></p>');
+   panel.insertAdjacentHTML('afterbegin','<h2 id="jamalName"></h2><img class="jamal-art" src="yasmine/images/jamal-desk.webp" alt=""><div id="jamalMenu"><button data-group="garden"></button><button data-group="campaign"></button><button data-group="cat"></button><button data-group="staff"></button><button data-group="donations"></button></div><div id="jamalSub" class="jamal-subhead"><h3 id="jamalHeading"></h3><button id="jamalBack"></button></div><article id="jamalSheet" class="statement" hidden></article><p id="jamalAccess" hidden></p>');
    const advanced=document.createElement('details');advanced.id='jamalAdvanced';advanced.innerHTML='<summary></summary>';panel.append(advanced);advanced.append(panel.querySelector('#financeBook'));
    $('officeArea').append(panel);
    $('jamalMenu').onclick=e=>{const b=e.target.closest('[data-group]');if(b){invoiceGroup=b.dataset.group;financePage=40;renderFinance()}};
@@ -459,11 +560,11 @@ function renderFinance(){
  const t=finText,openBills=Object.values(f.pending).map(id=>f.bills[id-1]),debt=openBills.filter(b=>!b.key.startsWith('request-')).reduce((n,b)=>n+b.amount,0);
  if(activeArea!=='office')return;
  const today=new Date();today.setHours(0,0,0,0);
- const stamp=[invoiceGroup,state.lang,today.getTime(),state.money,state.sales,f.rows.length,f.bills.length,openBills.map(b=>b.id+':'+b.seen),f.hired,f.due,financePeriod,financePage,financeSearch,f.joke,state.catName].join('|');
+ const stamp=[invoiceGroup==='donations'?donationRows().filter(letterReady).length:0,invoiceGroup,state.lang,today.getTime(),state.money,state.sales,f.rows.length,f.bills.length,openBills.map(b=>b.id+':'+b.seen),f.hired,f.due,financePeriod,financePage,financeSearch,f.joke,state.catName].join('|');
  if(stamp===financeViewStamp)return;financeViewStamp=stamp;
  const put=(id,text)=>{$(id).textContent=text};
  const title=(id,ar,en)=>{$(id).firstElementChild.textContent=t(ar,en)};
- const names={campaign:t('مبيعات المشتل عن طريق ياسمين','Nursery sales through Yasmin'),garden:t('حسابات المشتل','Nursery accounts'),cat:t('مصاريف ','Expenses · ')+displayName('catName'),staff:t('رواتب الموظفين ومكافآتهم','Staff wages and bonuses')};
+ const names={donations:t('💌 فواتير التبرع','💌 Donation receipts'),campaign:t('مبيعات المشتل عن طريق ياسمين','Nursery sales through Yasmin'),garden:t('حسابات المشتل','Nursery accounts'),cat:t('مصاريف ','Expenses · ')+displayName('catName'),staff:t('رواتب الموظفين ومكافآتهم','Staff wages and bonuses')};
  const home=!invoiceGroup;
  put('jamalName',t('جمال · محاسب المشتل','Jamal · Nursery accountant'));
  for(const b of $('jamalMenu').children)b.textContent=names[b.dataset.group];
@@ -510,6 +611,7 @@ function renderFinance(){
  $('jamalHeading').hidden=!sheet.hidden;
  $('jamalAccess').hidden=home||f.hired||invoiceGroup==='staff';
  put('jamalAccess',t('وظّف جمال من قسم الرواتب لتفتح كشوفك المحفوظة.','Hire Jamal under Staff wages to see your recorded statements.'));
+ if(invoiceGroup==='donations'){sheet.hidden=false;$('jamalAccess').hidden=true;$('jamalHeading').hidden=false;renderDonationLedger(sheet);return}
  if(home)return;
  if(f.hired){
    const wages={};
@@ -579,7 +681,7 @@ function notificationCount(){
  const book=tradeBook(),order=campaign();
  supplierDeal();
  if(order.stage==='waiting'&&Date.now()>=order.arrivesAt)order.stage='offer';
- return Number(!!state.staff.request)+Number(order.stage==='offer')+
+ return charityAlerts()+Number(!!state.staff.request)+Number(order.stage==='offer')+
    Number(state.sales>=book.nextDealSale)+Number(!!book.receiptUnread);
 }
 var yasminPortraits=document.querySelectorAll('[data-yasmin-portrait]');
@@ -1415,7 +1517,7 @@ function geoAnswer(i){var c=geoProgress(),g=c.geoCurrent;if(!state.abu.hired||!g
 function renderAbuGeo(){var panel=$('abuGeoPanel');if(!panel)return;panel.hidden=!state.abu.hired;if(panel.hidden)return;var c=geoProgress(),g=c.geoCurrent,en=state.lang==='en',l=en?1:0;$('abuGeoTitle').textContent=en?'🌍 Around the world with John':'🌍 حول العالم مع أبو وردة';if(!panel.open)return;$('abuGeoScore').textContent=(en?'Correct answers: ':'الإجابات الصحيحة: ')+(c.geoCorrect||0)+' / '+(c.geoTotal||0);$('abuGeoNext').hidden=!!g&&g.answer===null;$('abuGeoNext').textContent=g?(en?'Next question':'السؤال التالي'):(en?'Start quiz':'ابدأ المسابقة');$('abuGeoQuestion').textContent=g?abuGeoQuestions[g.id][l]:(en?'Ready to explore the world?':'لشوف معلوماتك بالجغرافيا يا ابني!');var opts=$('abuGeoOptions');opts.hidden=!g;if(g){var q=abuGeoQuestions[g.id];g.order.forEach(function(k,i){var b=opts.children[i];b.textContent=q[2+k*2+l];b.disabled=g.answer!==null;b.dataset.result=g.answer===null?'':k===0?'correct':g.answer===k?'wrong':'';b.onclick=function(){geoAnswer(k)}})}$('abuGeoFeedback').hidden=!g||g.answer===null;if(g&&g.answer!==null)$('abuGeoFeedback').textContent=(g.answer===0?(en?'Well done! ':'برافو يا ابني! '):(en?'Every day we learn something new. ':'مو مشكلة يا ابني، كل يوم منتعلّم شي جديد. '))+abuGeoQuestions[g.id][8+l]}
 $('abuGeoPanel').ontoggle=renderAbuGeo;
 $('abuGeoNext').onclick=geoNext;
-function render(){financeData();packOrders();renderCollections();renderFinance();renderAbuGeo();var pot=selectedPot();updateNurseryQuickActions();updateYasminFinancialAid();renderGoal();$('emergencyFertilizer').hidden=state.stock.fertilizer>0||!!state.emergencyFertilizerUsed;updateSky();$('employeesClose').textContent=state.lang==='ar'?'إغلاق':'Close';$('siteBack').textContent=state.lang==='ar'?'رجوع ←':'Back ←';$('daySettings').querySelector('label[for="dayMode"]').textContent=state.lang==='ar'?'🌤️ الوقت والسماء':'🌤️ Time & sky';$('daySettings').querySelector('label[for="weatherMode"]').textContent=state.lang==='ar'?'🌦️ الطقس':'🌦️ Weather';[['dayMode',['Automatic — day cycle','Always day','Always night']],['weatherMode',['Automatic — changing weather','Clear','Rain','Wind']]].forEach(function(x){var labels=state.lang==='en'?x[1]:x[0]==='dayMode'?['تلقائي — دورة اليوم','نهار دائم','ليل دائم']:['تلقائي — طقس متغير','صحو','مطر','ريح'];Array.from($(x[0]).options).forEach(function(o,i){o.textContent=labels[i]})});$('manualCare').hidden=!!state.abu.hired;$('careInfo').hidden=!!state.abu.hired;$('missionPanel').hidden=true;document.documentElement.lang=state.lang;document.documentElement.dir=state.lang==='ar'?'rtl':'ltr';document.title=tr('title');['title','subtitle','moneyLabel','salesLabel','qualityLabel','water','feed','sun','careInfo','buyerTitle','buyerText','sell','shopTitle','shopInfo','missionTitle','missionInfo'].forEach(function(k){$(k).textContent=tr(k)});$('lang').setAttribute('aria-pressed',String(state.lang==='en'));$('chooseArabic').setAttribute('aria-pressed',String(state.lang==='ar'));$('gameFooter').textContent=state.lang==='ar'?'التقدم محفوظ على جهازك · نباتاتك بتكمل نموها وإنت غايب':'Progress saved on your device · Plants keep growing while you’re away';$('topEditNames').textContent=state.lang==='ar'?'⚙️ الإعدادات':'⚙️ Settings';$('settingsNames').textContent=state.lang==='ar'?'أسماء اللعبة':'Game names';$('title').textContent='🌿 '+displayName("gardenName");$('settingsAudio').textContent=state.lang==='ar'?'الصوت':'Audio';$('employeesToggle').textContent=state.lang==='ar'?'إدارة الموظفين':'Manage employees';$('employeesTitle').textContent=state.lang==='ar'?'إدارة الموظفين':'Manage employees';$('yasminSalary').textContent=state.lang==='ar'?'👩🏻‍🌾 المديرة ياسمين — الراتب: بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.':'👩🏻‍🌾 Manager Yasmin — Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.';$('yasminEmployeeName').textContent=state.lang==='ar'?'ياسمين':'Yasmin';$('yasminEmployeeDescription').textContent=state.lang==='ar'?'مديرة المشتل':'Nursery manager';$('yasminEmployeeDuty').textContent=state.lang==='ar'?'بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.':'Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.';$('yasminEmployeeState').textContent=state.lang==='ar'?'● تعمل':'● Working';$('abuEmployeeName').textContent=state.lang==='ar'?'أبو وردة':'John';$('abuEmployeeRole').textContent=state.lang==='ar'?'مسؤول العناية بالنباتات':'Plant caretaker';$('abuEmployeeDuty').textContent=state.lang==='ar'?'بيسقي وبيسمّد وبيشيل الدود، وبيلمّ الأوراق اليابسة وقت يكون عم يشتغل':'Waters, fertilizes, removes pests and gathers fallen leaves while working';$('nanaEmployeeName').textContent=state.lang==='ar'?'نانا':'Nana';$('nanaEmployeeRole').textContent=state.lang==='ar'?'مربّية القطط':'Cat caretaker';$('nanaEmployeeDuty').textContent=state.lang==='ar'?'بتطعم القطة وبتسقيها وبتساعد بتمشيطها واللعب معها':'Feeds and waters the cat, and helps with grooming and play';$('nanaEmployeeSalary').textContent=state.lang==='ar'?'20 عملة كل 3 مبيعات':'20 coins every 3 sales';$('nanaEmployeeState').textContent=state.lang==='ar'?(state.nana.hired?(state.nana.paused?'● متوقفة مؤقتاً':'● تعمل'):'○ غير موظفة'):(state.nana.hired?(state.nana.paused?'● Paused':'● Working'):'○ Not hired');$('abuSalary').textContent=state.lang==='ar'?'👨‍🌾 مسؤول المشتل أبو وردة — الراتب: 15 عملة كل 3 مبيعات. الحالة: '+(state.abu.hired?(state.abu.paused?'متوقف':'يعمل'):'غير موظف'):'👨‍🌾 Nursery manager John — 15 coins every 3 sales. Status: '+(state.abu.hired?(state.abu.paused?'paused':'working'):'not hired');$('restartGame').textContent=state.lang==='ar'?'🔄 إعادة اللعبة من البداية':'🔄 Restart game';$('money').textContent='💰 '+state.money;$('sales').textContent=state.sales;$('quality').textContent=pot.quality+'%';$('qualityReason').textContent=pot.qualityCause||(state.lang==='ar'?'الجودة ممتازة، ما في ضرر مسجّل.':'Excellent quality; no recorded damage.');var crop=crops[pot.kind];$('cropName').textContent=pot.active?crop[state.lang]:'—';$('growth').style.width=pot.progress+'%';$('pct').textContent=Math.floor(pot.progress)+'%';$('stage').textContent=pot.active?crop.stages[state.lang][window.YasmineGardenCore.stageFor(pot.progress)]:'—';var remaining=Math.max(0,Math.ceil(crop.time*(100-pot.progress)/100));$('clock').textContent='⏱ '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');var ready=pot.active&&pot.progress>=100;$('sell').disabled=!ready;var price=Math.round(crop.price*(.5+pot.quality/200)*(state.sales<ECONOMY_CONFIG.starterSales?1+ECONOMY_CONFIG.starterBonus:1));$('offer').hidden=!ready;$('offer').textContent=ready?'💰 '+price:'';$('buyerText').textContent=ready?tr('ready'):tr('buyerText');['water','feed','sun'].forEach(function(k){$(k).disabled=!pot.active||ready||Date.now()-last[k]<5000});$('mission').textContent=state.sales>=3?tr('won'):tr('mission')+' ('+state.sales+'/3)';renderSeedShop(pot);renderPlots();renderUpgrade();renderCat();renderStaff();renderTrade();renderNurseryNotice();updateAudioButtons();renderCatEnergy();window.YasmineCompost.render(state,{state:()=>state,save,render,charge:financeMove,open:()=>{activeArea='nursery';render()},potAlerts:()=>nurseryPots().filter(p=>!p.active||isReady(p)).length});save()}
+function render(){financeData();charityUI();packOrders();renderCollections();renderFinance();renderAbuGeo();var pot=selectedPot();updateNurseryQuickActions();updateYasminFinancialAid();renderGoal();$('emergencyFertilizer').hidden=state.stock.fertilizer>0||!!state.emergencyFertilizerUsed;updateSky();$('employeesClose').textContent=state.lang==='ar'?'إغلاق':'Close';$('siteBack').textContent=state.lang==='ar'?'رجوع ←':'Back ←';$('daySettings').querySelector('label[for="dayMode"]').textContent=state.lang==='ar'?'🌤️ الوقت والسماء':'🌤️ Time & sky';$('daySettings').querySelector('label[for="weatherMode"]').textContent=state.lang==='ar'?'🌦️ الطقس':'🌦️ Weather';[['dayMode',['Automatic — day cycle','Always day','Always night']],['weatherMode',['Automatic — changing weather','Clear','Rain','Wind']]].forEach(function(x){var labels=state.lang==='en'?x[1]:x[0]==='dayMode'?['تلقائي — دورة اليوم','نهار دائم','ليل دائم']:['تلقائي — طقس متغير','صحو','مطر','ريح'];Array.from($(x[0]).options).forEach(function(o,i){o.textContent=labels[i]})});$('manualCare').hidden=!!state.abu.hired;$('careInfo').hidden=!!state.abu.hired;$('missionPanel').hidden=true;document.documentElement.lang=state.lang;document.documentElement.dir=state.lang==='ar'?'rtl':'ltr';document.title=tr('title');['title','subtitle','moneyLabel','salesLabel','qualityLabel','water','feed','sun','careInfo','buyerTitle','buyerText','sell','shopTitle','shopInfo','missionTitle','missionInfo'].forEach(function(k){$(k).textContent=tr(k)});$('lang').setAttribute('aria-pressed',String(state.lang==='en'));$('chooseArabic').setAttribute('aria-pressed',String(state.lang==='ar'));$('gameFooter').textContent=state.lang==='ar'?'التقدم محفوظ على جهازك · نباتاتك بتكمل نموها وإنت غايب':'Progress saved on your device · Plants keep growing while you’re away';$('topEditNames').textContent=state.lang==='ar'?'⚙️ الإعدادات':'⚙️ Settings';$('settingsNames').textContent=state.lang==='ar'?'أسماء اللعبة':'Game names';$('title').textContent='🌿 '+displayName("gardenName");$('settingsAudio').textContent=state.lang==='ar'?'الصوت':'Audio';$('employeesToggle').textContent=state.lang==='ar'?'إدارة الموظفين':'Manage employees';$('employeesTitle').textContent=state.lang==='ar'?'إدارة الموظفين':'Manage employees';$('yasminSalary').textContent=state.lang==='ar'?'👩🏻‍🌾 المديرة ياسمين — الراتب: بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.':'👩🏻‍🌾 Manager Yasmin — Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.';$('yasminEmployeeName').textContent=state.lang==='ar'?'ياسمين':'Yasmin';$('yasminEmployeeDescription').textContent=state.lang==='ar'?'مديرة المشتل':'Nursery manager';$('yasminEmployeeDuty').textContent=state.lang==='ar'?'بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.':'Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.';$('yasminEmployeeState').textContent=state.lang==='ar'?'● تعمل':'● Working';$('abuEmployeeName').textContent=state.lang==='ar'?'أبو وردة':'John';$('abuEmployeeRole').textContent=state.lang==='ar'?'مسؤول العناية بالنباتات':'Plant caretaker';$('abuEmployeeDuty').textContent=state.lang==='ar'?'بيسقي وبيسمّد وبيشيل الدود، وبيلمّ الأوراق اليابسة وقت يكون عم يشتغل':'Waters, fertilizes, removes pests and gathers fallen leaves while working';$('nanaEmployeeName').textContent=state.lang==='ar'?'نانا':'Nana';$('nanaEmployeeRole').textContent=state.lang==='ar'?'مربّية القطط':'Cat caretaker';$('nanaEmployeeDuty').textContent=state.lang==='ar'?'بتطعم القطة وبتسقيها وبتساعد بتمشيطها واللعب معها':'Feeds and waters the cat, and helps with grooming and play';$('nanaEmployeeSalary').textContent=state.lang==='ar'?'20 عملة كل 3 مبيعات':'20 coins every 3 sales';$('nanaEmployeeState').textContent=state.lang==='ar'?(state.nana.hired?(state.nana.paused?'● متوقفة مؤقتاً':'● تعمل'):'○ غير موظفة'):(state.nana.hired?(state.nana.paused?'● Paused':'● Working'):'○ Not hired');$('abuSalary').textContent=state.lang==='ar'?'👨‍🌾 مسؤول المشتل أبو وردة — الراتب: 15 عملة كل 3 مبيعات. الحالة: '+(state.abu.hired?(state.abu.paused?'متوقف':'يعمل'):'غير موظف'):'👨‍🌾 Nursery manager John — 15 coins every 3 sales. Status: '+(state.abu.hired?(state.abu.paused?'paused':'working'):'not hired');$('restartGame').textContent=state.lang==='ar'?'🔄 إعادة اللعبة من البداية':'🔄 Restart game';$('money').textContent='💰 '+state.money;$('sales').textContent=state.sales;$('quality').textContent=pot.quality+'%';$('qualityReason').textContent=pot.qualityCause||(state.lang==='ar'?'الجودة ممتازة، ما في ضرر مسجّل.':'Excellent quality; no recorded damage.');var crop=crops[pot.kind];$('cropName').textContent=pot.active?crop[state.lang]:'—';$('growth').style.width=pot.progress+'%';$('pct').textContent=Math.floor(pot.progress)+'%';$('stage').textContent=pot.active?crop.stages[state.lang][window.YasmineGardenCore.stageFor(pot.progress)]:'—';var remaining=Math.max(0,Math.ceil(crop.time*(100-pot.progress)/100));$('clock').textContent='⏱ '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');var ready=pot.active&&pot.progress>=100;$('sell').disabled=!ready;var price=Math.round(crop.price*(.5+pot.quality/200)*(state.sales<ECONOMY_CONFIG.starterSales?1+ECONOMY_CONFIG.starterBonus:1));$('offer').hidden=!ready;$('offer').textContent=ready?'💰 '+price:'';$('buyerText').textContent=ready?tr('ready'):tr('buyerText');['water','feed','sun'].forEach(function(k){$(k).disabled=!pot.active||ready||Date.now()-last[k]<5000});$('mission').textContent=state.sales>=3?tr('won'):tr('mission')+' ('+state.sales+'/3)';renderSeedShop(pot);renderPlots();renderUpgrade();renderCat();renderStaff();renderTrade();renderNurseryNotice();updateAudioButtons();renderCatEnergy();window.YasmineCompost.render(state,{state:()=>state,save,render,charge:financeMove,open:()=>{activeArea='nursery';render()},potAlerts:()=>nurseryPots().filter(p=>!p.active||isReady(p)).length});save()}
 function tradeBook(){
  return state.staff.trade ||= {edition:0, shipments:0, dealAt:-1, wageCount:0};
 }
