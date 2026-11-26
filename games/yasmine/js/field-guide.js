@@ -74,7 +74,7 @@ const entries = {
  },
  strawberry: {
   species:'Fragaria × ananassa',
-  fact:['نص كوب فراولة طازجة مقطّعة فيه تقريباً ٤٩ ملغ من فيتامين C. والنبتة فيها تكوّن شتلات صغيرة على سيقان طويلة اسمها مدّادات.','Half a cup of sliced fresh strawberries provides about 49 mg of vitamin C. The plant can also form daughter plants on long stems called runners.'],
+  fact:['نص كوب فراولة طازجة مقطّعة فيه تقريباً 49 ملغ من فيتامين C. والنبتة فيها تكوّن شتلات صغيرة على سيقان طويلة اسمها مدّادات.','Half a cup of sliced fresh strawberries provides about 49 mg of vitamin C. The plant can also form daughter plants on long stems called runners.'],
   steps:[
    ['اختار شتلة سليمة بجذور قوية ومكان مشمس.','Choose a healthy plant with strong roots and a sunny spot.'],
    ['افرد الجذور بالتراب وخلي التاج، نقطة التقاء الجذور والأوراق، بمستوى سطح التربة.','Spread out the roots and keep the crown, where roots and leaves meet, level with the soil surface.'],
