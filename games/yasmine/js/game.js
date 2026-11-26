@@ -2271,7 +2271,7 @@ function fertilizerQuote(ad){
  const t=finText, paid=fertilizerLot-ad.organic, unit=ad.unitCost??fertilizerUnitEstimate();
  const cost=paid*unit,margin=ad.price-cost,fmt=n=>Number(n.toFixed(2));
  const grade=margin<0?t('خسارة','Loss'):margin===0?t('عالتكلفة','Break-even'):margin<=2?t('ربح بسيط','Small gain'):margin<=4?t('جيد','Good'):t('ممتاز','Excellent');
- return [[t('سعر البيع المعتاد','Usual selling price'),fertilizerLot+t(' عملة',' coins')],[t('عرض الزبون','Customer offer'),ad.price+t(' عملة',' coins')],[t('الربح المقدّر بعد كلفة السماد','Estimated profit after fertilizer cost'),fmt(margin)+t(' عملة',' coins')],[t('رأي ياسمين','Yasmin’s verdict'),grade]];
+ return [[t('سعر البيع المعتاد','Usual selling price'),fertilizerLot+t(' عملة',' coins')],[t('عرض الزبون','Customer offer'),ad.price+t(' عملة',' coins')],[t('الزيادة عن سعر البيع المعتاد','Extra over usual sale'),(ad.price>=fertilizerLot?'+':'')+fmt(ad.price-fertilizerLot)+t(' عملة',' coins')],[t('رأي ياسمين','Yasmin’s verdict'),grade]];
 }
 function fertilizerAction(action){
  const b=tradeBook(),ad=b.fertAd;
@@ -2298,6 +2298,12 @@ function renderFertilizerOffer(){
  $('fertOfferTitle').textContent=title+' · '+fertilizerLot+t(' وحدة',' units');
  $('fertOfferInfo').textContent=waiting?t('الإعلان منشور. حجزنا 15 وحدة وبانتظار عرض الزبون.','Ad published. 15 units reserved while awaiting an offer.'):offered?'':eligible?t('ياسمين: صار عنا فائض. ننشر إعلان ونحجز 15 وحدة للزبون؟','Yasmin: We have a surplus. Advertise and reserve 15 units?'):'';
  const terms=$('fertOfferTerms');terms.hidden=!offered;
+ $('fertCostDetails').hidden=!offered;
+ if(offered){
+   const cost=(fertilizerLot-ad.organic)*(ad.unitCost??fertilizerUnitEstimate());
+   $('fertCostDetails').firstElementChild.textContent=t('كيف انحسب رأي ياسمين؟','How did Yasmin rate this?');
+   $('fertCostDetails').lastElementChild.textContent=t('عرض الزبون ','Customer offer ')+ad.price+t(' − كلفة شراء مقدّرة ',' − estimated purchase cost ')+cost+t(' = ',' = ')+(ad.price-cost)+t(' عملة قبل الرواتب والمحطة. سماد المحطة ما إله ثمن شراء.',' coins before wages and station costs. Home-made fertilizer has no purchase price.');
+ }
  const sig=offered?JSON.stringify(fertilizerQuote(ad)):'';
  if(terms.dataset.rows!==sig){terms.dataset.rows=sig;offerTerms('fertOfferTerms',offered?JSON.parse(sig):[])}
  $('fertResult').textContent=b.fertResult&&!ad?(b.fertResult>0?t('آخر بيع: قبضت ','Last sale: received ')+b.fertResult+t(' عملة',' coins'):t('رجع السماد المحجوز للمخزون.','Reserved fertilizer returned to stock.')):'';
@@ -2311,15 +2317,18 @@ function renderYasminDesk(){
  const bar=$('yasminDesk'),ar=state.lang==='ar';
  bar.hidden=!state.staff.hired;
  renderFertilizerOffer();
- const request=$('deskRequest'),req=state.staff.request;
- request.hidden=!state.staff.hired||!req;
- if(!request.hidden){
-   const text=req==='bonus'?finText('طلب بونص · 30 عملة','Bonus request · 30 coins'):staffWords().request[req];
-   request.querySelector('span').textContent=text;
-   $('requestTitle').textContent='🔴 '+text;
-   if(!request.onclick)request.onclick=()=>$('staffRequest').scrollIntoView({block:'center',behavior:'smooth'});
+ const request=$('deskRequest'),card=$('yasminRequestCard'),req=state.staff.request;
+ card.hidden=!state.staff.hired||!req;
+ if(card.dataset.kind!==(req||'')){card.dataset.kind=req||'';request.setAttribute('aria-expanded','false')}
+ const expanded=!card.hidden&&request.getAttribute('aria-expanded')==='true';
+ $('staffRequest').hidden=!expanded;
+ if(!card.hidden){
+   request.querySelector('span').textContent=req==='bonus'?finText('طلب بونص · 30 عملة','Bonus request · 30 coins'):finText('طلب موارد','Supply request');
+   request.querySelector('em').textContent=expanded?'':finText('◂ فتح','Open');
+   request.querySelector('i').textContent=expanded?finText('إغلاق ×','Close ×'):'';
+   if(!request.onclick)request.onclick=()=>{request.setAttribute('aria-expanded',String(request.getAttribute('aria-expanded')!=='true'));renderYasminDesk()};
  }
- const buttons=Array.from(bar.children);
+  const buttons=Array.from(bar.children);
  for(const button of buttons){
    const panel=$(button.getAttribute('aria-controls')),badge=$(button.dataset.badge);
    button.hidden=panel.hidden;
@@ -2339,7 +2348,7 @@ function renderYasminDesk(){
  const joke=$('yasminJokeLine'),dialogue=$('staffDialogue');
  joke.hidden=!jokeAwaitingRating;
  if(jokeAwaitingRating)joke.textContent=localizeDialogue(state.staff,staffWords());
- dialogue.hidden=jokeAwaitingRating||String(state.staff.dialogue).startsWith('joke:')&&dialogue.textContent===localizeDialogue(state.staff,staffWords());
+ dialogue.hidden=!!req||jokeAwaitingRating||String(state.staff.dialogue).startsWith('joke:')&&dialogue.textContent===localizeDialogue(state.staff,staffWords());
 }
 function renderTrade(){
  const panel=$('tradePanel'),plant=$('orderPlant');
