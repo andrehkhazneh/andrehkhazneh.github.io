@@ -1,9 +1,20 @@
 <!doctype html><html lang="ar" dir="rtl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>عقاراتي</title><style>
 *{box-sizing:border-box}body{margin:0;background:#e8efe9;color:#233a35;font:16px Tahoma,Arial,sans-serif}main{max-width:650px;margin:auto;padding:18px}header{display:flex;justify-content:space-between;align-items:center}h1{margin:10px 0}button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:12px;background:#226d59;color:white;box-shadow:0 3px #154b3e}button:disabled{background:#dce4df;color:#68766f;box-shadow:none;cursor:default}.balance{background:#173f36;color:white;padding:22px;border-radius:20px;margin:16px 0}.balance strong{display:block;font-size:36px;margin:8px 0}.city{display:grid;grid-template-columns:repeat(4,1fr);align-items:end;background:#c9ddc5;border-radius:18px;padding:12px;min-height:155px;gap:4px}.city img{width:100%;height:130px;object-fit:contain;object-position:bottom}.city img.locked{opacity:.18;filter:grayscale(1)}article{display:grid;grid-template-columns:clamp(92px,24vw,116px) minmax(0,1fr) auto;gap:10px;align-items:center;background:white;padding:12px;margin:12px 0;border-radius:16px;box-shadow:0 3px #d2ded6}article img{width:100%;height:116px;object-fit:contain}small{display:block;color:#64766d;margin-top:8px}footer{text-align:center;margin:24px 0;color:#64766d}#reset{background:transparent;color:#9b4141;box-shadow:none} @media(max-width:380px){article{grid-template-columns:92px minmax(0,1fr)}article img{width:92px;grid-row:span 2}article button{grid-column:2}}
 header{gap:10px}#clock{display:block;font-size:.88rem;color:#435c52;line-height:1.6}#settings{flex:none;padding:9px 12px}dialog{color:#233a35;background:#fffaf2;border:0;border-radius:16px;width:min(88vw,330px);padding:24px}dialog::backdrop{background:#152e27a6}dialog h2{margin:0 0 18px}dialog select{display:block;width:100%;margin:8px 0 20px;padding:10px;font:inherit;border-radius:8px}
-</style><main><header><div><h1 id="title">عقاراتي</h1><time id="clock"><span id="weekday"></span> <bdi id="numericDate" dir="ltr"></bdi><br><bdi id="numericTime" dir="ltr"></bdi></time></div>
-<button id="settings" aria-haspopup="dialog">⚙ الإعدادات</button></header>
-<dialog id="panel" aria-labelledby="panelTitle"><h2 id="panelTitle"></h2><label id="languageLabel" for="lang"></label><select id="lang"><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select><form method="dialog"><button id="done"></button></form></dialog><section class="balance"><span id="cashLabel"></span><strong id="money"></strong><span id="income"></span></section><div class="city" id="city"></div><p id="offline"></p><div id="cards"></div><footer><button id="reset"></button><small>V1.2</small></footer></main><script>
+#clock{display:inline-flex;align-items:center;gap:.55em;margin-top:8px;padding:.42em .72em;background:#e2ece5;border:1px solid #bacfc0;border-radius:999px;color:#214c3e;font-size:clamp(16px,4.3vw,20px);font-weight:600;line-height:1.4;white-space:nowrap;font-variant-numeric:tabular-nums}
+.date-part,.time-part{display:inline-flex;align-items:center;gap:.25em}.time-part{border-inline-start:1px solid #b3cabb;padding-inline-start:.5em}
+.level{display:table;margin-bottom:5px;padding:2px 8px;background:#eaf2ec;color:#385e4c;border-radius:12px;font-size:.8rem}
+.yield{color:#1c704f;font-size:.95rem;font-weight:600;white-space:nowrap}
+button.crowned:disabled{background:#fbf2d7;color:#755213;border:1px solid #e4cd8d}
+.money-row{display:flex;align-items:center;gap:.8rem}.gain{color:#b1f4b8;font-weight:bold;opacity:0}
+@media(max-width:480px){article{grid-template-columns:clamp(100px,29vw,130px) minmax(0,1fr);column-gap:14px;row-gap:6px}article img{grid-row:span 2;width:100%}article button{grid-column:2;justify-self:start;padding:7px 12px}}
+@media(max-width:360px){#clock{font-size:16px;gap:.27em;padding:.4em}.date-part,.time-part{gap:.14em}.time-part{padding-inline-start:.26em}}
+#shortDay{display:none}
+@media(max-width:410px){html[lang=en] #weekday{display:none}html[lang=en] #shortDay{display:inline}}
+@media(max-width:350px){#clock{gap:.2em;padding-inline:.35em;font-size:15px}main{padding-inline:12px}}
+</style><main><header><h1 id="title">عقاراتي</h1><button id="settings" aria-haspopup="dialog">⚙ الإعدادات</button></header>
+<time id="clock"><span class="date-part"><span aria-hidden="true">📅</span> <span id="weekday"></span><span id="shortDay"></span> <bdi id="numericDate" dir="ltr"></bdi></span><span class="time-part"><span aria-hidden="true">🕒</span> <bdi id="numericTime" dir="ltr"></bdi> <span id="sunMoon" aria-hidden="true"></span></span></time>
+<dialog id="panel" aria-labelledby="panelTitle"><h2 id="panelTitle"></h2><label id="languageLabel" for="lang"></label><select id="lang"><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select><form method="dialog"><button id="done"></button></form></dialog><section class="balance"><span id="cashLabel"></span><div class="money-row"><strong id="money"></strong><span id="gain" class="gain" dir="ltr" aria-hidden="true"></span></div><span id="income"></span></section><div class="city" id="city"></div><p id="offline"></p><div id="cards"></div><footer><button id="reset"></button><small>V1.3</small></footer></main><script>
 const P=[['house','بيت إيجار','Rental house',0,1,5,60],['flat','عمارة سكنية','Apartments',500,5,3,750],['shop','محل تجاري','Shop',2000,15,3,3000],['hotel','فندق','Hotel',10000,60,3,15000]], key='ak-real-estate-v1';const fresh=()=>({money:0,levels:[1,0,0,0],time:Date.now(),clockStart:Date.now(),lang:'ar'});let s=fresh();try{let v=JSON.parse(localStorage.getItem(key));if(v&&Number.isFinite(v.money)&&v.money>=0&&Array.isArray(v.levels)&&v.levels.length===4&&v.levels.every((x,i)=>Number.isInteger(x)&&x>=0&&x<=P[i][5])&&v.levels[0]>=1&&Number.isFinite(v.time))s=v}catch(e){}if (!Number.isFinite(s.clockStart)) s.clockStart = Date.now();
 const $=id=>document.getElementById(id),ar=()=>s.lang!=='en',t=(a,b)=>ar()?a:b,fmt=n=>Math.floor(n).toLocaleString('en-US')+' $',income=()=>P.reduce((a,p,i)=>a+p[4]*s.levels[i],0),cost=i=>s.levels[i]===0?P[i][3]:Math.round(P[i][6]*1.8**(s.levels[i]-1));let offline=Math.max(0,Math.min(28800,(Date.now()-s.time)/1000))*income();s.money+=offline;s.time=Date.now();function save(){try{localStorage.setItem(key,JSON.stringify(s))}catch(e){}}function tick(){let now=Date.now();s.money+=Math.max(0,Math.min(28800,(now-s.time)/1000))*income();s.time=now}const weekdays = {
   ar: new Intl.DateTimeFormat('ar-SY', {weekday:'long', timeZone:'UTC'}),
@@ -19,8 +30,10 @@ function updateClock() {
   clock.dateTime = stamp;
   clock.lang = locale;
   $('weekday').textContent = weekdays[locale].format(instant);
+  $('shortDay').textContent = weekdays.en.format(instant).slice(0,3);
   $('numericDate').textContent = [instant.getUTCDate(), instant.getUTCMonth() + 1, instant.getUTCFullYear()].join('/');
   const hour = instant.getUTCHours();
+  $('sunMoon').textContent = hour >= 6 && hour < 18 ? '☀️' : '🌙';
   const minute = String(instant.getUTCMinutes()).padStart(2, '0');
   $('numericTime').textContent = (hour % 12 || 12) + ':' + minute + (hour < 12 ? ' A.M.' : ' P.M.');
 }
@@ -28,5 +41,29 @@ function render(){document.documentElement.lang=ar()?'ar':'en';document.document
 $('panelTitle').textContent=t('الإعدادات','Settings');
 $('languageLabel').textContent=t('اللغة','Language');
 $('done').textContent=t('تم','Done');
-$('lang').value=ar()?'ar':'en';$('cashLabel').textContent=t('الرصيد المتاح','Available balance');$('reset').textContent=t('إعادة تعيين اللعبة','Reset game');$('offline').textContent=offline>=1?t('أرباح الغياب: ','Offline earnings: ')+fmt(offline):'';$('city').replaceChildren();$('cards').replaceChildren();P.forEach((p,i)=>{let l=s.levels[i],src=('fitted/'+p[0])+Math.max(1,l)+'.png',img=new Image();img.src=src;img.alt=p[ar()?1:2];if(!l)img.className='locked';$('city').append(img);let card=document.createElement('article'),pic=new Image();pic.src=src;pic.alt=img.alt;let info=document.createElement('div');let title=document.createElement('b');title.textContent=img.alt;let sub=document.createElement('small');sub.textContent=l?t('المستوى ','Level ')+l+' · '+fmt(l*p[4])+t(' / ثانية',' / sec'):t('غير مملوك','Not owned');info.append(title,sub);let btn=document.createElement('button');btn.id='buy'+i;btn.onclick=()=>{tick();let c=cost(i);if(s.levels[i]<p[5]&&s.money>=c){s.money-=c;s.levels[i]++;save();render()}};card.append(pic,info,btn);$('cards').append(card)});refresh()}function refresh(){updateClock();$('money').textContent=fmt(s.money);$('income').textContent=t('الدخل: ','Income: ')+fmt(income())+t(' / ثانية',' / sec');P.forEach((p,i)=>{let b=$('buy'+i),l=s.levels[i];b.disabled=l>=p[5]||s.money<cost(i);b.textContent=l>=p[5]?t('أقصى مستوى','Max level'):t(l?'تطوير':'شراء',l?'Upgrade':'Buy')+' · '+fmt(cost(i))})}$('settings').onclick=()=>$('panel').showModal();
-$('lang').onchange=()=>{s.lang=$('lang').value;save();render()};$('reset').onclick=()=>{if(confirm(t('حذف كل التقدم؟','Delete all progress?'))){let lang=s.lang;s=fresh();s.lang=lang;offline=0;save();render()}};render();save();setInterval(()=>{tick();refresh()},250);setInterval(save,3000);addEventListener('pagehide',()=>{tick();save()});document.addEventListener('visibilitychange',()=>{tick();save();refresh()});</script></html>
+$('lang').value=ar()?'ar':'en';$('cashLabel').textContent=t('الرصيد المتاح','Available balance');$('reset').textContent=t('إعادة تعيين اللعبة','Reset game');$('offline').textContent=offline>=1?t('أرباح الغياب: ','Offline earnings: ')+fmt(offline):'';$('city').replaceChildren();$('cards').replaceChildren();P.forEach((p,i)=>{let l=s.levels[i],src=('fitted/'+p[0])+Math.max(1,l)+'.png',img=new Image();img.src=src;img.alt=p[ar()?1:2];if(!l)img.className='locked';$('city').append(img);let card=document.createElement('article'),pic=new Image();pic.src=src;pic.alt=img.alt;let info=document.createElement('div');let title=document.createElement('b');title.textContent=img.alt;let sub=document.createElement('small');if (l) {
+  const level = document.createElement('span');
+  level.className = 'level';
+  level.textContent = t('المستوى ', 'Level ') + l;
+  info.append(level);
+  sub.className = 'yield';
+  const amount = document.createElement('bdi');
+  amount.dir = 'ltr';
+  amount.textContent = '+' + l * p[4] + '$';
+  sub.append(amount, t(' / ثانية', ' / sec'));
+} else {
+  sub.textContent = t('غير مملوك','Not owned');
+}
+info.append(title,sub);let btn=document.createElement('button');btn.id='buy'+i;if(l===p[5])btn.className='crowned';btn.onclick=()=>{tick();let c=cost(i);if(s.levels[i]<p[5]&&s.money>=c){s.money-=c;s.levels[i]++;save();render()}};card.append(pic,info,btn);$('cards').append(card)});refresh()}function refresh(){updateClock();$('money').textContent=fmt(s.money);$('income').textContent=t('الدخل: ','Income: ')+fmt(income())+t(' / ثانية',' / sec');P.forEach((p,i)=>{let b=$('buy'+i),l=s.levels[i];b.disabled=l>=p[5]||s.money<cost(i);b.textContent=l>=p[5]?'👑 '+t('أقصى مستوى','Max level'):t(l?'تطوير':'شراء',l?'Upgrade':'Buy')+' · '+fmt(cost(i))})}$('settings').onclick=()=>$('panel').showModal();
+$('lang').onchange=()=>{s.lang=$('lang').value;save();render()};$('reset').onclick=()=>{if(confirm(t('حذف كل التقدم؟','Delete all progress?'))){let lang=s.lang;s=fresh();s.lang=lang;offline=0;save();render()}};render();save();setInterval(()=>{tick();refresh()},250);setInterval(save,3000);
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+setInterval(() => {
+  if (document.hidden || reducedMotion.matches) return;
+  const gain = $('gain');
+  gain.textContent = '+' + income().toLocaleString('en-US') + '$';
+  gain.animate([
+    {opacity:0, transform:'translateY(5px)'},
+    {opacity:1, transform:'translateY(0)', offset:.22},
+    {opacity:0, transform:'translateY(-16px)'}
+  ], {duration:900, easing:'ease-out'});
+},1000);addEventListener('pagehide',()=>{tick();save()});document.addEventListener('visibilitychange',()=>{tick();save();refresh()});</script></html>
