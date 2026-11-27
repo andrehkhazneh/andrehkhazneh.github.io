@@ -1,1 +1,19 @@
-{"name":"Canada Calculators | حاسبات كندا","short_name":"Canada Calc","start_url":"./index.html","scope":"./","display":"standalone","background_color":"#f5f1e9","theme_color":"#a71930","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]}
+{
+  "lang": "en-CA",
+  "name": "Canada Calculators",
+  "short_name": "Canada Calc",
+  "name_localized": {
+    "ar": {"value": "حاسبات كندا", "dir": "rtl"},
+    "fr": {"value": "Calculatrices canadiennes"}
+  },
+  "short_name_localized": {
+    "ar": {"value": "حاسبات كندا", "dir": "rtl"},
+    "fr": {"value": "Calculatrices"}
+  },
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f1e9",
+  "theme_color": "#a71930",
+  "icons": [{"src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any"}]
+}

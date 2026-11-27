@@ -31,13 +31,13 @@ td:last-child{text-align:left;font-variant-numeric:tabular-nums}
 tr.tot td{font-weight:700}
 .note{color:var(--mute);font-size:.82rem;margin-top:16px}
 .hide{display:none}
-a{color:var(--red)} #lang{padding:8px 16px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer} details{margin-top:16px} summary{cursor:pointer} .tabs button{font-size:.9rem} @media(max-width:380px){.row{flex-wrap:wrap}.row>div{min-width:120px}}
+a{color:var(--red)} .row>.language{flex:0 0 auto;white-space:nowrap} #lang{width:auto;padding:8px 16px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer} details{margin-top:16px} summary{cursor:pointer} .tabs button{font-size:.9rem} @media(max-width:380px){.row{flex-wrap:wrap}.row>div{min-width:120px}}
 </style>
 <meta name="theme-color" content="#a71930"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><style> .brand{display:flex;align-items:center;gap:14px;margin:24px 0 8px}.brand img{width:64px;height:64px;border-radius:15px}.card{box-shadow:0 8px 24px #0000000c}.legal{padding:16px;border:1px solid var(--line);border-radius:14px;margin-top:20px}.install{font:inherit;padding:10px 16px;border-radius:10px;background:var(--red);color:white;border:0;cursor:pointer} .row>div{min-width:0}@media(display-mode:standalone){#back-site,#install-help{display:none!important}} html.app-installed #back-site,html.app-installed #install-help{display:none!important}</style><script>if(navigator.standalone===true||matchMedia("(display-mode: standalone)").matches||matchMedia("(display-mode: fullscreen)").matches)document.documentElement.classList.add("app-installed");</script><style>.reset-calc{display:block;margin:16px 0 0;padding:10px 16px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}</style></head>
 <body>
 <main>
-<div class="row" style="align-items:center;justify-content:space-between"><a id="back-site" href="https://andrehkhazneh.github.io/#apps" data-en="← Back to website">العودة للموقع</a><button id="lang" type="button">English</button></div>
-<div class="brand"><img src="icon.svg" alt=""><div><h1>حاسبات كندا</h1><small>Canada Calculators · V4.2</small></div></div>
+<div class="row" style="align-items:center;justify-content:space-between"><a id="back-site" href="https://andrehkhazneh.github.io/#apps" data-en="← Back to website">العودة للموقع</a><div class="language"><span aria-hidden="true">🌐</span> <select id="lang" aria-label="اللغة" dir="ltr"><option lang="ar" value="ar">العربية</option><option lang="en" value="en">English</option><option lang="fr" value="fr">Français</option></select></div></div>
+<div class="brand"><img src="icon.svg" alt=""><div><h1>حاسبات كندا</h1><small><span data-brand>حاسبات كندا</span> · V4.3</small></div></div>
 <p class="sub">احسب ضريبة المشتريات وراتبك الصافي بسرعة.</p>
 
 <div class="tabs" role="tablist">
@@ -78,13 +78,13 @@ a{color:var(--red)} #lang{padding:8px 16px;border:1px solid var(--line);border-r
 </section>
 
 <p class="note">أداة تقديرية للمعلومات العامة وليست استشارة ضريبية. تأكد من النسب من المصادر الرسمية قبل الاعتماد عليها.</p>
-<p class="note">الإصدار 4.2 — الرواتب 2026 و2027. آخر تحديث: 26 نوفمبر 2026. لا تحديث تلقائي للنسب. تخفيضات المعالين لعام 2027 غير مؤكدة ولذلك عطلت لهذه السنة.</p><details><summary>المصادر الرسمية</summary><p><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/payroll-deductions-t4127-payroll-deductions-formulas/t4127-jul-123rd-edition-effective-july-1-2026/t4127-jul-payroll-deductions-formulas.html">CRA – T4127 (2026)</a> · <a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan.html">CRA – T4127 (2027)</a> · <a href="https://www.ontario.ca/page/ontario-tax-reduction">Ontario Tax Reduction</a> · <a href="https://www.canada.ca/en/revenue-agency/services/e-services/digital-services-businesses/payroll-deductions-online-calculator.html">CRA – PDOC</a> · <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/charge-collect-which-rate.html">CRA – GST/HST</a></p></details><section class="legal"><details><summary>سياسة الخصوصية</summary><p class="note">الحسابات تتم داخل جهازك. لا يرسل التطبيق مدخلاتك المالية ولا يحفظها عمدا. يخزن المتصفح ملفات التطبيق للعمل دون اتصال. قد يسجل مزود الاستضافة بيانات الاتصال المعتادة مثل عنوان IP. الروابط الخارجية تخضع لسياسات أصحابها.</p></details><details><summary>إخلاء المسؤولية</summary><p class="note">هذه أداة تعليمية مستقلة وليست تابعة للحكومة الكندية ولا تقدم استشارة مالية أو ضريبية. النتائج تقديرية ولا تصلح بديلا عن كشوف الرواتب أو الإقرار الضريبي أو حاسبة CRA الرسمية. قد تتغير القوانين والنسب.</p></details><p><a href="https://github.com/andrehkhazneh/andrehkhazneh.github.io/issues/new" target="_blank" rel="noopener noreferrer">الإبلاغ عن خطأ عبر GitHub</a></p><p class="note">لا تدرج راتبك الحقيقي أو معلوماتك الشخصية في البلاغ العام. يتطلب GitHub حسابا وقد يلزم تفعيل قسم Issues.</p><details id="install-help"><summary>تثبيت التطبيق</summary><p class="note">على iPhone استخدم Safari ثم مشاركة ثم إضافة إلى الشاشة الرئيسية. على Android استخدم قائمة المتصفح ثم تثبيت التطبيق إن توفر.</p><button class="install hide" id="install">Install / تثبيت</button></details><p class="note" style="text-align:center">© 2026 Canada Calculators</p></section></main>
+<p class="note">الإصدار 4.3 — الرواتب 2026 و2027. آخر تحديث: 26 نوفمبر 2026. لا تحديث تلقائي للنسب. تخفيضات المعالين لعام 2027 غير مؤكدة ولذلك عطلت لهذه السنة.</p><details><summary>المصادر الرسمية</summary><p><a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/payroll-deductions-t4127-payroll-deductions-formulas/t4127-jul-123rd-edition-effective-july-1-2026/t4127-jul-payroll-deductions-formulas.html">وكالة الإيرادات الكندية – T4127 (2026)</a> · <a href="https://www.canada.ca/en/revenue-agency/services/forms-publications/payroll/t4127-payroll-deductions-formulas/t4127-jan.html">وكالة الإيرادات الكندية – T4127 (2027)</a> · <a href="https://www.ontario.ca/page/ontario-tax-reduction">تخفيض ضريبة أونتاريو</a> · <a href="https://www.canada.ca/en/revenue-agency/services/e-services/digital-services-businesses/payroll-deductions-online-calculator.html">حاسبة اقتطاعات الرواتب الكندية</a> · <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/charge-collect-which-rate.html">وكالة الإيرادات الكندية – GST/HST</a></p></details><section class="legal"><details><summary>سياسة الخصوصية</summary><p class="note">الحسابات تتم داخل جهازك. لا يرسل التطبيق مدخلاتك المالية ولا يحفظها عمدا. يخزن المتصفح ملفات التطبيق للعمل دون اتصال. قد يسجل مزود الاستضافة بيانات الاتصال المعتادة مثل عنوان IP. الروابط الخارجية تخضع لسياسات أصحابها.</p></details><details><summary>إخلاء المسؤولية</summary><p class="note">هذه أداة تعليمية مستقلة وليست تابعة للحكومة الكندية ولا تقدم استشارة مالية أو ضريبية. النتائج تقديرية ولا تصلح بديلا عن كشوف الرواتب أو الإقرار الضريبي أو حاسبة CRA الرسمية. قد تتغير القوانين والنسب.</p></details><p><a href="https://github.com/andrehkhazneh/andrehkhazneh.github.io/issues/new" target="_blank" rel="noopener noreferrer">الإبلاغ عن خطأ عبر GitHub</a></p><p class="note">لا تدرج راتبك الحقيقي أو معلوماتك الشخصية في البلاغ العام. يتطلب GitHub حسابا وقد يلزم تفعيل قسم Issues.</p><details id="install-help"><summary>تثبيت التطبيق</summary><p class="note">على iPhone استخدم Safari ثم مشاركة ثم إضافة إلى الشاشة الرئيسية. على Android استخدم قائمة المتصفح ثم تثبيت التطبيق إن توفر.</p><button class="install hide" id="install">تثبيت التطبيق</button></details><p class="note" style="text-align:center">© 2026 <span data-brand>حاسبات كندا</span></p></section></main>
 
 <script>
 const $=id=>document.getElementById(id);
 const num=(id,max=1e9)=>Math.min(max,Math.max(0,Number.isFinite(+$(id).value)?+$(id).value:0));
-const fmt=n=>new Intl.NumberFormat('en-CA',{style:'currency',currency:'CAD'}).format(n);
-const pct=n=>(+(n*100).toFixed(3))+'%';
+const fmt=n=>new Intl.NumberFormat(locales[language],{style:'currency',currency:'CAD'}).format(n);
+const pct=n=>new Intl.NumberFormat(locales[language],{style:'percent',maximumFractionDigits:3}).format(n);
 
 /* tabs */
 ['t1','t2'].forEach((id,i)=>$(id).addEventListener('click',()=>{
@@ -111,11 +111,11 @@ const PROV={
 Object.entries(PROV).forEach(([k,v])=>{const o=document.createElement('option');o.value=k;o.textContent=v[0];if(k==='ON')o.selected=true;$('prov').appendChild(o)});
 function sales(){
   const p=[...PROV[$('prov').value]],amt=num('amt'),tipP=num('tip',1000)/100;
-  const kind=$('taxkind').value; $('customBox').classList.toggle('hide',kind!=='custom'); if(kind==='provincial'){p[4]=p[4]||Math.max(0,p[2]-.05);p[2]=0;p[3]=p[3]||'Provincial HST';}else if(kind==='custom'){p[1]=english?'Tax 1':'ضريبة 1';p[3]=english?'Tax 2':'ضريبة 2';p[2]=num('customFed',100)/100;p[4]=num('customProv',100)/100;}else if($('taxkind').value==='none'){p[2]=p[4]=0;}else if($('taxkind').value==='federal'){p[1]='GST';p[2]=.05;p[4]=0;} const rate=p[2]+p[4]; const ready=$('amt').value.trim()!==""&&$('amt').validity.valid; $('result-s').classList.toggle("hide",!ready); if(!ready)return;
+  const kind=$('taxkind').value; $('customBox').classList.toggle('hide',kind!=='custom'); if(kind==='provincial'){p[4]=p[4]||Math.max(0,p[2]-.05);p[2]=0;p[3]=p[3]||'Provincial HST';}else if(kind==='custom'){p[1]='ضريبة 1';p[3]='ضريبة 2';p[2]=num('customFed',100)/100;p[4]=num('customProv',100)/100;}else if($('taxkind').value==='none'){p[2]=p[4]=0;}else if($('taxkind').value==='federal'){p[1]='GST';p[2]=.05;p[4]=0;} const rate=p[2]+p[4]; const ready=$('amt').value.trim()!==""&&$('amt').validity.valid; $('result-s').classList.toggle("hide",!ready); if(!ready)return;
   const cents=x=>Math.round((x+1e-9)*100); const input=cents(amt); const post=$('mode').value==='post'; const base=post?Math.round(input/(1+rate)):input; const pre=base/100; const a=post&&!p[4]?input-base:Math.min(cents(pre*p[2]),post?input-base:Infinity); const b=post?input-base-a:cents(pre*p[4]); const t1=a/100,t2=b/100,tip=cents(pre*tipP)/100;
-  const rows=[['المبلغ قبل الضريبة',fmt(pre)],[`${p[1]} (${pct(p[2])})`,fmt(t1)]];
-  if(p[4])rows.push([`${p[3]} (${pct(p[4])})`,fmt(t2)]);
-  if(tip)rows.push([`${english?"Tip on pre-tax amount":"بقشيش على المبلغ قبل الضريبة"} (${pct(tipP)})`,fmt(tip)]);
+  const rows=[['المبلغ قبل الضريبة',fmt(pre)],[`${taxLabel(p[1])} (${pct(p[2])})`,fmt(t1)]];
+  if(p[4])rows.push([`${taxLabel(p[3])} (${pct(p[4])})`,fmt(t2)]);
+  if(tip)rows.push([`${tr("بقشيش على المبلغ قبل الضريبة")} (${pct(tipP)})`,fmt(tip)]);
   $('s-table').innerHTML=rows.map(r=>`<tr><td>${tr(r[0])}</td><td dir="ltr">${r[1]}</td></tr>`).join('');
   $('s-total').textContent=fmt(pre+t1+t2+tip);
 }
@@ -159,17 +159,147 @@ function net(){
   $('n-label').textContent=tr(labels[per]);
   $('n-net').textContent=fmt(r.net/div);
   $('n-bw').textContent=fmt(r.net/26);
-  const rows=[['إجمالي الدخل السنوي',g],['ضريبة الدخل الفيدرالية',-r.fed],['ضريبة أونتاريو (مع Health Premium)',-r.ont],['مساهمة CPP / CPP2',-r.cpp],['تأمين العمل EI',-r.ei]];
+  const rows=[['إجمالي الدخل السنوي',g],['ضريبة الدخل الفيدرالية',-r.fed],['ضريبة أونتاريو (شاملة المساهمة الصحية)',-r.ont],['مساهمة CPP / CPP2',-r.cpp],['تأمين العمل EI',-r.ei]];
   const rate=g?(r.total/g):0;
   $('n-table').innerHTML=rows.map(x=>`<tr><td>${tr(x[0])}</td><td dir="ltr">${fmt(x[1])}</td></tr>`).join('')+
     `<tr class="tot"><td>${tr("الصافي السنوي")}</td><td dir="ltr">${fmt(r.net)}</td></tr><tr><td>${tr("نسبة الاستقطاع الكلية")}</td><td dir="ltr">${pct(rate)}</td></tr>`;
 }
 ['gross','per','hrs','ot','mult','fc','oc','year','children','disabled'].forEach(id=>$(id).addEventListener('input',net));
-const dict={"حاسبات كندا": "Canada Calculators", "احسب ضريبة المشتريات وراتبك الصافي بسرعة.": "Estimate sales tax and take-home pay.", "ضريبة المبيعات": "Sales tax", "الراتب الصافي – أونتاريو": "Net pay – Ontario 2026", "المقاطعة": "Province / territory", "المبلغ ($)": "Amount ($)", "البقشيش (%)": "Tip (%)", "نوع الضريبة (حسب أهلية المنتج)": "Tax treatment (if eligible)", "النسبة العامة": "Standard rate", "معفى بالكامل / صفرية": "Fully exempt / zero-rated", "الضريبة الفيدرالية فقط (GST 5%)": "Federal GST only (5%)", "المبلغ المُدخل": "Amount entered", "قبل الضريبة": "Before tax", "شامل الضريبة": "Tax included", "الإجمالي": "Total", "الدخل ($)": "Income ($)", "نوع الدخل": "Income frequency", "سنوي": "Annual", "شهري": "Monthly", "مرتين شهرياً": "Semi-monthly", "كل أسبوعين": "Biweekly", "أسبوعي": "Weekly", "بالساعة": "Hourly", "ساعات العمل أسبوعيًا": "Regular weekly hours", "ساعات إضافية أسبوعياً (فوق الساعات العادية)": "Extra weekly hours (above regular hours)", "معامل أجر العمل الإضافي": "Overtime multiplier", "ائتمانات TD1 إضافية (اختياري)": "Additional TD1 credits (optional)", "مبالغ الائتمان الفيدرالية الإضافية (مثل DTC، دون الأساسي)": "Additional federal claim amounts (e.g. DTC, excluding basic)", "مبالغ ائتمان أونتاريو الإضافية (دون الأساسي)": "Additional Ontario claim amounts (excluding basic)", "أدخل مبالغ المطالبة المؤهلة من TD1 وTD1ON، لا قيمة تخفيض الضريبة نفسها.": "Enter eligible TD1/TD1ON claim amounts, not the tax savings.", "متوسط الصافي كل أسبوعين (ليس شيك راتب فعلي)": "Average biweekly net (not an actual paycheque)", "المبلغ قبل الضريبة": "Before tax", "إجمالي الدخل السنوي": "Annual gross income", "ضريبة الدخل الفيدرالية": "Federal income tax", "ضريبة أونتاريو (مع Health Premium)": "Ontario tax (including health premium)", "مساهمة CPP / CPP2": "CPP / CPP2 contributions", "تأمين العمل EI": "Employment insurance", "الصافي السنوي": "Annual net", "الصافي الشهري": "Monthly net", "الصافي مرتين شهرياً": "Semi-monthly net", "الصافي كل أسبوعين": "Biweekly net", "الصافي الأسبوعي": "Weekly net", "الصافي السنوي (محسوب من الساعات)": "Annual net (from hourly wages)", "نسبة الاستقطاع الكلية": "Total deduction rate", "العودة للموقع": "Back to website", "تقدير سنوي لموظف في أونتاريو حسب السنة المختارة، وليس إقراراً ضريبياً أو شيك راتب. لا يشمل LIFT أو التقاعد أو النقابة أو المزايا أو جميع الائتمانات.": "2026 Ontario estimate for a regular employee, excluding pension, union dues, benefits and other deductions. Use CRA PDOC for actual payroll.", "أداة تقديرية للمعلومات العامة وليست استشارة ضريبية. تأكد من النسب من المصادر الرسمية قبل الاعتماد عليها.": "General estimates only; not tax advice. Verify rates with official sources.", "الإصدار 4.2 — الرواتب 2026 و2027. آخر تحديث: 26 نوفمبر 2026. لا تحديث تلقائي للنسب. تخفيضات المعالين لعام 2027 غير مؤكدة ولذلك عطلت لهذه السنة.": "Payroll: 2026 only. Formula review: November 26, 2026. No automatic updates. Sales tax uses standard rates; verify eligibility and voluntary tips.", "ألبرتا": "Alberta", "كولومبيا البريطانية": "British Columbia", "مانيتوبا": "Manitoba", "نيو برونزويك": "New Brunswick", "نيوفاوندلاند ولابرادور": "Newfoundland and Labrador", "نوفا سكوشا": "Nova Scotia", "الأقاليم الشمالية الغربية": "Northwest Territories", "نونافوت": "Nunavut", "أونتاريو": "Ontario", "الأمير إدوارد": "Prince Edward Island", "كيبك": "Quebec", "ساسكاتشوان": "Saskatchewan", "يوكون": "Yukon"}; Object.assign(dict,{"الراتب الصافي – أونتاريو": "Net pay – Ontario", "السنة الضريبية": "Tax year", "أدخل الساعات المؤهلة للعمل الإضافي بنفسك؛ تختلف الأهلية حسب المهنة والقانون والاتفاق. يفترض الحساب 52 أسبوع عمل.": "Enter eligible overtime hours yourself; eligibility varies by occupation, law and agreement. Assumes 52 working weeks.", "عدد الأطفال المعالين المؤهلين لتخفيض أونتاريو": "Eligible dependent children for Ontario tax reduction", "عدد المعالين المؤهلين ذوي الإعاقة (قد يشمل طفلاً محسوباً أعلاه)": "Eligible dependants with disabilities (may include a child counted above)", "لا تطالب بتخفيض المعال نفسه مع شخص آخر. تحقق من شروط الأهلية الرسمية.": "Do not duplicate the same dependant claim with another person. Check official eligibility rules.", "الجزء الفيدرالي فقط (5%) عند الأهلية": "Federal portion only (5%), if eligible", "الجزء الإقليمي فقط عند الأهلية": "Provincial portion only, if eligible", "نسب مخصصة حسب أهلية المعاملة": "Custom rates based on transaction eligibility", "النسبة الأولى (%)": "First rate (%)", "النسبة الثانية (%)": "Second rate (%)", "الإعفاءات ليست تلقائية. تحقق من أهلية المنتج؛ البقشيش اختياري ويحسب قبل الضريبة.": "Exemptions are not automatic. Verify item eligibility; voluntary tips are calculated before tax.", "تقدير سنوي لموظف في أونتاريو حسب السنة المختارة، وليس إقراراً ضريبياً أو شيك راتب. لا يشمل LIFT أو التقاعد أو النقابة أو المزايا أو جميع الائتمانات.": "Annual Ontario employee estimate for the selected year, not a tax return or paycheque. Excludes LIFT, pensions, union dues, benefits and other credits.", "الإصدار 4.2 — الرواتب 2026 و2027. آخر تحديث: 26 نوفمبر 2026. لا تحديث تلقائي للنسب. تخفيضات المعالين لعام 2027 غير مؤكدة ولذلك عطلت لهذه السنة.": "Version 4.2 — payroll 2026 and 2027. Updated November 26, 2026. Rates do not update automatically. 2027 dependant reductions are disabled pending confirmation."}); dict["المصادر الرسمية"]="Official sources"; dict["مسح الحساب"]="Clear calculation"; let english=false; const tr=t=>english?(dict[t]||t):t;
-Object.assign(dict,{"سياسة الخصوصية": "Privacy policy", "الحسابات تتم داخل جهازك. لا يرسل التطبيق مدخلاتك المالية ولا يحفظها عمدا. يخزن المتصفح ملفات التطبيق للعمل دون اتصال. قد يسجل مزود الاستضافة بيانات الاتصال المعتادة مثل عنوان IP. الروابط الخارجية تخضع لسياسات أصحابها.": "Calculations run on your device. The app does not transmit or intentionally store your financial inputs. Your browser caches app files for offline use. The hosting provider may log ordinary connection data such as IP addresses. External links have their own policies.", "إخلاء المسؤولية": "Disclaimer", "هذه أداة تعليمية مستقلة وليست تابعة للحكومة الكندية ولا تقدم استشارة مالية أو ضريبية. النتائج تقديرية ولا تصلح بديلا عن كشوف الرواتب أو الإقرار الضريبي أو حاسبة CRA الرسمية. قد تتغير القوانين والنسب.": "This independent educational tool is not affiliated with the Canadian government and does not provide financial or tax advice. Estimates are not a substitute for pay statements, tax returns or the official CRA calculator. Laws and rates may change.", "الإبلاغ عن خطأ عبر GitHub": "Report an issue on GitHub", "لا تدرج راتبك الحقيقي أو معلوماتك الشخصية في البلاغ العام. يتطلب GitHub حسابا وقد يلزم تفعيل قسم Issues.": "Do not include real salary or personal information in public reports. GitHub requires an account and Issues may need to be enabled.", "تثبيت التطبيق": "Install app", "على iPhone استخدم Safari ثم مشاركة ثم إضافة إلى الشاشة الرئيسية. على Android استخدم قائمة المتصفح ثم تثبيت التطبيق إن توفر.": "On iPhone use Safari, Share, then Add to Home Screen. On Android use the browser menu and Install app if available."});
-const staticNodes=[...document.querySelectorAll('h1, .sub, label, option, [role=tab], summary, p.note, a, .big small')].filter(e=>e.id!=='n-label').map(e=>[e,e.textContent]);
-$('lang').onclick=()=>{english=!english;document.documentElement.lang=english?'en':'ar';document.documentElement.dir=english?'ltr':'rtl';$('lang').textContent=english?'العربية':'English';staticNodes.forEach(([e,t])=>e.textContent=tr(t));sales();net();};
-sales();net();
+const messages = {"حاسبات كندا": ["Canada Calculators", "Calculatrices canadiennes"],
+  "احسب ضريبة المشتريات وراتبك الصافي بسرعة.": ["Estimate sales tax and take-home pay.", "Estimez la taxe de vente et votre salaire net."],
+  "ضريبة المبيعات": ["Sales tax", "Taxe de vente"],
+  "الراتب الصافي – أونتاريو": ["Net pay – Ontario", "Salaire net – Ontario"],
+  "المقاطعة": ["Province / territory", "Province ou territoire"],
+  "المبلغ ($)": ["Amount ($)", "Montant ($)"],
+  "البقشيش (%)": ["Tip (%)", "Pourboire (%)"],
+  "نوع الضريبة (حسب أهلية المنتج)": ["Tax treatment (if eligible)", "Traitement fiscal selon l’admissibilité du produit"],
+  "النسبة العامة": ["Standard rate", "Taux général"],
+  "معفى بالكامل / صفرية": ["Fully exempt / zero-rated", "Entièrement exonéré ou détaxé"],
+  "الضريبة الفيدرالية فقط (GST 5%)": ["Federal GST only (5%)", "TPS fédérale seulement (5 %)"],
+  "المبلغ المُدخل": ["Amount entered", "Montant saisi"],
+  "قبل الضريبة": ["Before tax", "Avant taxes"],
+  "شامل الضريبة": ["Tax included", "Taxes comprises"],
+  "الإجمالي": ["Total", "Total"],
+  "الدخل ($)": ["Income ($)", "Revenu ($)"],
+  "نوع الدخل": ["Income frequency", "Fréquence de la paie"],
+  "سنوي": ["Annual", "Annuelle"],
+  "شهري": ["Monthly", "Mensuelle"],
+  "مرتين شهرياً": ["Semi-monthly", "Deux fois par mois"],
+  "كل أسبوعين": ["Biweekly", "Toutes les deux semaines"],
+  "أسبوعي": ["Weekly", "Hebdomadaire"],
+  "بالساعة": ["Hourly", "À l’heure"],
+  "ساعات العمل أسبوعيًا": ["Regular weekly hours", "Heures normales par semaine"],
+  "ساعات إضافية أسبوعياً (فوق الساعات العادية)": ["Extra weekly hours (above regular hours)", "Heures supplémentaires par semaine (en plus des heures normales)"],
+  "معامل أجر العمل الإضافي": ["Overtime multiplier", "Multiplicateur des heures supplémentaires"],
+  "ائتمانات TD1 إضافية (اختياري)": ["Additional TD1 credits (optional)", "Crédits supplémentaires du TD1 (facultatif)"],
+  "مبالغ الائتمان الفيدرالية الإضافية (مثل DTC، دون الأساسي)": ["Additional federal claim amounts (e.g. DTC, excluding basic)", "Montants fédéraux supplémentaires à demander (p. ex. le CIPH), hors montant de base"],
+  "مبالغ ائتمان أونتاريو الإضافية (دون الأساسي)": ["Additional Ontario claim amounts (excluding basic)", "Montants supplémentaires à demander en Ontario, hors montant de base"],
+  "أدخل مبالغ المطالبة المؤهلة من TD1 وTD1ON، لا قيمة تخفيض الضريبة نفسها.": ["Enter eligible TD1/TD1ON claim amounts, not the tax savings.", "Saisissez les montants admissibles indiqués sur les formulaires TD1 et TD1ON. La réduction d’impôt sera calculée."],
+  "متوسط الصافي كل أسبوعين (ليس شيك راتب فعلي)": ["Average biweekly net (not an actual paycheque)", "Salaire net moyen par période de deux semaines (estimation)"],
+  "المبلغ قبل الضريبة": ["Before tax", "Montant avant taxes"],
+  "إجمالي الدخل السنوي": ["Annual gross income", "Revenu annuel brut"],
+  "ضريبة الدخل الفيدرالية": ["Federal income tax", "Impôt fédéral sur le revenu"],
+  "مساهمة CPP / CPP2": ["CPP / CPP2 contributions", "Cotisations au RPC et au RPC2"],
+  "تأمين العمل EI": ["Employment insurance", "Cotisations d’assurance-emploi"],
+  "الصافي السنوي": ["Annual net", "Salaire net annuel"],
+  "الصافي الشهري": ["Monthly net", "Salaire net mensuel"],
+  "الصافي مرتين شهرياً": ["Semi-monthly net", "Salaire net par demi-mois"],
+  "الصافي كل أسبوعين": ["Biweekly net", "Salaire net par période de deux semaines"],
+  "الصافي الأسبوعي": ["Weekly net", "Salaire net hebdomadaire"],
+  "الصافي السنوي (محسوب من الساعات)": ["Annual net (from hourly wages)", "Salaire net annuel (calculé à partir du taux horaire)"],
+  "نسبة الاستقطاع الكلية": ["Total deduction rate", "Taux global des retenues"],
+  "العودة للموقع": ["Back to website", "Retour au site"],
+  "تقدير سنوي لموظف في أونتاريو حسب السنة المختارة، وليس إقراراً ضريبياً أو شيك راتب. لا يشمل LIFT أو التقاعد أو النقابة أو المزايا أو جميع الائتمانات.": ["Annual Ontario employee estimate for the selected year, not a tax return or paycheque. Excludes LIFT, pensions, union dues, benefits and other credits.", "Estimation annuelle pour une personne salariée en Ontario selon l’année choisie. Elle ne constitue ni une déclaration de revenus ni un bulletin de paie. Le crédit d’impôt pour les personnes et les familles à faible revenu, les régimes de retraite, les cotisations syndicales, les avantages sociaux et certains crédits sont exclus."],
+  "أداة تقديرية للمعلومات العامة وليست استشارة ضريبية. تأكد من النسب من المصادر الرسمية قبل الاعتماد عليها.": ["General estimates only; not tax advice. Verify rates with official sources.", "Ces estimations sont fournies à titre indicatif. Pour une décision fiscale, vérifiez les taux auprès des sources officielles."],
+  "الإصدار 4.3 — الرواتب 2026 و2027. آخر تحديث: 26 نوفمبر 2026. لا تحديث تلقائي للنسب. تخفيضات المعالين لعام 2027 غير مؤكدة ولذلك عطلت لهذه السنة.": ["Version 4.3 — payroll 2026 and 2027. Updated November 26, 2026. Rates do not update automatically. 2027 dependant reductions are disabled pending confirmation.", "Version 4.3 — Paie de 2026 et de 2027. Mise à jour le 26 novembre 2026. Les taux ne sont pas mis à jour automatiquement. Les réductions pour personnes à charge de 2027 sont désactivées en attendant leur confirmation."],
+  "ألبرتا": ["Alberta", "Alberta"],
+  "كولومبيا البريطانية": ["British Columbia", "Colombie-Britannique"],
+  "مانيتوبا": ["Manitoba", "Manitoba"],
+  "نيو برونزويك": ["New Brunswick", "Nouveau-Brunswick"],
+  "نيوفاوندلاند ولابرادور": ["Newfoundland and Labrador", "Terre-Neuve-et-Labrador"],
+  "نوفا سكوشا": ["Nova Scotia", "Nouvelle-Écosse"],
+  "الأقاليم الشمالية الغربية": ["Northwest Territories", "Territoires du Nord-Ouest"],
+  "نونافوت": ["Nunavut", "Nunavut"],
+  "أونتاريو": ["Ontario", "Ontario"],
+  "الأمير إدوارد": ["Prince Edward Island", "Île-du-Prince-Édouard"],
+  "كيبك": ["Quebec", "Québec"],
+  "ساسكاتشوان": ["Saskatchewan", "Saskatchewan"],
+  "يوكون": ["Yukon", "Yukon"],
+  "السنة الضريبية": ["Tax year", "Année d’imposition"],
+  "أدخل الساعات المؤهلة للعمل الإضافي بنفسك؛ تختلف الأهلية حسب المهنة والقانون والاتفاق. يفترض الحساب 52 أسبوع عمل.": ["Enter eligible overtime hours yourself; eligibility varies by occupation, law and agreement. Assumes 52 working weeks.", "Saisissez vos heures supplémentaires admissibles. L’admissibilité varie selon la profession, la loi et la convention applicable. Le calcul suppose 52 semaines de travail."],
+  "عدد الأطفال المعالين المؤهلين لتخفيض أونتاريو": ["Eligible dependent children for Ontario tax reduction", "Nombre d’enfants à charge admissibles à la réduction de l’impôt de l’Ontario"],
+  "عدد المعالين المؤهلين ذوي الإعاقة (قد يشمل طفلاً محسوباً أعلاه)": ["Eligible dependants with disabilities (may include a child counted above)", "Nombre de personnes à charge handicapées admissibles (peut inclure un enfant compté ci-dessus)"],
+  "لا تطالب بتخفيض المعال نفسه مع شخص آخر. تحقق من شروط الأهلية الرسمية.": ["Do not duplicate the same dependant claim with another person. Check official eligibility rules.", "Une seule personne peut demander la réduction pour la même personne à charge. Vérifiez les critères d’admissibilité officiels."],
+  "الجزء الفيدرالي فقط (5%) عند الأهلية": ["Federal portion only (5%), if eligible", "Part fédérale seulement (5 %), si admissible"],
+  "الجزء الإقليمي فقط عند الأهلية": ["Provincial portion only, if eligible", "Part provinciale seulement, si admissible"],
+  "نسب مخصصة حسب أهلية المعاملة": ["Custom rates based on transaction eligibility", "Taux personnalisés selon l’admissibilité de la transaction"],
+  "النسبة الأولى (%)": ["First rate (%)", "Premier taux (%)"],
+  "النسبة الثانية (%)": ["Second rate (%)", "Deuxième taux (%)"],
+  "الإعفاءات ليست تلقائية. تحقق من أهلية المنتج؛ البقشيش اختياري ويحسب قبل الضريبة.": ["Exemptions are not automatic. Verify item eligibility; voluntary tips are calculated before tax.", "Les exemptions ne sont pas automatiques. Vérifiez l’admissibilité du produit. Le pourboire facultatif est calculé avant taxes."],
+  "المصادر الرسمية": ["Official sources", "Sources officielles"],
+  "مسح الحساب": ["Clear calculation", "Effacer le calcul"],
+  "سياسة الخصوصية": ["Privacy policy", "Politique de confidentialité"],
+  "الحسابات تتم داخل جهازك. لا يرسل التطبيق مدخلاتك المالية ولا يحفظها عمدا. يخزن المتصفح ملفات التطبيق للعمل دون اتصال. قد يسجل مزود الاستضافة بيانات الاتصال المعتادة مثل عنوان IP. الروابط الخارجية تخضع لسياسات أصحابها.": ["Calculations run on your device. The app does not transmit or intentionally store your financial inputs. Your browser caches app files for offline use. The hosting provider may log ordinary connection data such as IP addresses. External links have their own policies.", "Les calculs sont effectués sur votre appareil. L’application ne transmet pas vos données financières et ne les enregistre pas intentionnellement. Votre navigateur conserve les fichiers nécessaires au fonctionnement hors ligne. L’hébergeur peut consigner des données de connexion, comme votre adresse IP. Les sites externes appliquent leurs propres politiques."],
+  "إخلاء المسؤولية": ["Disclaimer", "Avis de non-responsabilité"],
+  "هذه أداة تعليمية مستقلة وليست تابعة للحكومة الكندية ولا تقدم استشارة مالية أو ضريبية. النتائج تقديرية ولا تصلح بديلا عن كشوف الرواتب أو الإقرار الضريبي أو حاسبة CRA الرسمية. قد تتغير القوانين والنسب.": ["This independent educational tool is not affiliated with the Canadian government and does not provide financial or tax advice. Estimates are not a substitute for pay statements, tax returns or the official CRA calculator. Laws and rates may change.", "Cet outil éducatif indépendant n’est pas affilié au gouvernement du Canada et ne fournit pas de conseils financiers ou fiscaux. Les estimations ne remplacent ni un bulletin de paie, ni une déclaration de revenus, ni le calculateur officiel de l’ARC. Les lois et les taux peuvent changer."],
+  "الإبلاغ عن خطأ عبر GitHub": ["Report an issue on GitHub", "Signaler un problème sur GitHub"],
+  "لا تدرج راتبك الحقيقي أو معلوماتك الشخصية في البلاغ العام. يتطلب GitHub حسابا وقد يلزم تفعيل قسم Issues.": ["Do not include real salary or personal information in public reports. GitHub requires an account and Issues may need to be enabled.", "N’indiquez ni votre salaire réel ni vos renseignements personnels dans un signalement public. Un compte GitHub est requis et la section Issues doit être activée."],
+  "تثبيت التطبيق": ["Install app", "Installer l’application"],
+  "على iPhone استخدم Safari ثم مشاركة ثم إضافة إلى الشاشة الرئيسية. على Android استخدم قائمة المتصفح ثم تثبيت التطبيق إن توفر.": ["On iPhone use Safari, Share, then Add to Home Screen. On Android use the browser menu and Install app if available.", "Sur iPhone, ouvrez Safari, touchez Partager, puis Sur l’écran d’accueil. Sur Android, ouvrez le menu du navigateur, puis touchez Installer l’application si l’option est offerte."],
+  "اللغة": ["Language", "Langue"],
+  "ضريبة 1": ["Tax 1", "Taxe 1"],
+  "ضريبة 2": ["Tax 2", "Taxe 2"],
+  "بقشيش على المبلغ قبل الضريبة": ["Tip on pre-tax amount", "Pourboire sur le montant avant taxes"],
+  "ضريبة السلع والخدمات (GST)": ["GST", "TPS"],
+  "ضريبة المبيعات المنسقة (HST)": ["HST", "TVH"],
+  "ضريبة المبيعات الإقليمية (PST)": ["PST", "TVP"],
+  "ضريبة مبيعات كيبيك (QST)": ["QST", "TVQ"],
+  "الجزء الإقليمي من HST": ["Provincial HST portion", "Part provinciale de la TVH"],
+  "وكالة الإيرادات الكندية – T4127 (2026)": ["CRA – T4127 (2026)", "ARC – T4127 (2026)"],
+  "وكالة الإيرادات الكندية – T4127 (2027)": ["CRA – T4127 (2027)", "ARC – T4127 (2027)"],
+  "تخفيض ضريبة أونتاريو": ["Ontario Tax Reduction", "Réduction de l’impôt de l’Ontario"],
+  "حاسبة اقتطاعات الرواتب الكندية": ["CRA – PDOC", "ARC – Calculateur en direct de retenues sur la paie"],
+  "وكالة الإيرادات الكندية – GST/HST": ["CRA – GST/HST", "ARC – TPS/TVH"],
+  "ضريبة أونتاريو (شاملة المساهمة الصحية)": ["Ontario tax (including health premium)", "Impôt de l’Ontario (contribution-santé comprise)"]};
+const locales = {ar:'ar-CA', en:'en-CA', fr:'fr-CA'};
+const languageKey = 'canada-calculators.language';
+function initialLanguage() {
+  try {
+    const saved = localStorage.getItem(languageKey);
+    if (Object.hasOwn(locales, saved)) return saved;
+  } catch {}
+  for (const tag of [...(navigator.languages || []), navigator.language || '']) {
+    const code = tag.toLowerCase().split('-')[0];
+    if (Object.hasOwn(locales, code)) return code;
+  }
+  return 'en';
+}
+let language = initialLanguage();
+function tr(key) {
+  if (language === 'ar' || !messages[key]) return key;
+  return messages[key][language === 'fr' ? 1 : 0];
+}
+const taxNames = {"GST": "ضريبة السلع والخدمات (GST)", "HST": "ضريبة المبيعات المنسقة (HST)", "PST": "ضريبة المبيعات الإقليمية (PST)", "QST": "ضريبة مبيعات كيبيك (QST)", "Provincial HST": "الجزء الإقليمي من HST"};
+const taxLabel = key => tr(taxNames[key] || key);
+const staticNodes = [...document.querySelectorAll('h1,.sub,label,select:not(#lang) option,[role=tab],summary,p.note,a,.big small,.reset-calc,#install,[data-brand]')]
+  .filter(node => Object.hasOwn(messages, node.textContent))
+  .map(node => [node, node.textContent]);
+function renderLanguage() {
+  document.documentElement.lang = language;
+  document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+  document.title = tr('حاسبات كندا');
+  $('lang').value = language;
+  $('lang').setAttribute('aria-label', tr('اللغة'));
+  for (const [node, key] of staticNodes) node.textContent = tr(key);
+  sales();
+  net();
+}
+$('lang').addEventListener('change', event => {
+  language = event.target.value;
+  try { localStorage.setItem(languageKey, language); } catch {}
+  renderLanguage();
+});
+renderLanguage();
 </script>
-<script>let installPrompt;const standalone=matchMedia("(display-mode: standalone)");const syncMode=()=>document.documentElement.classList.toggle("app-installed",standalone.matches||navigator.standalone===true||matchMedia("(display-mode: fullscreen)").matches);standalone.addEventListener?.("change",syncMode);window.addEventListener("appinstalled",()=>{document.documentElement.classList.add("app-installed");installPrompt=null;});window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;document.getElementById('install').classList.remove('hide')});document.getElementById('install').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;document.getElementById('install').classList.add('hide')}};if('serviceWorker' in navigator && location.protocol==='https:')navigator.serviceWorker.register('./sw.js').catch(console.warn);</script><script>for(const [key,values,calc,focus] of [['s',{amt:'',tip:0,taxkind:'all',mode:'pre',customFed:5,customProv:0},sales,'amt'],['n',{gross:'',hrs:40,ot:0,mult:1.5,fc:0,oc:0,children:0,disabled:0},net,'gross']]){$('reset-'+key).onclick=()=>{for(const [id,v] of Object.entries(values))$(id).value=v;calc();$(focus).focus()}};const langReset=()=>{for(const key of ['s','n'])$('reset-'+key).textContent=tr('مسح الحساب')};$('lang').addEventListener('click',langReset);</script></body>
+<script>let installPrompt;const standalone=matchMedia("(display-mode: standalone)");const syncMode=()=>document.documentElement.classList.toggle("app-installed",standalone.matches||navigator.standalone===true||matchMedia("(display-mode: fullscreen)").matches);standalone.addEventListener?.("change",syncMode);window.addEventListener("appinstalled",()=>{document.documentElement.classList.add("app-installed");installPrompt=null;});window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;document.getElementById('install').classList.remove('hide')});document.getElementById('install').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;document.getElementById('install').classList.add('hide')}};if('serviceWorker' in navigator && window.isSecureContext)navigator.serviceWorker.register('./sw.js').catch(console.warn);</script><script>for(const [key,values,calc,focus] of [['s',{amt:'',tip:0,taxkind:'all',mode:'pre',customFed:5,customProv:0},sales,'amt'],['n',{gross:'',hrs:40,ot:0,mult:1.5,fc:0,oc:0,children:0,disabled:0},net,'gross']]){$('reset-'+key).onclick=()=>{for(const [id,v] of Object.entries(values))$(id).value=v;calc();$(focus).focus()}}</script></body>
 </html>
