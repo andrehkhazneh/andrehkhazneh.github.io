@@ -12,9 +12,13 @@ button.crowned:disabled{background:#fbf2d7;color:#755213;border:1px solid #e4cd8
 #shortDay{display:none}
 @media(max-width:410px){html[lang=en] #weekday{display:none}html[lang=en] #shortDay{display:inline}}
 @media(max-width:350px){#clock{gap:.2em;padding-inline:.35em;font-size:15px}main{padding-inline:12px}}
+.views{display:flex;gap:5px;margin:12px 0;padding:5px;background:#dce7df;border:1px solid #c5d7cb;border-radius:15px}.views button{flex:1;min-height:44px;font-weight:700;background:transparent;color:#365c50;box-shadow:none}.views button[aria-pressed=true]{background:#226d59;color:white;box-shadow:0 2px 0 #154b3e}
+#servicesView figure{margin:12px 0;padding:16px;background:#fff;border-radius:16px;box-shadow:0 3px #d2ded6}#servicesView figcaption{font-size:1.1rem;font-weight:700}#servicesView img{display:block;width:100%;margin:10px 0 6px}.stages{display:grid;grid-template-columns:24fr 33fr 43fr;text-align:center;color:#486353;font-size:.86rem}
 </style><main><header><h1 id="title">عقاراتي</h1><button id="settings" aria-haspopup="dialog">⚙ الإعدادات</button></header>
 <time id="clock"><span class="date-part"><span aria-hidden="true">📅</span> <span id="weekday"></span><span id="shortDay"></span> <bdi id="numericDate" dir="ltr"></bdi></span><span class="time-part"><span aria-hidden="true">🕒</span> <bdi id="numericTime" dir="ltr"></bdi> <span id="sunMoon" aria-hidden="true"></span></span></time>
-<dialog id="panel" aria-labelledby="panelTitle"><h2 id="panelTitle"></h2><label id="languageLabel" for="lang"></label><select id="lang"><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select><form method="dialog"><button id="done"></button></form></dialog><section class="balance"><span id="cashLabel"></span><div class="money-row"><strong id="money"></strong><span id="gain" class="gain" dir="ltr" aria-hidden="true"></span></div><span id="income"></span></section><div class="city" id="city"></div><p id="offline"></p><div id="cards"></div><footer><button id="reset"></button><small>V1.3</small></footer></main><script>
+<dialog id="panel" aria-labelledby="panelTitle"><h2 id="panelTitle"></h2><label id="languageLabel" for="lang"></label><select id="lang"><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select><form method="dialog"><button id="done"></button></form></dialog><section class="balance"><span id="cashLabel"></span><div class="money-row"><strong id="money"></strong><span id="gain" class="gain" dir="ltr" aria-hidden="true"></span></div><span id="income"></span></section><nav class="views" aria-label="أقسام الحي"><button id="propertiesButton" aria-controls="propertiesView" aria-pressed="true">العقارات</button><button id="servicesButton" aria-controls="servicesView" aria-pressed="false">الخدمات</button></nav>
+<section id="propertiesView" aria-labelledby="propertiesButton"><div class="city" id="city"></div><p id="offline"></p><div id="cards"></div></section>
+<section id="servicesView" aria-labelledby="servicesButton" hidden><figure><figcaption id="policeTitle"></figcaption><img src="services/police.webp" alt="" loading="lazy"><div class="stages" dir="ltr"><span></span><span></span><span></span></div></figure><figure><figcaption id="fireTitle"></figcaption><img src="services/fire.webp" alt="" loading="lazy"><div class="stages" dir="ltr"><span></span><span></span><span></span></div></figure><figure><figcaption id="hospitalTitle"></figcaption><img src="services/hospital.webp" alt="" loading="lazy"><div class="stages" dir="ltr"><span></span><span></span><span></span></div></figure></section><footer><button id="reset"></button><small>V1.3</small></footer></main><script>
 const P=[['house','بيت إيجار','Rental house',0,1,5,60],['flat','عمارة سكنية','Apartments',500,5,3,750],['shop','محل تجاري','Shop',2000,15,3,3000],['hotel','فندق','Hotel',10000,60,3,15000]], key='ak-real-estate-v1';const fresh=()=>({money:0,levels:[1,0,0,0],time:Date.now(),clockStart:Date.now(),lang:'ar'});let s=fresh();try{let v=JSON.parse(localStorage.getItem(key));if(v&&Number.isFinite(v.money)&&v.money>=0&&Array.isArray(v.levels)&&v.levels.length===4&&v.levels.every((x,i)=>Number.isInteger(x)&&x>=0&&x<=P[i][5])&&v.levels[0]>=1&&Number.isFinite(v.time))s=v}catch(e){}if (!Number.isFinite(s.clockStart)) s.clockStart = Date.now();
 const $=id=>document.getElementById(id),ar=()=>s.lang!=='en',t=(a,b)=>ar()?a:b,fmt=n=>Math.floor(n).toLocaleString('en-US')+' $',income=()=>P.reduce((a,p,i)=>a+p[4]*s.levels[i],0),cost=i=>s.levels[i]===0?P[i][3]:Math.round(P[i][6]*1.8**(s.levels[i]-1));let offline=Math.max(0,Math.min(28800,(Date.now()-s.time)/1000))*income();s.money+=offline;s.time=Date.now();function save(){try{localStorage.setItem(key,JSON.stringify(s))}catch(e){}}function tick(){let now=Date.now();s.money+=Math.max(0,Math.min(28800,(now-s.time)/1000))*income();s.time=now}const weekdays = {
   ar: new Intl.DateTimeFormat('ar-SY', {weekday:'long', timeZone:'UTC'}),
@@ -37,7 +41,27 @@ function updateClock() {
   const minute = String(instant.getUTCMinutes()).padStart(2, '0');
   $('numericTime').textContent = (hour % 12 || 12) + ':' + minute + (hour < 12 ? ' A.M.' : ' P.M.');
 }
-function render(){document.documentElement.lang=ar()?'ar':'en';document.documentElement.dir=ar()?'rtl':'ltr';$('title').textContent=t('عقاراتي','My Properties');$('settings').textContent='⚙ '+t('الإعدادات','Settings');
+function selectView(services) {
+  $('propertiesView').hidden = services;
+  $('servicesView').hidden = !services;
+  $('propertiesButton').setAttribute('aria-pressed', String(!services));
+  $('servicesButton').setAttribute('aria-pressed', String(services));
+}
+$('propertiesButton').onclick = () => selectView(false);
+$('servicesButton').onclick = () => selectView(true);
+function render(){
+  $('propertiesButton').textContent = t('العقارات', 'Properties');
+  $('servicesButton').textContent = t('الخدمات', 'Services');
+  document.querySelector('.views').setAttribute('aria-label', t('أقسام الحي', 'Neighborhood sections'));
+  $('policeTitle').textContent = t('مخفر الشرطة', 'Police station');
+  $('fireTitle').textContent = t('مركز الإطفاء', 'Fire station');
+  $('hospitalTitle').textContent = t('المستشفى', 'Hospital');
+  document.querySelectorAll('.stages').forEach(row => {
+    Array.from(row.children).forEach((label, i) => {
+      label.textContent = t('المستوى ', 'Level ') + (i + 1);
+      label.dir = ar() ? 'rtl' : 'ltr';
+    });
+  });document.documentElement.lang=ar()?'ar':'en';document.documentElement.dir=ar()?'rtl':'ltr';$('title').textContent=t('عقاراتي','My Properties');$('settings').textContent='⚙ '+t('الإعدادات','Settings');
 $('panelTitle').textContent=t('الإعدادات','Settings');
 $('languageLabel').textContent=t('اللغة','Language');
 $('done').textContent=t('تم','Done');
