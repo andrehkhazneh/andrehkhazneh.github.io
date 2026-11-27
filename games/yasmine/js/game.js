@@ -474,7 +474,7 @@ function financeWage(){
  if(++f.count>=10){f.count=0;if(state.money>=20)financeMove(-20,'accountant',{person:'ledger'});else {f.due=true;f.reportLimit=f.rows.length}}
 }
 const financialLabels={
- apiarySeed:['بذور المنحلة','Apiary seeds'],apiaryFlower:['بيع نبات المنحلة','Apiary plant sale'],honeySale:['بيع العسل','Honey sale'],fertilizerSale:['بيع فائض السماد','Surplus fertilizer sale'],donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى 2','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى 3','Station tier 3'],
+ defense:['حراسة المشتل','Nursery watch'],defenseReward:['مكافأة الحراسة','Watch reward'],apiarySeed:['بذور المنحلة','Apiary seeds'],apiaryFlower:['بيع نبات المنحلة','Apiary plant sale'],honeySale:['بيع العسل','Honey sale'],fertilizerSale:['بيع فائض السماد','Surplus fertilizer sale'],donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى 2','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى 3','Station tier 3'],
  warda:['وردة','Warda'],abu:['أبو وردة','Abu Warda'],nana:['نانا','Nana'],ledger:['جمال','Jamal'],yasmin:['ياسمين','Yasmin']
 };
 function finText(ar,en){return state.lang==='en'?en:ar}
@@ -2161,7 +2161,7 @@ function geoAnswer(i){var c=geoProgress(),g=c.geoCurrent;if(!state.abu.hired||!g
 function renderAbuGeo(){var panel=$('abuGeoPanel');if(!panel)return;panel.hidden=!state.abu.hired;if(panel.hidden)return;var c=geoProgress(),g=c.geoCurrent,en=state.lang==='en',l=en?1:0;$('abuGeoTitle').textContent=en?'🌍 Around the world with John':'🌍 حول العالم مع أبو وردة';if(!panel.open)return;$('abuGeoScore').textContent=(en?'Correct answers: ':'الإجابات الصحيحة: ')+(c.geoCorrect||0)+' / '+(c.geoTotal||0);$('abuGeoNext').hidden=!!g&&g.answer===null;$('abuGeoNext').textContent=g?(en?'Next question':'السؤال التالي'):(en?'Start quiz':'ابدأ المسابقة');$('abuGeoQuestion').textContent=g?abuGeoQuestions[g.id][l]:(en?'Ready to explore the world?':'لشوف معلوماتك بالجغرافيا يا ابني!');var opts=$('abuGeoOptions');opts.hidden=!g;if(g){var q=abuGeoQuestions[g.id];g.order.forEach(function(k,i){var b=opts.children[i];b.textContent=q[2+k*2+l];b.disabled=g.answer!==null;b.dataset.result=g.answer===null?'':k===0?'correct':g.answer===k?'wrong':'';b.onclick=function(){geoAnswer(k)}})}$('abuGeoFeedback').hidden=!g||g.answer===null;if(g&&g.answer!==null)$('abuGeoFeedback').textContent=(g.answer===0?(en?'Well done! ':'برافو يا ابني! '):(en?'Every day we learn something new. ':'مو مشكلة يا ابني، كل يوم منتعلّم شي جديد. '))+abuGeoQuestions[g.id][8+l]}
 $('abuGeoPanel').ontoggle=renderAbuGeo;
 $('abuGeoNext').onclick=geoNext;
-function render(){financeData();charityUI();packOrders();renderCollections();renderFinance();renderAbuGeo();var pot=selectedPot();updateNurseryQuickActions();updateYasminFinancialAid();renderGoal();$('emergencyFertilizer').hidden=state.stock.fertilizer>0||!!state.emergencyFertilizerUsed;updateSky();$('employeesClose').textContent=state.lang==='ar'?'إغلاق':'Close';$('siteBack').textContent=state.lang==='ar'?'رجوع ←':'Back ←';$('daySettings').querySelector('label[for="dayMode"]').textContent=state.lang==='ar'?'🌤️ الوقت والسماء':'🌤️ Time & sky';$('daySettings').querySelector('label[for="weatherMode"]').textContent=state.lang==='ar'?'🌦️ الطقس':'🌦️ Weather';[['dayMode',['Automatic — day cycle','Always day','Always night']],['weatherMode',['Automatic — changing weather','Clear','Rain','Wind']]].forEach(function(x){var labels=state.lang==='en'?x[1]:x[0]==='dayMode'?['تلقائي — دورة اليوم','نهار دائم','ليل دائم']:['تلقائي — طقس متغير','صحو','مطر','ريح'];Array.from($(x[0]).options).forEach(function(o,i){o.textContent=labels[i]})});$('manualCare').hidden=!!state.abu.hired;$('careInfo').hidden=!!state.abu.hired;$('missionPanel').hidden=true;document.documentElement.lang=state.lang;document.documentElement.dir=state.lang==='ar'?'rtl':'ltr';document.title=tr('title');['title','subtitle','moneyLabel','salesLabel','qualityLabel','water','feed','sun','careInfo','buyerTitle','buyerText','sell','shopTitle','shopInfo','missionTitle','missionInfo'].forEach(function(k){$(k).textContent=tr(k)});$('lang').setAttribute('aria-pressed',String(state.lang==='en'));$('chooseArabic').setAttribute('aria-pressed',String(state.lang==='ar'));$('gameFooter').textContent=state.lang==='ar'?'التقدم محفوظ على جهازك · نباتاتك بتكمل نموها وإنت غايب':'Progress saved on your device · Plants keep growing while you’re away';$('topEditNames').textContent=state.lang==='ar'?'⚙️ الإعدادات':'⚙️ Settings';$('settingsNames').textContent=state.lang==='ar'?'أسماء اللعبة':'Game names';$('title').textContent='🌿 '+displayName("gardenName");$('settingsAudio').textContent=state.lang==='ar'?'الصوت':'Audio';$('employeesToggle').textContent=state.lang==='ar'?'إدارة الموظفين':'Manage employees';$('employeesTitle').textContent=state.lang==='ar'?'إدارة الموظفين':'Manage employees';$('yasminSalary').textContent=state.lang==='ar'?'👩🏻‍🌾 المديرة ياسمين — الراتب: بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.':'👩🏻‍🌾 Manager Yasmin — Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.';$('yasminEmployeeName').textContent=state.lang==='ar'?'ياسمين':'Yasmin';$('yasminEmployeeDescription').textContent=state.lang==='ar'?'مديرة المشتل':'Nursery manager';$('yasminEmployeeDuty').textContent=state.lang==='ar'?'بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.':'Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.';$('yasminEmployeeState').textContent=state.lang==='ar'?'● تعمل':'● Working';$('abuEmployeeName').textContent=state.lang==='ar'?'أبو وردة':'John';$('abuEmployeeRole').textContent=state.lang==='ar'?'مسؤول العناية بالنباتات':'Plant caretaker';$('abuEmployeeDuty').textContent=state.lang==='ar'?'بيسقي وبيسمّد وبيشيل الدود، وبيلمّ الأوراق اليابسة وقت يكون عم يشتغل':'Waters, fertilizes, removes pests and gathers fallen leaves while working';$('nanaEmployeeName').textContent=state.lang==='ar'?'نانا':'Nana';$('nanaEmployeeRole').textContent=state.lang==='ar'?'مربّية القطط':'Cat caretaker';$('nanaEmployeeDuty').textContent=state.lang==='ar'?'بتطعم القطة وبتسقيها وبتساعد بتمشيطها واللعب معها':'Feeds and waters the cat, and helps with grooming and play';$('nanaEmployeeSalary').textContent=state.lang==='ar'?'20 عملة كل 3 مبيعات':'20 coins every 3 sales';$('nanaEmployeeState').textContent=state.lang==='ar'?(state.nana.hired?(state.nana.paused?'● متوقفة مؤقتاً':'● تعمل'):'○ غير موظفة'):(state.nana.hired?(state.nana.paused?'● Paused':'● Working'):'○ Not hired');$('abuSalary').textContent=state.lang==='ar'?'👨‍🌾 مسؤول المشتل أبو وردة — الراتب: 15 عملة كل 3 مبيعات. الحالة: '+(state.abu.hired?(state.abu.paused?'متوقف':'يعمل'):'غير موظف'):'👨‍🌾 Nursery manager John — 15 coins every 3 sales. Status: '+(state.abu.hired?(state.abu.paused?'paused':'working'):'not hired');$('restartGame').textContent=state.lang==='ar'?'🔄 إعادة اللعبة من البداية':'🔄 Restart game';$('money').textContent='💰 '+state.money;$('sales').textContent=state.sales;$('quality').textContent=pot.quality+'%';$('qualityReason').textContent=pot.qualityCause||(state.lang==='ar'?'الجودة ممتازة، ما في ضرر مسجّل.':'Excellent quality; no recorded damage.');var crop=crops[pot.kind];$('cropName').textContent=pot.active?crop[state.lang]:'—';$('growth').style.width=pot.progress+'%';$('pct').textContent=Math.floor(pot.progress)+'%';$('stage').textContent=pot.active?crop.stages[state.lang][window.YasmineGardenCore.stageFor(pot.progress)]:'—';var remaining=Math.max(0,Math.ceil(crop.time*(100-pot.progress)/100));$('clock').textContent='⏱ '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');var ready=pot.active&&pot.progress>=100;$('sell').disabled=!ready;var price=Math.round(crop.price*(.5+pot.quality/200)*(state.sales<ECONOMY_CONFIG.starterSales?1+ECONOMY_CONFIG.starterBonus:1));$('offer').hidden=!ready;$('offer').textContent=ready?'💰 '+price:'';$('buyerText').textContent=ready?tr('ready'):tr('buyerText');['water','feed','sun'].forEach(function(k){$(k).disabled=!pot.active||ready||Date.now()-last[k]<5000});$('mission').textContent=state.sales>=3?tr('won'):tr('mission')+' ('+state.sales+'/3)';renderSeedShop(pot);renderPlots();renderUpgrade();renderCat();renderStaff();renderApiary();renderTrade();renderYasminDesk();renderNurseryNotice();updateAudioButtons();renderCatEnergy();window.YasmineCompost.render(state,{state:()=>state,save,render,charge:financeMove,open:()=>{activeArea='nursery';render()},potAlerts:()=>nurseryPots().filter(p=>!p.active||isReady(p)).length});save()}
+function render(){if(document.getElementById("nurserySpirit")?.dataset.ready)renderSpirit();financeData();charityUI();packOrders();renderCollections();renderFinance();renderAbuGeo();var pot=selectedPot();updateNurseryQuickActions();updateYasminFinancialAid();renderGoal();$('emergencyFertilizer').hidden=state.stock.fertilizer>0||!!state.emergencyFertilizerUsed;updateSky();$('employeesClose').textContent=state.lang==='ar'?'إغلاق':'Close';$('siteBack').textContent=state.lang==='ar'?'رجوع ←':'Back ←';$('daySettings').querySelector('label[for="dayMode"]').textContent=state.lang==='ar'?'🌤️ الوقت والسماء':'🌤️ Time & sky';$('daySettings').querySelector('label[for="weatherMode"]').textContent=state.lang==='ar'?'🌦️ الطقس':'🌦️ Weather';[['dayMode',['Automatic — day cycle','Always day','Always night']],['weatherMode',['Automatic — changing weather','Clear','Rain','Wind']]].forEach(function(x){var labels=state.lang==='en'?x[1]:x[0]==='dayMode'?['تلقائي — دورة اليوم','نهار دائم','ليل دائم']:['تلقائي — طقس متغير','صحو','مطر','ريح'];Array.from($(x[0]).options).forEach(function(o,i){o.textContent=labels[i]})});$('manualCare').hidden=!!state.abu.hired;$('careInfo').hidden=!!state.abu.hired;$('missionPanel').hidden=true;document.documentElement.lang=state.lang;document.documentElement.dir=state.lang==='ar'?'rtl':'ltr';document.title=tr('title');['title','subtitle','moneyLabel','salesLabel','qualityLabel','water','feed','sun','careInfo','buyerTitle','buyerText','sell','shopTitle','shopInfo','missionTitle','missionInfo'].forEach(function(k){$(k).textContent=tr(k)});$('lang').setAttribute('aria-pressed',String(state.lang==='en'));$('chooseArabic').setAttribute('aria-pressed',String(state.lang==='ar'));$('gameFooter').textContent=state.lang==='ar'?'التقدم محفوظ على جهازك · نباتاتك بتكمل نموها وإنت غايب':'Progress saved on your device · Plants keep growing while you’re away';$('topEditNames').textContent=state.lang==='ar'?'⚙️ الإعدادات':'⚙️ Settings';$('settingsNames').textContent=state.lang==='ar'?'أسماء اللعبة':'Game names';$('title').textContent='🌿 '+displayName("gardenName");$('settingsAudio').textContent=state.lang==='ar'?'الصوت':'Audio';$('employeesToggle').textContent=state.lang==='ar'?'إدارة الموظفين':'Manage employees';$('employeesTitle').textContent=state.lang==='ar'?'إدارة الموظفين':'Manage employees';$('yasminSalary').textContent=state.lang==='ar'?'👩🏻‍🌾 المديرة ياسمين — الراتب: بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.':'👩🏻‍🌾 Manager Yasmin — Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.';$('yasminEmployeeName').textContent=state.lang==='ar'?'ياسمين':'Yasmin';$('yasminEmployeeDescription').textContent=state.lang==='ar'?'مديرة المشتل':'Nursery manager';$('yasminEmployeeDuty').textContent=state.lang==='ar'?'بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.':'Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.';$('yasminEmployeeState').textContent=state.lang==='ar'?'● تعمل':'● Working';$('abuEmployeeName').textContent=state.lang==='ar'?'أبو وردة':'John';$('abuEmployeeRole').textContent=state.lang==='ar'?'مسؤول العناية بالنباتات':'Plant caretaker';$('abuEmployeeDuty').textContent=state.lang==='ar'?'بيسقي وبيسمّد وبيشيل الدود، وبيلمّ الأوراق اليابسة وقت يكون عم يشتغل':'Waters, fertilizes, removes pests and gathers fallen leaves while working';$('nanaEmployeeName').textContent=state.lang==='ar'?'نانا':'Nana';$('nanaEmployeeRole').textContent=state.lang==='ar'?'مربّية القطط':'Cat caretaker';$('nanaEmployeeDuty').textContent=state.lang==='ar'?'بتطعم القطة وبتسقيها وبتساعد بتمشيطها واللعب معها':'Feeds and waters the cat, and helps with grooming and play';$('nanaEmployeeSalary').textContent=state.lang==='ar'?'20 عملة كل 3 مبيعات':'20 coins every 3 sales';$('nanaEmployeeState').textContent=state.lang==='ar'?(state.nana.hired?(state.nana.paused?'● متوقفة مؤقتاً':'● تعمل'):'○ غير موظفة'):(state.nana.hired?(state.nana.paused?'● Paused':'● Working'):'○ Not hired');$('abuSalary').textContent=state.lang==='ar'?'👨‍🌾 مسؤول المشتل أبو وردة — الراتب: 15 عملة كل 3 مبيعات. الحالة: '+(state.abu.hired?(state.abu.paused?'متوقف':'يعمل'):'غير موظف'):'👨‍🌾 Nursery manager John — 15 coins every 3 sales. Status: '+(state.abu.hired?(state.abu.paused?'paused':'working'):'not hired');$('restartGame').textContent=state.lang==='ar'?'🔄 إعادة اللعبة من البداية':'🔄 Restart game';$('money').textContent='💰 '+state.money;$('sales').textContent=state.sales;$('quality').textContent=pot.quality+'%';$('qualityReason').textContent=pot.qualityCause||(state.lang==='ar'?'الجودة ممتازة، ما في ضرر مسجّل.':'Excellent quality; no recorded damage.');var crop=crops[pot.kind];$('cropName').textContent=pot.active?crop[state.lang]:'—';$('growth').style.width=pot.progress+'%';$('pct').textContent=Math.floor(pot.progress)+'%';$('stage').textContent=pot.active?crop.stages[state.lang][window.YasmineGardenCore.stageFor(pot.progress)]:'—';var remaining=Math.max(0,Math.ceil(crop.time*(100-pot.progress)/100));$('clock').textContent='⏱ '+String(Math.floor(remaining/60)).padStart(2,'0')+':'+String(remaining%60).padStart(2,'0');var ready=pot.active&&pot.progress>=100;$('sell').disabled=!ready;var price=Math.round(crop.price*(.5+pot.quality/200)*(state.sales<ECONOMY_CONFIG.starterSales?1+ECONOMY_CONFIG.starterBonus:1));$('offer').hidden=!ready;$('offer').textContent=ready?'💰 '+price:'';$('buyerText').textContent=ready?tr('ready'):tr('buyerText');['water','feed','sun'].forEach(function(k){$(k).disabled=!pot.active||ready||Date.now()-last[k]<5000});$('mission').textContent=state.sales>=3?tr('won'):tr('mission')+' ('+state.sales+'/3)';renderSeedShop(pot);renderPlots();renderUpgrade();renderCat();renderStaff();renderApiary();renderTrade();renderYasminDesk();renderNurseryNotice();updateAudioButtons();renderCatEnergy();window.YasmineCompost.render(state,{state:()=>state,save,render,charge:financeMove,open:()=>{activeArea='nursery';render()},potAlerts:()=>nurseryPots().filter(p=>!p.active||isReady(p)).length});save()}
 const nectarPlants=[
  {ar:'دوّار الشمس',en:'Sunflower',icon:'🌻',cost:8,plant:17,honey:22,grow:45},
  {ar:'الخزامى',en:'Lavender',icon:'🪻',cost:11,plant:22,honey:28,grow:55},
@@ -2449,7 +2449,7 @@ function countYasminOffer(order){
 }
 function fertilizerAlert(){
  const ad=tradeBook().fertAd;
- if(!ad)return Number(state.stock.fertilizer>=fertilizerThreshold);
+ if(!ad)return Number(state.stock.fertilizer>fertilizerThreshold);
  if(ad.stage==='waiting'&&Date.now()>=ad.due)ad.stage='offer';
  if(ad.stage==='offer')countYasminOffer(ad);
  return Number(ad.stage==='offer');
@@ -2460,39 +2460,40 @@ function fertilizerUnitEstimate(){
  return 2;
 }
 function fertilizerQuote(ad){
- const t=finText, paid=fertilizerLot-ad.organic, unit=ad.unitCost??fertilizerUnitEstimate();
+ const t=finText, paid=(ad.quantity??fertilizerLot)-ad.organic, unit=ad.unitCost??fertilizerUnitEstimate();
  const cost=paid*unit,margin=ad.price-cost,fmt=n=>Number(n.toFixed(2));
  const grade=margin<0?t('خسارة','Loss'):margin===0?t('عالتكلفة','Break-even'):margin<=2?t('ربح بسيط','Small gain'):margin<=4?t('جيد','Good'):t('ممتاز','Excellent');
- return [[t('سعر البيع المعتاد','Usual selling price'),fertilizerLot+t(' عملة',' coins')],[t('عرض الزبون','Customer offer'),ad.price+t(' عملة',' coins')],[t('الزيادة عن سعر البيع المعتاد','Extra over usual sale'),(ad.price>=fertilizerLot?'+':'')+fmt(ad.price-fertilizerLot)+t(' عملة',' coins')],[t('رأي ياسمين','Yasmin’s verdict'),grade]];
+ return [[t('سعر البيع المعتاد','Usual selling price'),(ad.quantity??fertilizerLot)+t(' عملة',' coins')],[t('عرض الزبون','Customer offer'),ad.price+t(' عملة',' coins')],[t('الزيادة عن سعر البيع المعتاد','Extra over usual sale'),(ad.price>=(ad.quantity??fertilizerLot)?'+':'')+fmt(ad.price-(ad.quantity??fertilizerLot))+t(' عملة',' coins')],[t('رأي ياسمين','Yasmin’s verdict'),grade]];
 }
 function fertilizerAction(action){
  const b=tradeBook(),ad=b.fertAd;
  if(!state.staff.hired)return;
- if(action==='publish'&&!ad&&state.stock.fertilizer>=fertilizerThreshold){
-   const organic=Math.min(state.compost?.organicStock||0,fertilizerLot);
-   state.stock.fertilizer-=fertilizerLot;if(organic)state.compost.organicStock-=organic;
+ if(action==='publish'&&!ad&&state.stock.fertilizer>fertilizerThreshold){
+   const quantity=Math.min(fertilizerLot,state.stock.fertilizer-fertilizerThreshold);
+   const organic=Math.min(state.compost?.organicStock||0,quantity);
+   state.stock.fertilizer-=quantity;if(organic)state.compost.organicStock-=organic;
    const edition=b.fertEdition||0;
-   b.fertAd={stage:'waiting',due:Date.now()+30000,organic,unitCost:fertilizerUnitEstimate(),price:[16,18,20][edition%3],grade:edition%3};b.fertEdition=edition+1;
+   b.fertAd={stage:'waiting',due:Date.now()+30000,quantity,organic,unitCost:fertilizerUnitEstimate(),price:Math.ceil(quantity*[16,18,20][edition%3]/fertilizerLot),grade:edition%3};b.fertEdition=edition+1;
  }else if(ad?.stage==='offer'&&(action==='accept'||action==='decline')){
-   if(action==='accept')financeMove(ad.price,'fertilizerSale',{person:'yasmin',quantity:fertilizerLot,fertilizerCost:(fertilizerLot-ad.organic)*(ad.unitCost??fertilizerUnitEstimate())});
-   else {state.stock.fertilizer+=fertilizerLot;if(ad.organic)state.compost.organicStock+=ad.organic}
+   if(action==='accept')financeMove(ad.price,'fertilizerSale',{person:'yasmin',quantity:ad.quantity??fertilizerLot,fertilizerCost:((ad.quantity??fertilizerLot)-ad.organic)*(ad.unitCost??fertilizerUnitEstimate())});
+   else {state.stock.fertilizer+=(ad.quantity??fertilizerLot);if(ad.organic)state.compost.organicStock+=ad.organic}
    b.fertResult=action==='accept'?ad.price:-1;delete b.fertAd;
  }else return;
  save();render();
 }
 function renderFertilizerOffer(){
- const b=tradeBook(),t=finText,eligible=state.stock.fertilizer>=fertilizerThreshold;
+ const b=tradeBook(),t=finText,eligible=state.stock.fertilizer>fertilizerThreshold;
  fertilizerAlert();const ad=b.fertAd,card=$('fertOffer');
  card.hidden=!state.staff.hired||(!eligible&&!ad&&!b.fertResult);
  if(card.hidden)return;
  const waiting=ad?.stage==='waiting',offered=ad?.stage==='offer';
  const title=t('إعلان بيع السماد','Fertilizer sale ad');
- $('fertOfferTitle').textContent=title+' · '+fertilizerLot+t(' وحدة',' units');
- $('fertOfferInfo').textContent=waiting?t('الإعلان منشور. حجزنا 15 وحدة وبانتظار عرض الزبون.','Ad published. 15 units reserved while awaiting an offer.'):offered?'':eligible?t('ياسمين: صار عنا فائض. ننشر إعلان ونحجز 15 وحدة للزبون؟','Yasmin: We have a surplus. Advertise and reserve 15 units?'):'';
+ $('fertOfferTitle').textContent=title+' · '+(ad?(ad.quantity??fertilizerLot):Math.min(fertilizerLot,Math.max(0,state.stock.fertilizer-100)))+t(' وحدة',' units');
+ $('fertOfferInfo').textContent=waiting?t('الإعلان منشور. حجزنا الكمية المعروضة وبانتظار عرض الزبون.','Ad published. Stock reserved while awaiting an offer.'):offered?'':eligible?t('ياسمين: صار عنا فائض. ننشر إعلان ونحجز الكمية المعروضة للزبون؟','Yasmin: We have a surplus. Advertise and reserve the shown quantity?'):'';
  const terms=$('fertOfferTerms');terms.hidden=!offered;
  $('fertCostDetails').hidden=!offered;
  if(offered){
-   const cost=(fertilizerLot-ad.organic)*(ad.unitCost??fertilizerUnitEstimate());
+   const cost=((ad.quantity??fertilizerLot)-ad.organic)*(ad.unitCost??fertilizerUnitEstimate());
    $('fertCostDetails').firstElementChild.textContent=t('كيف انحسب رأي ياسمين؟','How did Yasmin rate this?');
    $('fertCostDetails').lastElementChild.textContent=t('عرض الزبون ','Customer offer ')+ad.price+t(' − كلفة شراء مقدّرة ',' − estimated purchase cost ')+cost+t(' = ',' = ')+(ad.price-cost)+t(' عملة قبل الرواتب والمحطة. سماد المحطة ما إله ثمن شراء.',' coins before wages and station costs. Home-made fertilizer has no purchase price.');
  }
@@ -3111,10 +3112,122 @@ tickCatEnergy(0);
 document.addEventListener('visibilitychange',function(){if(!document.hidden){tickCatEnergy(0);render();}});
 
 advancePlantClock(Date.now());
+const staffPrices={yasmin:2500,abu:1000,warda:1000};
+function spirit(){return state.spirit ||= {upgrades:{},round:0}}
+function eligibleWorker(id){
+ return window.YasmineGardenCore.levelFor(state.sales)>=10 &&
+   (id==='warda'||(id==='yasmin'?state.staff.hired:hasSecondPot()));
+}
+const management=document.createElement('details');
+management.id='nurserySpirit';management.className='panel';
+management.innerHTML='<summary></summary><p></p><div class="grid"></div><h3></h3><p></p><div class="grid"></div>';
+$('staffArea').append(management);
+const [managementTitle,managementInfo,upgradeButtons,defenseTitle,defenseInfo,defenseButtons]=management.children;
+function spiritButton(parent,action){
+ const button=document.createElement('button');button.type='button';button.onclick=action;parent.append(button);return button;
+}
+const upgradeControls={};
+for(const [id,cost] of Object.entries(staffPrices)){
+ upgradeControls[id]=spiritButton(upgradeButtons,()=>{
+   const s=spirit();if(s.upgrades[id]||!eligibleWorker(id)||state.money<cost)return;
+   financeMove(-cost,'upgrade',{person:id});s.upgrades[id]=true;save();render();
+ });
+}
+const shelters=[['بيت الزجاج','Greenhouse'],['خلية النحل','Beehive'],['مخزن البذور','Seed store']];
+const startDefense=spiritButton(defenseButtons,()=>{
+ const s=spirit();if(s.wave||window.YasmineGardenCore.levelFor(state.sales)<10||state.money<30)return;
+ financeMove(-30,'defense');s.wave={turn:0,points:0,target:Math.floor(Math.random()*3),until:Date.now()+12000};save();render();
+});
+function finishThreat(choice){
+ const s=spirit(),w=s.wave;if(!w)return;
+ if(choice===w.target&&Date.now()<w.until)w.points++;
+ if(++w.turn===3){
+   s.round++;s.lastPoints=w.points;if(w.points)financeMove(w.points*20,'defenseReward');
+   delete s.wave;
+ }else{w.target=(w.target+1+Math.floor(Math.random()*2))%3;w.until=Date.now()+12000}
+ save();render();
+}
+const defenses=shelters.map((_,i)=>spiritButton(defenseButtons,()=>finishThreat(i)));
+management.dataset.ready='1';
+function renderSpirit(){
+ const s=spirit(),t=finText,l=state.lang==='en'?1:0;
+ managementTitle.textContent=t('🌿 روح المشتل · الترقيات والدفاع','🌿 Nursery Spirit · upgrades and defense');
+ managementInfo.textContent=t('بتفتح الترقيات بالمستوى ١٠. نانا بتطلب الأكل من ياسمين من دون ترقية.','Unlocks at level 10. Nana can ask Yasmin for food without an upgrade.');
+ const jobs={yasmin:t('ياسمين ٢ · إدارة الإعلانات والمبيعات','Yasmin II · campaigns and sales'),abu:t('أبو وردة ٣ · زراعة الطلبيات','Abu Warda III · grow orders'),warda:t('وردة ٢ · إنتاج العسل وبيع الزهر','Warda II · produce honey and sell blooms')};
+ for(const [id,b] of Object.entries(upgradeControls)){
+   b.textContent=jobs[id]+' · '+(s.upgrades[id]?'✓':staffPrices[id]+' 🪙');
+   b.disabled=!!s.upgrades[id]||!eligibleWorker(id)||state.money<staffPrices[id];
+ }
+ defenseTitle.textContent=t('🛡️ حراسة المشتل','🛡️ Nursery watch');
+ const w=s.wave;
+ defenseInfo.textContent=w?t('هجمة ','Wave ')+(w.turn+1)+'/3 · '+t('احمِ ','Protect ')+shelters[w.target][l]+' · '+Math.max(0,Math.ceil((w.until-Date.now())/1000))+'s':
+ (s.round?t('آخر جولة ','Last round ')+s.lastPoints+'/3 · +'+s.lastPoints*20+' 🪙. ':'')+t('٣ هجمات. اختَر الموقع المهدد قبل انتهاء الوقت. كل حماية ناجحة بتربحك ٢٠ عملة.','Three waves. Protect the threatened site before time runs out. Earn 20 coins per save.');
+ startDefense.textContent=t('جهّز الحراسة · ٣٠ عملة','Hire guards · 30 coins');startDefense.hidden=!!w;startDefense.disabled=state.money<30||window.YasmineGardenCore.levelFor(state.sales)<10;
+ defenses.forEach((b,i)=>{b.hidden=!w;b.textContent=shelters[i][l]});
+}
+function managePlantLane(managed,grow){
+ const book=tradeBook(),lane=plantLane(),o=campaign(),now=Date.now();
+ if(managed){
+   if(o.stage==='draft'){o.stage='waiting';o.arrivesAt=now+30000}
+   if(o.stage==='waiting'&&now>=o.arrivesAt){o.stage='offer';countYasminOffer(o)}
+   if(o.stage==='paid'||(o.stage==='offer'&&o.price<=o.normal)){
+     if(o.stage==='paid'&&now<(lane.showUntil ||= now+10000))return;
+     lane.edition++;delete lane.order;delete lane.showUntil;lane.receiptUnread=false;return;
+   }
+   if(o.stage==='offer')o.stage='packing';
+ }
+ if(o.stage!=='packing')return;
+ if(managed||grow){
+   const match=matchingOrderPot();if(match)match.forYasmin=book.activePlant===2?2:true;
+   packOrders();
+ }
+ if(managed&&o.packed===2){deliverOrder();return}
+ if(grow)plantForOrder();
+}
+function spiritTick(){
+ const s=spirit(),u=s.upgrades;
+ if(s.wave&&Date.now()>=s.wave.until)finishThreat(-1);
+ if(!Object.keys(u).length)return;
+ const managed=u.yasmin&&state.staff.hired,book=tradeBook(),w=wardaData();
+ if(managed||u.abu){
+   const lane=book.activePlant,pot=state.selectedPot;
+   try{
+     for(const slot of [1,2]){book.activePlant=slot;managePlantLane(managed,u.abu&&!state.abu.paused)}
+   }finally{book.activePlant=lane;state.selectedPot=pot}
+ }
+ apiaryTick();
+ if(u.warda&&w.bed&&!w.bed.sold&&Date.now()>=w.bed.nectarEnd)apiaryAct('flower',w.bed.kind,w.bed.id);
+ if(managed){
+   const previous=state.staff.request;
+   const pending=stockRequests()[0];
+   if(pending&&state.money>=requests.find(r=>r.type===pending).cost){
+     state.staff.request=pending;
+     $('acceptRequest').onclick();
+     if(previous==='bonus')state.staff.request=previous;
+   }
+   for(let slot=0;slot<w.ads.length;slot++){
+     const ad=w.ads[slot];
+     if(ad?.stage==='offer')honeyAd(ad.price>nectarPlants[ad.kind].honey?'accept':'decline',slot,ad.kind);
+     else if(!ad){const i=w.jars.findIndex(n=>n>0);if(i>=0)honeyAd('post',slot,i)}
+   }
+   fertilizerAlert();
+   if(!book.fertAd&&state.stock.fertilizer>100)fertilizerAction('publish');
+   else if(book.fertAd?.stage==='offer'){
+     const ad=book.fertAd,n=ad.quantity??15;
+     fertilizerAction(ad.price>(n-ad.organic)*(ad.unitCost??fertilizerUnitEstimate())?'accept':'decline');
+   }
+   if(u.warda&&!w.bed&&w.ads.some(ad=>!ad)&&!w.jars.some(Boolean)){
+     const kind=(s.honeyOrders||0)%nectarPlants.length;
+     if(state.money>=nectarPlants[kind].cost){apiaryAct('sow',kind);s.honeyOrders=(s.honeyOrders||0)+1}
+   }
+ }
+ save();
+}
+
 function syncPlants(){advancePlantClock(Date.now());save();if(!document.hidden)render();}
 document.addEventListener('visibilitychange',syncPlants);
 window.addEventListener('pageshow',syncPlants);
 window.addEventListener('pagehide',()=>{advancePlantClock(Date.now());save();});
-var lastNotificationCount=notificationCount();var lastTick=Date.now();setInterval(function(){var now=Date.now(),delta=Math.min(2,(now-lastTick)/1000);lastTick=now;if(document.hidden)return;updateClock();updateSky();if(state.weatherMode==='auto')updateWeather();window.YasmineCompost.tick(state,delta,save);tickCat(delta);tickStaff();tickAbu();tickNana();tickCatEmergency();var n=notificationCount();if(n>lastNotificationCount&&state.staff.hired)sound('notify');lastNotificationCount=n;advancePlantClock(now);render()},1000);setInterval(function(){if(Date.now()>=eventNext){scheduleEvent();if(!document.hidden&&activeArea==='nursery')eventSpawn()}},1000);render();msg(state.lang==='ar'?'بلّش اعتني بالياسمينة!':'Start caring for your jasmine!');
+var lastNotificationCount=notificationCount();var lastTick=Date.now();setInterval(function(){var now=Date.now(),delta=Math.min(2,(now-lastTick)/1000);lastTick=now;if(document.hidden)return;updateClock();updateSky();if(state.weatherMode==='auto')updateWeather();window.YasmineCompost.tick(state,delta,save);tickCat(delta);tickStaff();spiritTick();tickAbu();tickNana();tickCatEmergency();var n=notificationCount();if(n>lastNotificationCount&&state.staff.hired)sound('notify');lastNotificationCount=n;advancePlantClock(now);render()},1000);setInterval(function(){if(Date.now()>=eventNext){scheduleEvent();if(!document.hidden&&activeArea==='nursery')eventSpawn()}},1000);render();msg(state.lang==='ar'?'بلّش اعتني بالياسمينة!':'Start caring for your jasmine!');
 if(audioSettings.music)tryPlayMusic();
 })();
