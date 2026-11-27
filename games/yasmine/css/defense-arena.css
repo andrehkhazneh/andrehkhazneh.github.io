@@ -15,3 +15,11 @@
 .arena-health{display:flex;align-items:center;gap:8px;margin:8px 0 12px;flex-wrap:wrap;font-weight:700}
 .arena-health progress{flex:1;min-width:68px;height:12px;accent-color:#b2dc74}
 #arenaArea .arena-actions button{min-height:44px;padding-inline:1.2rem}
+.arena-kit{margin-block:12px}.arena-palette{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+#arenaArea .arena-palette button{display:grid;justify-items:center;align-content:start;gap:3px;padding:4px 2px;background:#294c42;color:#fff2ce;border:1px solid #968455;border-radius:10px;font-size:clamp(11px,2.9vw,16px);line-height:1.35}
+#arenaArea .arena-palette button[aria-pressed=true]{outline:2px solid #f7cf75;background:#466750}
+.arena-palette img{width:100%;height:clamp(36px,11vw,62px);object-fit:contain}
+#arenaArea .arena-pad img{width:110%;height:115%;object-fit:contain;position:absolute;bottom:7%;left:-5%;pointer-events:none}
+.arena-kit select,.arena-kit>button{min-height:40px;margin:3px}
+.boss-entry{display:flex;align-items:center;gap:10px;padding-block:7px;border-bottom:1px solid #8e957355}.boss-entry img{width:56px;height:56px;object-fit:contain}.boss-entry small{display:block}.boss-entry button{margin-inline-start:auto}
+.boss-entry .boss-medal{border-radius:50%;background:radial-gradient(#e5ba5e,#755927);border:3px ridge #e6c27c;box-sizing:border-box;padding:4px}.boss-entry .undiscovered{filter:brightness(0);opacity:.48}.boss-book[hidden]{display:none!important}

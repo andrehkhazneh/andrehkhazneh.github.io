@@ -1,6 +1,6 @@
 /* Each route is a series of cubic curves. The movement table and the painted
    road use the same samples, including the last few steps up to the roots. */
-window.createNurseryArena=function({state,save,level,visit}){
+window.createNurseryArena=function({state,save,financeMove,level,visit}){
  const get=id=>document.getElementById(id),tab=get('arenaTab'),area=get('arenaArea'),map=get('arenaMap');
  const routeShapes=[
   [[-15,126],[63,105,71,213,129,203],[217,193,154,319,239,318],[265,318,276,310,300,306]],
@@ -43,9 +43,81 @@ window.createNurseryArena=function({state,save,level,visit}){
  const c=get('arenaCanvas').getContext('2d'),buttons=[],shots=[];
  const ar=()=>state.lang!=='en',t=(a,b)=>ar()?a:b;
  function data(){return state.arena ||= {hp:1000,pads:[],round:0,wave:null}}
+ const bosses=[
+   ['الخنفساء العملاقة','Giant Beetle','الوردة الذهبية','Golden Rose',350],
+   ['العنكبوت العملاق','Giant Spider','زهرة القمر','Moonflower',450],
+   ['العقرب العملاق','Giant Scorpion','زهرة الياقوت','Ruby Flower',550],
+   ['الجرادة العملاقة','Giant Grasshopper','زهرة الكريستال','Crystal Flower',650],
+   ['ملكة الدبابير','Wasp Queen','زهرة الشمس الملكية','Royal Sunflower',800]
+ ];
+ const devices=[
+   ['المصيدة البنفسجية','Violet Trap'],['مدفع قطرات الماء','Water Cannon'],['رشاش المبيد','Mist Sprayer'],['برج الصعق','Lightning Spire'],['محطة العلاج','Healing Shrine']
+ ];
+ const descriptions=[['تصعق الحشرات الطائرة','Zaps flying insects'],['يبطئ الحشرات','Slows insects'],['يرش مجموعة قريبة','Hits nearby groups'],['ضرر قوي ضد الزعماء','Heavy damage against bosses'],['ترمّم الشجرة خلال الهجمة','Heals the tree during a wave']];
+ const artURL=(group,i)=>'yasmine/images/arena/'+group+'-'+i+'.webp';
+ const bossImages=bosses.map((_,i)=>{const img=new Image();img.src=artURL('boss',i);return img});
+ function setup(){
+   const s=data();s.devices||={};s.tiers||={};s.wins||={};
+   if(s.wave&&s.wave.number==null){s.wave.number=s.round+1;s.wave.total=12;s.wave.legacy=true}
+   return s;
+ }
+ function el(tag,parent,cls){const e=document.createElement(tag);if(cls)e.className=cls;if(parent)parent.append(e);return e}
+ const controls=el('div',null,'arena-kit');get('arenaTip').before(controls);
+ const palette=el('div',controls,'arena-palette'),deviceBtns=[];
+ let selected=1,replay=0;
+ devices.forEach((d,i)=>{
+   const b=el('button',palette);b.type='button';const img=el('img',b);img.src=artURL('device',i);img.alt='';el('span',b);
+   b.onclick=()=>{selected=i;labels()};deviceBtns.push(b);
+ });
+ const deviceInfo=el('p',controls),upgrade=el('button',controls),remove=el('button',controls),replays=el('select',controls);
+ remove.type=upgrade.type='button';remove.onclick=()=>{selected=-1;labels()};
+ upgrade.onclick=()=>{const s=setup(),tier=s.tiers[selected]||1,price=tier*100;
+   if(s.wave||selected<0||tier>=3||state.money<price||level()<10)return;
+   financeMove(-price,'upgrade');s.tiers[selected]=tier+1;save();labels()
+ };
+ replays.onchange=()=>{replay=Number(replays.value);labels()};
+ function bossAt(n){return n%5===0?(n/5-1)%5:null}
+ function art(group,i,cls=''){const im=document.createElement('img');im.src=artURL(group,i);im.alt='';im.className=cls;return im}
+ function book(after){
+   const panel=el('section',null,'panel boss-book');panel.hidden=true;get(after).after(panel);return panel
+ }
+ const guide=book('encyclopediaArea'),medals=book('achievementsArea'),bed=el('section',get('nurseryArea'),'panel boss-book');
+ let bookStamp='';
+ function renderBooks(active){
+   const s=setup(),owned=Object.keys(s.wins),ready=s.bed&&Date.now()>=s.bed.ready;
+   guide.hidden=active!=='encyclopedia';medals.hidden=active!=='achievements';bed.hidden=active!=='nursery'||!owned.length;
+   if(guide.hidden&&medals.hidden&&bed.hidden){bookStamp='';return}
+   const seconds=s.bed?Math.max(0,Math.ceil((s.bed.ready-Date.now())/1000)):0;
+   const stamp=JSON.stringify([active,state.lang,owned,s.bed,active==='nursery'?seconds:0]);
+   if(stamp===bookStamp)return;bookStamp=stamp;
+   const panel=active==='nursery'?bed:active==='achievements'?medals:guide;panel.replaceChildren();
+   el('h3',panel).textContent=active==='nursery'?t('مشتل النباتات النادرة','Rare plant bed'):active==='achievements'?t('أوسمة زعماء الساحة','Arena boss medals'):t('النباتات النادرة','Rare plants');
+   for(let i=0;i<bosses.length;i++){
+     const won=!!s.wins[i],d=bosses[i];
+     if(panel===bed&&!won)continue;
+     const card=el('div',panel,'boss-entry');
+     card.append(art(panel===medals?'boss':'flower',i,(won?'':'undiscovered ')+(panel===medals?'boss-medal':'')));
+     const desc=el('div',card);el('strong',desc).textContent=panel===medals?t('وسام ','Medal · ')+t(d[0],d[1]):won?t(d[2],d[3]):t('نبات غير مكتشف','Undiscovered plant');
+     el('small',desc).textContent=t('الموجة ','Wave ')+(i+1)*5+' · '+(won?t('مكتشف','Unlocked'):t('اهزم ','Defeat ')+t(d[0],d[1]));
+     if(panel!==bed)continue;
+     const b=el('button',card);b.disabled=!!s.bed&&(s.bed.kind!==i||!ready);
+     b.textContent=!s.bed?t('ازرع','Plant'):s.bed.kind!==i?t('الحوض مشغول','Bed occupied'):ready?t('بيع · ','Sell · ')+d[4]+' 🪙':t('عم تنمو · ','Growing · ')+seconds+t(' ث','s');
+     b.onclick=()=>{if(!s.wins[i])return;if(!s.bed)s.bed={kind:i,ready:Date.now()+90000};
+       else if(s.bed.kind===i&&Date.now()>=s.bed.ready){financeMove(d[4],'sales',{rarePlant:i});s.bed=null}else return;
+       save();bookStamp='';renderBooks('nursery')};
+   }
+ }
  function locate(bug){const path=paths[bug.lane];return path.find(p=>p.dist>=bug.distance)||path[path.length-1]}
  function bugArt(bug,time){
    const p=locate(bug),before=locate({...bug,distance:bug.distance-5});
+   if(bug.boss!=null){
+     const art=bossImages[bug.boss];
+     if(art.complete&&art.naturalWidth)c.drawImage(art,p.x-28,p.y-30,56,56);
+     else oval(c,p.x,p.y,16,12,'#6f3648');
+     c.fillStyle='#392c30';c.fillRect(p.x-20,p.y-29,40,4);
+     c.fillStyle='#f8ce59';c.fillRect(p.x-20,p.y-29,40*bug.hp/bug.max,4);return;
+   }
+   if(bug.flying){oval(c,p.x-4,p.y-7,7,3,'#e1efff');oval(c,p.x+4,p.y+7,7,3,'#c6dcf2')}
    c.save();c.translate(p.x,p.y);c.rotate(Math.atan2(p.y-before.y,p.x-before.x));const gait=Math.sin(time*.017+bug.id)*2;
    c.strokeStyle='#30293a';c.lineWidth=2.2;
    for(const s of [-1,1])for(const x of [-5,0,5]){c.beginPath();c.moveTo(x,s*3);c.lineTo(x-2,s*8);c.lineTo(x+gait,s*11);c.stroke()}
@@ -60,16 +132,37 @@ window.createNurseryArena=function({state,save,level,visit}){
  function step(dt){
    const s=data(),w=s.wave;if(!w)return;
    w.clock+=dt;
-   if(w.sent<12&&w.clock>=w.sent*1.2){w.bugs.push({id:w.sent,lane:(w.sent+s.round)%3,distance:0,hp:3});w.sent++}
-   for(const bug of w.bugs)bug.distance+=dt*39;
+   const boss=bossAt(w.number),total=w.total;
+   if(w.sent<total&&w.clock>=w.sent*1.15){
+     const isBoss=!w.legacy&&boss!=null&&w.sent===total-1;
+     const hp=isBoss?16+boss*5:3+Math.min(4,Math.floor((w.number-1)/5));
+     w.bugs.push({id:w.sent,lane:(w.sent+w.number-1)%3,distance:0,hp,max:hp,boss:isBoss?boss:null,flying:isBoss?boss===4:w.sent%3===1});w.sent++
+   }
+   for(const bug of w.bugs)bug.distance+=dt*(bug.boss!=null?24:39)*(bug.slow>w.clock?.55:1);
    for(const index of s.pads){
      if((w.cool[index]||0)>w.clock)continue;
-     const [x,y]=pads[index];
-     const target=w.bugs.filter(b=>b.hp>0&&Math.hypot(locate(b).x-x,locate(b).y-y)<108).sort((a,b)=>b.distance-a.distance)[0];
-     if(target){const point=locate(target);target.hp--;w.cool[index]=w.clock+.8;shots.push({from:index,x:point.x,y:point.y,life:.22})}
+     const type=s.devices[index]??1,tier=s.tiers[type]||1,[x,y]=pads[index];
+     if(type===4){s.hp=Math.min(1000,s.hp+10*tier);w.cool[index]=w.clock+3;continue}
+     const within=w.bugs.filter(b=>b.hp>0&&(type!==0||b.flying)&&Math.hypot(locate(b).x-x,locate(b).y-y)<(type===3?155:122)+10*tier);
+     within.sort((a,b)=>(type===3?Number(b.boss!=null)-Number(a.boss!=null):0)||b.distance-a.distance);
+     const target=within[0];if(!target)continue;
+     const point=locate(target),damage=type===3?(target.boss!=null?5:2):type===0?4:2;
+     const hits=type===2?w.bugs.filter(b=>Math.hypot(locate(b).x-point.x,locate(b).y-point.y)<50):[target];
+     for(const b of hits){b.hp-=damage+tier-1;if(type===1)b.slow=w.clock+2}
+     w.cool[index]=w.clock+(type===3?1.25:.85);shots.push({from:index,x:point.x,y:point.y,life:.22})
    }
-   w.bugs=w.bugs.filter(b=>{if(b.hp<=0){w.stopped++;return false}if(b.distance>=paths[b.lane].at(-1).dist){s.hp=Math.max(0,s.hp-80);return false}return true});
-   if(s.hp===0||(w.sent===12&&!w.bugs.length)){s.last=w.stopped;s.round++;s.wave=null;save();labels()}
+   w.bugs=w.bugs.filter(b=>{
+     if(b.hp<=0){w.stopped++;if(b.boss!=null){w.defeated=true;if(!s.wins[b.boss]){s.wins[b.boss]=true;s.newPrize=b.boss;w.savePrize=true}}return false}
+     if(b.distance>=paths[b.lane].at(-1).dist){s.hp=Math.max(0,s.hp-(b.boss!=null?230:80));return false}return true
+   });
+   if(w.savePrize){delete w.savePrize;save()}
+   if(s.hp===0||(w.sent===total&&!w.bugs.length)){
+     s.last=w.stopped;s.lastTotal=total;
+     const cleared=s.hp>0&&(w.legacy||boss==null||w.defeated);
+     if(cleared&&!w.replay)s.round=Math.max(s.round,w.number);
+     s.retry=!cleared;s.wave=null;save();labels()
+   }
+
  }
  function labels(){
    const s=data(),w=s.wave;
@@ -78,17 +171,33 @@ window.createNurseryArena=function({state,save,level,visit}){
    get('arenaBack').textContent=t('رجوع','Back');
    get('arenaTree').textContent=t('شجرة روح المشتل','Nursery Spirit Tree');
    get('arenaHealth').value=s.hp;get('arenaHP').textContent=s.hp+' / 1000';
-   const tip=t('اضغط على + لتركيب زهرة حارسة. فيك توزّع ٣ زهرات وتغيّر أماكنها قبل الهجمة.','Tap + to plant a flower turret. Position up to three and move them before the wave.');
-   get('arenaTip').textContent=w?t('الحشرات عم تقرب! الزهرات بتطلق بذور مضيئة تلقائياً.','The insects are approaching! Your flowers fire glowing seeds automatically.'):tip;
-   get('arenaStatus').textContent=w?t('تم صدّ ','Stopped ')+w.stopped+' / 12':s.last!=null?t('آخر هجمة · انصدّ منها ','Last wave · stopped ')+s.last+' / 12':t('الدفاعات المركّبة ','Defenses placed ')+s.pads.length+' / 3';
-   const start=get('arenaStart');start.hidden=!!w;start.disabled=!!s.hp&&!s.pads.length;start.textContent=s.hp?t('ابدأ هجمة الحشرات','Start insect wave'):t('جدّد الشجرة','Restore tree');
-   buttons.forEach((b,i)=>{const on=s.pads.includes(i);b.textContent=on?'✿':'+';b.disabled=!!w||(!on&&s.pads.length>=3);b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',t(on?'إزالة الدفاع من الموقع ':'تركيب دفاع في الموقع ',on?'Remove turret from site ':'Place turret at site ')+(i+1))});
+   const n=w?.number||replay||s.round+1, boss=bossAt(n);
+   const tier=s.tiers[selected]||1;
+   deviceBtns.forEach((b,i)=>{b.lastChild.textContent=t(...devices[i]);b.setAttribute('aria-pressed',String(selected===i));b.disabled=!!w});
+   remove.textContent=t('فكّ جهاز','Remove device');remove.disabled=!!w;remove.setAttribute('aria-pressed',String(selected===-1));
+   deviceInfo.textContent=selected<0?t('اختَر الجهاز على الخريطة لفكّه.','Tap a device on the map to remove it.'):t(...descriptions[selected])+t(' · المستوى ',' · Level ')+tier;
+   upgrade.hidden=selected<0||tier===3;upgrade.disabled=!!w||state.money<tier*100;upgrade.textContent=t('ترقية · ','Upgrade · ')+tier*100+' 🪙';
+   const options=[[0,t('الموجة التالية ','Next wave ')+(s.round+1)],...bosses.map((d,i)=>[(i+1)*5,t('إعادة · ','Replay · ')+t(d[0],d[1])]).filter(([num])=>num<=s.round)];
+   const optionsKey=JSON.stringify(options);if(replays.dataset.key!==optionsKey){replays.replaceChildren();for(const [num,label] of options)replays.add(new Option(label,num));replays.dataset.key=optionsKey}
+   replays.value=replay;replays.disabled=!!w;replays.setAttribute('aria-label',t('اختيار الموجة','Select wave'));
+   get('arenaTip').textContent=t('الموجة ','Wave ')+n+(boss!=null?' · '+t(bosses[boss][0],bosses[boss][1]):'')+' — '+(w?t('احمِ شجرة روح المشتل!','Protect the Spirit Tree!'):t('اختَر الجهاز وبعدين اضغط على موقع تركيبه.','Choose a device, then tap a site to place it.'));
+   const prize=s.newPrize==null?null:bosses[s.newPrize];
+   get('arenaStatus').textContent=w?t('تم صدّ ','Stopped ')+w.stopped+' / '+w.total:prize?t('🏅 ربحت وسام ','🏅 Earned the medal for ')+t(prize[0],prize[1])+t(' وفتحت زراعة ',' and unlocked ')+t(prize[2],prize[3]):s.retry?t('جرّب الموجة من جديد','Try the wave again'):s.last!=null?t('آخر موجة · ','Last wave · ')+s.last+' / '+(s.lastTotal||12):t('الدفاعات المركبة ','Devices placed ')+s.pads.length+' / 3';
+   const start=get('arenaStart');start.hidden=!!w;start.disabled=!!s.hp&&!s.pads.length;start.textContent=s.hp?t('ابدأ الموجة','Start wave'):t('جدّد الشجرة','Restore tree');
+   buttons.forEach((b,i)=>{const on=s.pads.includes(i),type=s.devices[i]??1;
+     if(b.dataset.icon!==String(on?type:-1)){b.replaceChildren();if(on)b.append(art('device',type));else b.textContent='+';b.dataset.icon=on?type:-1}
+     b.disabled=!!w||(!on&&(s.pads.length>=3||selected<0));b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',(on?t(...devices[type]):t('موقع فارغ','Empty site'))+' '+(i+1))});
  }
  pads.forEach(([x,y],i)=>{const b=document.createElement('button');b.type='button';b.className='arena-pad';b.style.left=x/6+'%';b.style.top=y/6+'%';b.onclick=()=>{
-   const s=data();if(level()<10||s.wave)return;
-   if(s.pads.includes(i))s.pads=s.pads.filter(n=>n!==i);else if(s.pads.length<3)s.pads.push(i);save();labels()
+   const s=setup();if(level()<10||s.wave)return;
+   if(selected<0){s.pads=s.pads.filter(n=>n!==i);delete s.devices[i]}
+   else if(s.pads.includes(i)||s.pads.length<3){if(!s.pads.includes(i))s.pads.push(i);s.devices[i]=selected}
+   save();labels()
  };buttons.push(b);map.append(b)});
- get('arenaStart').onclick=()=>{const s=data();if(level()<10||s.wave)return;if(!s.hp){s.hp=1000;s.last=null}else if(s.pads.length)s.wave={clock:0,sent:0,stopped:0,bugs:[],cool:{}};save();labels()};
+ get('arenaStart').onclick=()=>{const s=setup();if(level()<10||s.wave)return;if(!s.hp){s.hp=1000;s.last=null}
+   else if(s.pads.length){const number=replay||s.round+1;s.newPrize=null;s.wave={number,total:12+Math.min(12,number-1),replay:!!replay,clock:0,sent:0,stopped:0,bugs:[],cool:{}}}
+   save();labels()};
+
  get('arenaBack').onclick=()=>visit('overview');
  tab.onclick=()=>{if(level()>=10){visit(area.hidden?'arena':'overview');if(!area.hidden)area.scrollIntoView({block:'start'})}};
  let frame=0,previous=0;
@@ -99,6 +208,7 @@ window.createNurseryArena=function({state,save,level,visit}){
    draw(now);if(data().wave||shots.length)frame=requestAnimationFrame(animate);else previous=0;
  }
  function refresh(active){
+   renderBooks(active);
    const open=level()>=10;tab.disabled=!open;tab.textContent=(open?'🛡️ ':'🔒 ')+t('ساحة الدفاع','Defense arena')+(open?'':t(' · المستوى ١٠',' · Level 10'));
    area.hidden=active!=='arena'||!open;tab.setAttribute('aria-pressed',String(!area.hidden));
    if(area.hidden){if(frame)cancelAnimationFrame(frame);frame=0;previous=0;return}
