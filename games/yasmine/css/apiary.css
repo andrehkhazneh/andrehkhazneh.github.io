@@ -39,3 +39,14 @@
 #apiaryTotals>*{color:#39280e!important;border-color:#b69456}
 #apiaryTotals>:last-child{background:#654318;color:#fff2cd!important;border-radius:6px;padding:.6rem}
 #apiaryTotals>:last-child>*{color:inherit!important}
+
+#apiaryTools{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0}
+#apiaryTools button{position:relative;min-width:0;padding:16px 7px;border-radius:18px;font-weight:bold}
+#apiaryTools button[data-mode="jar"]{grid-column:1/-1}
+#wardaCounter{display:grid;gap:8px}
+#wardaCounter .seed-card{width:100%}
+#wardaCounter .seed-art.single-specimen{background-size:contain;background-position:center}
+#gameNav :is(#apiaryTab,#jamalTab):disabled{opacity:.68;cursor:not-allowed}
+#workersArea details[hidden],#employeesPanel details[hidden],#honeyMarket[hidden]{display:none!important}
+#gameNav :is(#apiaryTab,#jamalTab):disabled::before{display:none}
+#gameNav :is(#apiaryTab,#jamalTab):disabled{padding-inline:.45rem!important}

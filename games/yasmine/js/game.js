@@ -178,8 +178,11 @@ function renderCat(){
   $('workersTab').setAttribute('aria-pressed',String(activeArea==='workers'));
   $('workersTab').setAttribute('aria-expanded',String(activeArea==='workers'));
   $('workersTab').firstChild.textContent=finText('الموظفين ','Staff ');
-  $('officeArea').hidden=activeArea!=='office';
-  $('jamalTab').textContent=finText('المحاسبة','Accounting');
+  const officeOpen=officeAvailable();
+  $('officeArea').hidden=!officeOpen||activeArea!=='office';
+  jamalStaff.hidden=!officeOpen;
+  $('jamalTab').disabled=!officeOpen;
+  $('jamalTab').textContent=officeOpen?finText('المحاسبة','Accounting'):finText('🔒 المحاسبة · مستوى ٦','🔒 Accounting · Level 6');
   $('jamalTab').setAttribute('aria-pressed',String(activeArea==='office'));
   $('jamalStaffName').textContent=finText('جمال','Jamal');
   $('jamalStaffInfo').textContent=finText('محاسب المشتل · التوظيف من المستوى 6 مقابل 400 عملة. الراتب 20 كل 10 مبيعات.','Nursery accountant · Level 6, 400 coins to hire, wage 20 per 10 sales.');
@@ -530,7 +533,10 @@ function invoiceSection(category){
  if(['seeds','sales','fertilizer','compostBuy','compostUpgrade','compostUpgrade2','compostUpgrade3'].includes(category))return 'garden';
  return 'other';
 }
-function openOffice(){activeArea='office';invoiceGroup='';financeViewStamp='';render()}
+function officeAvailable(){
+ return financeData().hired || window.YasmineGardenCore.levelFor(state.sales)>=6;
+}
+function openOffice(){if(!officeAvailable())return;activeArea='office';invoiceGroup='';financeViewStamp='';render()}
 $('jamalTab').onclick=()=>{if(activeArea==='office'){activeArea='overview';render()}else openOffice()};
 $('jamalStaffGo').onclick=openOffice;
 let financePeriod='all',financePage=40,financeSearch='',financeViewStamp='';
@@ -1189,7 +1195,7 @@ function renderFinance(){
    $('financeTalk').onclick=()=>{financeData().joke=(financeData().joke||0)+1;save();renderFinance()};
  }
  const t=finText,openBills=Object.values(f.pending).map(id=>f.bills[id-1]),debt=openBills.filter(b=>!b.key.startsWith('request-')).reduce((n,b)=>n+b.amount,0);
- if(activeArea!=='office')return;
+ if(activeArea!=='office'||!officeAvailable())return;
  const today=new Date();today.setHours(0,0,0,0);
  const stamp=[invoiceGroup==='donations'?donationRows().filter(letterReady).length:0,invoiceGroup,f.offerCount,state.lang,today.getTime(),state.money,state.sales,f.rows.length,f.bills.length,openBills.map(b=>b.id+':'+b.seen),f.hired,f.due,financePeriod,financePage,financeSearch,f.joke,state.catName].join('|');
  if(stamp===financeViewStamp)return;financeViewStamp=stamp;
@@ -1665,29 +1671,25 @@ function renderPlots(){
   }
   updatePairCards();
 }
+function seedCard(crop,kind,disabled,onClick,lockedLevel=0){
+ const button=document.createElement('button'),art=document.createElement('span'),copy=document.createElement('span');
+ button.type='button';button.className='seed-card';button.disabled=disabled;button.onclick=onClick;
+ art.className='seed-art';art.setAttribute('aria-hidden','true');
+ art.style.backgroundImage='url("yasmine/images/plants/'+kind+'.webp")';
+ copy.className='seed-copy';
+ const name=document.createElement('strong'),price=document.createElement('small');
+ name.textContent=crop[state.lang];price.textContent=crop.cost+finText(' عملة',' coins');
+ if(lockedLevel)price.textContent+=' · 🔒 '+finText('تفتح بالمستوى ','Level ')+lockedLevel;
+ copy.append(name,price);button.append(art,copy);return button;
+}
 function renderSeedShop(p){
   var level=window.YasmineGardenCore.levelFor(state.sales), en=state.lang==='en';
   var signature=[state.lang,level,p.active,...Object.values(crops).map(c=>state.money>=c.cost)].join('|');
   if($('shop').dataset.signature===signature)return;
   $('shop').replaceChildren();
   Object.entries(crops).forEach(function([kind,c]){
-    var button=document.createElement('button'), locked=level<c.level;
-    button.type='button';
-    button.className='seed-card';
-    const art=document.createElement('span');
-    art.className='seed-art';
-    art.setAttribute('aria-hidden','true');
-    art.style.backgroundImage='url("yasmine/images/plants/'+kind+'.webp")';
-    const copy=document.createElement('span');
-    copy.className='seed-copy';
-    const name=document.createElement('strong'), price=document.createElement('small');
-    name.textContent=c[state.lang];
-    price.textContent=c.cost+(en?' coins':' عملة');
-    if(locked)price.textContent+=' · 🔒 '+(en?'Level ':'تفتح بالمستوى ')+c.level;
-    copy.append(name,price);
-    button.append(art,copy);
-    button.disabled=locked||p.active||state.money<c.cost;
-    button.onclick=()=>buy(kind);
+    const locked=level<c.level;
+    const button=seedCard(c,kind,locked||p.active||state.money<c.cost,()=>buy(kind),locked?c.level:0);
     $('shop').appendChild(button);
   });
   $('shop').dataset.signature=signature;
@@ -2172,6 +2174,12 @@ const nectarPlants=[
 function wardaData(){
  return state.apiary ||= {bed:null,jars:[0,0,0,0],ads:[null,null],edition:0,batch:0};
 }
+function apiaryAvailable(){
+ const w=wardaData();
+ // Older players keep the apiary they have already used.
+ return window.YasmineGardenCore.levelFor(state.sales)>=5 || w.batch>0 || !!w.bed ||
+   w.produced>0 || w.soldCount>0 || w.jars.some(Boolean) || w.ads.some(Boolean);
+}
 function apiaryTick(now=Date.now()){
  const w=wardaData(),bed=w.bed;
  if(bed&&now>=bed.nectarEnd+15000&&!bed.jarMade){w.jars[bed.kind]++;bed.jarMade=true;w.produced=(w.produced||0)+1;(w.producedKinds||={})[bed.kind]=true}
@@ -2191,7 +2199,7 @@ function wardaWage(price){
 }
 function apiaryAct(action,i,batch){
  const w=wardaData(),p=nectarPlants[i];apiaryTick();
- if(!p)return;
+ if(!apiaryAvailable()||!p)return;
  if(action==='sow'){
    if(w.bed||state.money<p.cost)return;
    const bloom=Date.now()+p.grow*1000;
@@ -2207,7 +2215,7 @@ function apiaryAct(action,i,batch){
 }
 function honeyAd(action,slot,i){
  const w=wardaData(),ad=w.ads[slot];
- if(!state.staff.hired||![0,1].includes(slot))return;
+ if(!apiaryAvailable()||!state.staff.hired||![0,1].includes(slot))return;
  if(action==='post'){
    if(ad||!nectarPlants[i]||!w.jars[i])return;
    const price=Math.round(nectarPlants[i].honey*[1.12,1.25,1.08][w.edition%3]);
@@ -2225,23 +2233,34 @@ function renderApiary(){
  const w=wardaData(),t=finText,bed=w.bed,now=Date.now(),area=$('apiaryArea');
  const hasPlant=bed&&!bed.sold&&now>=bed.nectarEnd;
  const jarCount=w.jars.reduce((a,b)=>a+b,0);
- $('apiaryTab').textContent=t('مناحل العسل','Honey Apiary');
+ const unlocked=apiaryAvailable();
+ $('apiaryTab').disabled=!unlocked;
+ $('apiaryTab').textContent=unlocked?t('مناحل العسل','Honey Apiary'):t('🔒 مناحل العسل · مستوى ٥','🔒 Apiary · Level 5');
+ $('wardaStaffTitle').closest('details').hidden=!unlocked;
+ $('wardaEmployeeName').closest('details').hidden=!unlocked;
  const badge=$('apiaryBadge');badge.hidden=!hasPlant&&!jarCount;badge.textContent=Number(!!hasPlant)+jarCount;
- area.hidden=activeArea!=='apiary';$('apiaryTab').setAttribute('aria-pressed',String(!area.hidden));
+ area.hidden=!unlocked||activeArea!=='apiary';$('apiaryTab').setAttribute('aria-pressed',String(!area.hidden));
  $('wardaStaffTitle').textContent=t('وردة · مسؤولة مناحل العسل','Warda · Beekeeper');
  $('wardaStaffRole').textContent=t('بنت أبو وردة. بتعتني بزهر الرحيق وبتجهّز العسل للبيع.','Abu Warda’s daughter grows nectar flowers and prepares honey for sale.');
  $('wardaEmployeeName').textContent=t('وردة','Warda');
  $('wardaEmployeeRole').textContent=t('مسؤولة مناحل العسل','Beekeeper');
  $('wardaEmployeeDuty').textContent=$('wardaStaffRole').textContent;
- const terms=t('متاحة من المستوى 1 · راتب 25 عملة كل 3 مبيعات عسل','Available from level 1 · 25 coins per 3 honey sales');
+ const terms=t('متاحة من المستوى ٥ · راتب 25 عملة كل 3 مبيعات عسل','Available from level 5 · 25 coins per 3 honey sales');
  $('wardaEmployeeTerms').textContent=terms+' · '+t('الراتب القادم بعد ','Next wage in ')+(3-(w.wageCount||0))+t(' مبيعات عسل',' honey sales');
  $('wardaStaffRole').textContent+=' '+$('wardaEmployeeTerms').textContent;
  $('wardaGo').textContent=t('زور مناحل العسل','Visit apiary');
  if(area.hidden)return;
  $('apiaryTitle').textContent=t('وردة · مناحل العسل','Warda · Apiary');
  const mode=area.dataset.mode||'seeds';
- const words={flower:t('بيع نبات','Sell plant'),jar:t('بيع العسل','Sell honey'),seeds:t('متجر بذور','Seed shop')};
- for(const b of $('apiaryTools').children){b.textContent=words[b.dataset.mode];b.setAttribute('aria-pressed',String(mode===b.dataset.mode))}
+ const words={flower:t('🧑‍🌾 زبون النبتة','🧑‍🌾 Plant buyer'),jar:t('🍯 بيع العسل','🍯 Sell honey'),seeds:t('🛒 متجر البذور','🛒 Seed shop')};
+ for(const b of $('apiaryTools').children){
+   const tool=b.dataset.mode, count=tool==='flower'?Number(!!hasPlant):tool==='jar'?jarCount:Number(!bed);
+   b.querySelector('.tool-label').textContent=words[tool];
+   const alert=b.querySelector('.tool-count');
+   alert.hidden=!count;
+   alert.textContent=count||'';
+   b.setAttribute('aria-expanded',String(mode===tool));
+ }
  $('apiaryBed').textContent=bed&&!bed.sold?(now<bed.bloom?'🌱':nectarPlants[bed.kind].icon):'';
  const progress=$('wardaProgress');progress.hidden=!bed;progress.setAttribute('aria-label',t('تقدّم الدفعة','Batch progress'));
  if(bed){const start=bed.bloom-nectarPlants[bed.kind].grow*1000;progress.value=Math.min(100,100*(now-start)/(bed.nectarEnd+15000-start))}
@@ -2249,7 +2268,8 @@ function renderApiary(){
  $('wardaStatus').textContent=!bed?t('وردة: اختار بذور لحتى نزرع للنحل.','Warda: Choose a nectar flower to sow.'):now<bed.bloom?wardaName(bed.kind)+' · '+t('باقي للإزهار ','Blooms in ')+remain(bed.bloom)+t(' ث','s'):now<bed.nectarEnd?t('🐝 زيارات النحل · ','🐝 Bee visits · ')+Math.floor((now-bed.bloom)/6000)+' / 4':!bed.jarMade?t('اكتمل جمع الرحيق · العسل بيجهز خلال ','Nectar collected · Honey ready in ')+remain(bed.nectarEnd+15000)+t(' ث','s'):t('🍯 العسل جاهز وزبون النبتة ناطر.','🍯 Honey ready. A flower buyer is waiting.');
  const box=$('wardaCounter'),sig=JSON.stringify([mode,state.lang,bed?.id,!!hasPlant,!!bed?.sold,w.jars,nectarPlants.map(p=>state.money>=p.cost)]);
  if(box.dataset.stamp===sig)return;
- box.dataset.stamp=sig;box.replaceChildren();
+ box.dataset.stamp=sig;box.replaceChildren();box.hidden=mode==='closed';
+ if(box.hidden)return;
  function row(kind,text,button,action,disabled){
    const el=document.createElement('div');el.className='apiary-row';
    if(action==='jar')el.innerHTML=jarArt(kind);
@@ -2258,16 +2278,24 @@ function renderApiary(){
    el.append(label,btn);box.append(el);
  }
  if(mode==='seeds'){
-   nectarPlants.forEach((p,i)=>row(i,p.icon+' '+wardaName(i),t('ازرع بـ ','Sow for ')+p.cost+t(' عملات',' coins'),'sow',!!bed||state.money<p.cost));
+   nectarPlants.forEach((p,i)=>{
+     const button=seedCard(p,p.en.toLowerCase(),!!bed||state.money<p.cost,()=>apiaryAct('sow',i));
+     if(!crops[p.en.toLowerCase()])button.querySelector('.seed-art').classList.add('single-specimen');
+     box.append(button);
+   });
  }else if(mode==='flower'){
    if(hasPlant)row(bed.kind,t('زبون طالب ','Buyer wants ')+wardaName(bed.kind),t('بيع · ','Sell · ')+nectarPlants[bed.kind].plant,'flower',false);
    else box.textContent=t('بيوصل زبون النبتة بعد زيارة النحل الرابعة.','A flower buyer arrives after the fourth bee visit.');
  }else{
-   nectarPlants.forEach((p,i)=>row(i,t('عسل ','Honey · ')+wardaName(i)+' × '+w.jars[i],w.jars[i]?t('بيع للزبون · ','Sell to buyer · ')+p.honey:t('بانتظار العسل','Awaiting honey'),'jar',!w.jars[i]));
+   if(!jarCount)box.textContent=t('ما في عسل جاهز للبيع بعد.','No honey is ready to sell yet.');
+   nectarPlants.forEach((p,i)=>{
+     if(w.jars[i])row(i,t('عسل ','Honey · ')+wardaName(i)+(w.jars[i]>1?' × '+w.jars[i]:''),t('بيع للزبون · ','Sell to buyer · ')+p.honey,'jar',false);
+   });
  }
 }
 function renderHoneyMarket(){
  const w=wardaData(),host=$('honeyMarket'),t=finText;
+ host.hidden=!apiaryAvailable();if(host.hidden)return;
  const stamp=JSON.stringify([state.lang,w.jars,w.ads]);if(host.dataset.stamp===stamp)return;
  host.dataset.stamp=stamp;host.replaceChildren();
  const title=document.createElement('h3');title.textContent=t('إعلانات عسل وردة','Warda’s honey ads');host.append(title);
@@ -2290,10 +2318,10 @@ function renderHoneyMarket(){
    button(t('اقبل وبيع','Accept sale'),()=>honeyAd('accept',slot));button(t('ارفض العرض','Decline'),()=>honeyAd('decline',slot));
  });
 }
-function visitWarda(){activeArea='apiary';render();$('apiaryArea').scrollIntoView({block:'start'})}
+function visitWarda(){if(!apiaryAvailable())return;activeArea='apiary';render();$('apiaryArea').scrollIntoView({block:'start'})}
 $('wardaGo').onclick=visitWarda;
-$('apiaryTab').onclick=()=>{activeArea=activeArea==='apiary'?'overview':'apiary';render()};
-$('apiaryTools').onclick=e=>{const b=e.target.closest('button');if(b){$('apiaryArea').dataset.mode=b.dataset.mode;renderApiary()}};
+$('apiaryTab').onclick=()=>{if(!apiaryAvailable())return;activeArea=activeArea==='apiary'?'overview':'apiary';render()};
+$('apiaryTools').onclick=e=>{const b=e.target.closest('button');if(b&&apiaryAvailable()){const area=$('apiaryArea');area.dataset.mode=(area.dataset.mode||'seeds')===b.dataset.mode?'closed':b.dataset.mode;renderApiary()}};
 
 function tradeBook(){
  return state.staff.trade ||= {edition:0, shipments:0, dealAt:-1, wageCount:0};

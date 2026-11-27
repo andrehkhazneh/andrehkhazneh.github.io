@@ -140,7 +140,7 @@ function render(area,crops,plants,en,markRead,openMedal){
    const plant=crops[id],record=plants[id];
    const text=record?plant[lang]:(en?'Undiscovered plant':'نبتة غير مكتشفة');
    return '<button type="button" class="field-card'+(record?.unread?' fresh':'')+'" data-plant="'+id+'" '+(record?'':'disabled')+'><span class="field-specimen" aria-hidden="true" style="background-image:url(yasmine/images/plants/'+id+'.webp)"></span><strong>'+text+'</strong>'+
-    (record?.unread?'<small>'+(en?'New':'جديد')+'</small>':!record?'<small>'+(en?'Grow to maturity · Level ':'ازرعها حتى النضج · المستوى ')+plant.level+'</small>':'')+'</button>';
+    (record?.unread?'<small>'+(en?'New':'جديد')+'</small>':!record?'<small>'+(en?'Grow to maturity · Level ':'ازرعها حتى النضج · المستوى ')+plant.level+'</small>':'')+(record?'<span class="field-read">'+(en?'📖 Open plant guide':'📖 افتح دليل النبتة')+'</span>':'')+'</button>';
  });
  area.innerHTML='<h2>'+(en?'Plant encyclopedia':'موسوعة النباتات')+'</h2><p>'+(en?'Plants discovered':'نباتات اكتشفتها')+' · <bdi>'+known.length+' / '+ids.length+'</bdi></p><div class="field-grid">'+cards.join('')+'</div>'+
    (known.length===ids.length?'<button type="button" class="field-award"><img alt="" src="yasmine/images/plant-lover.webp">'+(en?'View Plant lover medal':'شوف وسام عاشق النباتات')+'</button>':'');
