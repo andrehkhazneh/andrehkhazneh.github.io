@@ -23,3 +23,8 @@
 .arena-kit select,.arena-kit>button{min-height:40px;margin:3px}
 .boss-entry{display:flex;align-items:center;gap:10px;padding-block:7px;border-bottom:1px solid #8e957355}.boss-entry img{width:56px;height:56px;object-fit:contain}.boss-entry small{display:block}.boss-entry button{margin-inline-start:auto}
 .boss-entry .boss-medal{border-radius:50%;background:radial-gradient(#e5ba5e,#755927);border:3px ridge #e6c27c;box-sizing:border-box;padding:4px}.boss-entry .undiscovered{filter:brightness(0);opacity:.48}.boss-book[hidden]{display:none!important}
+
+.spirit-care{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;align-items:center;margin:12px 0;padding:12px;border:1px solid #aa9e68;border-radius:14px;background:#284638}
+.spirit-care>img{object-fit:contain}.spirit-care .arena-health{display:grid;gap:4px;margin:0}.spirit-care progress{width:100%}
+.spirit-options,.spirit-care>p{grid-column:1/-1}.spirit-options{display:flex;flex-wrap:wrap;gap:6px}.spirit-options button{flex:1;min-height:44px}
+#arenaArea .spirit-care>p{margin:0}.spirit-care>p:empty{display:none}

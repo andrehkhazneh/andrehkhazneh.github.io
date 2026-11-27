@@ -475,7 +475,7 @@ function financeWage(){
  if(++f.count>=10){f.count=0;if(state.money>=20)financeMove(-20,'accountant',{person:'ledger'});else {f.due=true;f.reportLimit=f.rows.length}}
 }
 const financialLabels={
- defense:['حراسة المشتل','Nursery watch'],defenseReward:['مكافأة الحراسة','Watch reward'],apiarySeed:['بذور المنحلة','Apiary seeds'],apiaryFlower:['بيع نبات المنحلة','Apiary plant sale'],honeySale:['بيع العسل','Honey sale'],fertilizerSale:['بيع فائض السماد','Surplus fertilizer sale'],donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى 2','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى 3','Station tier 3'],
+ arenaHeal:['علاج روح المشتل','Spirit Tree treatment'],arenaRevive:['إحياء روح المشتل','Spirit Tree revival'],arenaUpgrade:['ترقية جهاز دفاع','Defense device upgrade'],arenaReward:['مكافأة موجة الدفاع','Arena wave reward'],defense:['حراسة المشتل','Nursery watch'],defenseReward:['مكافأة الحراسة','Watch reward'],apiarySeed:['بذور المنحلة','Apiary seeds'],apiaryFlower:['بيع نبات المنحلة','Apiary plant sale'],honeySale:['بيع العسل','Honey sale'],fertilizerSale:['بيع فائض السماد','Surplus fertilizer sale'],donation:['تبرع','Donation'],sales:['بيع نبتة','Plant sale'],salary:['راتب','Wage'],accountant:['راتب جمال','Accountant wage'],hire:['توظيف','Hiring'],upgrade:['تطوير','Upgrade'],seeds:['بذور','Seeds'],fertilizer:['سماد تجاري','Commercial fertilizer'],catfood:['طعام','Food'],bonus:['بونص','Bonus'],invoice:['طوارئ القطة','Cat emergency'],catshop:['متجر القطة','Cat shop'],awards:['ميدالية','Medal'],missions:['مهمة','Mission'],events:['حدث بالمشتل','Nursery event'],catreward:['مكافأة القطة','Cat reward'],compostBuy:['شراء محطة السماد','Compost station'],compostUpgrade:['تطوير محطة السماد','Station upgrade'],compostUpgrade2:['تطوير المحطة للمستوى 2','Station tier 2'],compostUpgrade3:['تطوير المحطة للمستوى 3','Station tier 3'],
  warda:['وردة','Warda'],abu:['أبو وردة','Abu Warda'],nana:['نانا','Nana'],ledger:['جمال','Jamal'],yasmin:['ياسمين','Yasmin']
 };
 function finText(ar,en){return state.lang==='en'?en:ar}
@@ -1268,7 +1268,7 @@ function renderFinance(){
  const start=new Date(today);start.setDate(start.getDate()-({today:0,yesterday:1,week:6,month:29}[financePeriod]||0));
  if(f.due&&f.reportLimit==null)f.reportLimit=f.rows.length;
  const rows=(f.due?f.rows.slice(0,f.reportLimit):f.rows).filter(r=>financePeriod==='all'||(r.at>=+start&&(financePeriod!=='yesterday'||r.at<+today)));
- const groups={},investment=['hire','upgrade','compostBuy','compostUpgrade','compostUpgrade2','compostUpgrade3'];
+ const groups={},investment=['hire','upgrade','arenaUpgrade','compostBuy','compostUpgrade','compostUpgrade2','compostUpgrade3'];
  let income=0,expense=0,invested=0;
  for(const r of rows){if(r.amount>0)income+=r.amount;else expense-=r.amount;groups[r.category]=(groups[r.category]||0)+r.amount;if(investment.includes(r.category))invested-=r.amount}
  const expected=f.rows.reduce((n,r)=>n+r.amount,f.opening);
@@ -1289,7 +1289,7 @@ function renderFinance(){
  put('financePlants',Object.entries(plants).map(([k,v])=>(crops[k]?.[state.lang]||k)+' · '+v.n+t(' مباعة · دخل ',' sold · Revenue ')+v.gross+t(' · متوسط السعر ',' · Average price ')+Math.round(v.gross/v.n)).join('\n')||t('بتظهر بعد أول بيع مسجل باسم النبتة.','Available after your first sale recorded by crop.'));
  put('financeShare',t('شارك صورة التقرير','Share report image'));
  $('financeShare').onclick=()=>shareOfficePage(t('تقرير المشتل المالي','Nursery financial report'),[options[financePeriod],t('إيرادات ','Income ')+income,t('مصاريف ','Expenses ')+expense,t('صافي الحركة النقدية ','Net cash ')+fmt(income-expense)]);
- const describe=r=>[finLabel(r.category),r.person&&finLabel(r.person),r.crop&&crops[r.crop]?.[state.lang],['catfood','catshop','catreward','invoice'].includes(r.category)&&displayName('catName')].filter(Boolean).join(' · ');
+ const describe=r=>[finLabel(r.category),r.wave&&t('الموجة ','Wave ')+r.wave,r.person&&finLabel(r.person),r.crop&&crops[r.crop]?.[state.lang],['catfood','catshop','catreward','invoice'].includes(r.category)&&displayName('catName')].filter(Boolean).join(' · ');
  if($('financeHistory').open){
    const box=$('financeRows');box.replaceChildren();$('financeSearch').placeholder=t('ابحث باسم الموظف أو النبتة أو رقم الحركة','Search staff, crop or reference');
    const matches=rows.filter(r=>(describe(r)+' TX-'+(r.id||'')).toLowerCase().includes(financeSearch.toLowerCase()));
