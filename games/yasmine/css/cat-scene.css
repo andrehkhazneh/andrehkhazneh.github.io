@@ -88,3 +88,43 @@ body.night-ui #catEmergencyPanel[data-level="news"] { background: #243e32; color
 #catArea.cat-in-shelter > :not(.cat-heading):not(#catEmergencyBill),
 #catArea.cat-in-shelter :is(#nanaCatPortrait,#nanaCatNews),
 #catEmergencyPanel [hidden] { display: none !important; }
+
+/* Care, missions and the shop use one set of clock-driven button colors. */
+body #catArea,body #catSheet{
+  --cat-face:var(--nav-face,#dce8c9);
+  --cat-top:color-mix(in srgb,var(--cat-face) 87%,white);
+  --cat-bottom:color-mix(in srgb,var(--cat-face) 90%,#142a30);
+  --cat-edge:color-mix(in srgb,var(--cat-face) 65%,white);
+  --cat-lip:color-mix(in srgb,var(--cat-face) 55%,#10232b)
+}
+html body #catArea :is(button,#catMissions>summary,#nanaHeartPanel>summary),
+html body #catSheet button{
+  color:var(--nav-ink,#203926)!important;
+  background:linear-gradient(var(--cat-top),var(--cat-bottom))!important;
+  border:1px solid var(--cat-edge)!important;
+  box-shadow:inset 0 1px 1px #ffffff50,0 4px var(--cat-lip)!important;
+}
+#catArea :is(#catMissions>summary,#catBoutiqueTitle,#nanaHeartPanel>summary){
+  box-sizing:border-box;width:100%;padding:.8rem 1rem;border-radius:14px;text-align:start;font-weight:bold;cursor:pointer
+}
+html body #catArea #mouseChaseResult:not([hidden]){
+  display:block;position:relative;isolation:isolate;overflow:hidden;margin:1.1rem 0;padding:.9rem;
+  border:1px solid #a88755;border-radius:5px 10px 10px 5px;color:#47321f;
+  background:repeating-linear-gradient(135deg,#975649 0 8px,#ebdec5 8px 17px,#576f72 17px 25px,#ebdec5 25px 34px);
+  box-shadow:0 4px 10px #17202538;text-align:start
+}
+#mouseChaseResult::before{
+  content:"";position:absolute;inset:5px;z-index:-1;background:linear-gradient(115deg,#fff8e7,#f0e1bd);
+  border:1px solid #c8b079;border-radius:3px
+}
+#catArea #mouseChaseResult header{
+  display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:.65rem;
+  padding:0 0 .6rem;margin:0;border-bottom:1px dashed #b59b70;background:transparent
+}
+.patrol-stamp{width:clamp(50px,12vw,72px);height:auto;aspect-ratio:1;object-fit:cover;padding:3px;background:#fff9e9;border:2px dotted #927659;transform:rotate(-4deg)}
+#mouseReportTitle{color:#57462e!important;font-size:1.08rem}
+#mouseChaseResult .patrol-letter{padding:.55rem .25rem .25rem}
+#mouseChaseResult .patrol-letter p{color:#453320!important;margin:.25rem 0;line-height:1.6}
+#mouseChaseResult #mouseReportGreeting{font-weight:normal}
+#mouseChaseResult #mouseReportSignature{text-align:end;font-size:.95rem;color:#695137!important}
+#catScene.is-napping[data-bed="false"]:not(.cat-art-ready){background:#f2d8b0 url(../images/cat-care/floor-nap.webp) center 85%/37% auto no-repeat}

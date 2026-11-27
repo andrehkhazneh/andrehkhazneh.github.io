@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>حديقة السعادة | Andreh’s Garden</title>
-<link rel="stylesheet" href="yasmine/css/cat-scene.css?v=yasmin-chase-1">
+<link rel="stylesheet" href="yasmine/css/cat-scene.css?v=mishmish-patrol-2">
 <link rel="stylesheet" href="yasmine/css/base.css?v=20261122-voice11">
 <link rel="stylesheet" href="yasmine/css/overrides.css?v=garden-tiles-1"><style id="mishmishRefinement">
 #catArea>.grid,#catArea .grid:has(#catWater){display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
@@ -430,9 +430,7 @@ html body #gameNav :is(#staffTab,#jamalTab)[aria-pressed=true]{text-decoration:u
 #staffArea :is(#staffMood,#staffRole){color:inherit!important;opacity:1!important}
 html body #staffArea :is(#staffMood,#staffRole){background:#f8f4e6!important;color:#303b2d!important;padding:.18em .5em;border-radius:.5em;width:fit-content}
 #fertOffer h3{text-align:center}#fertOfferInfo:empty,#fertResult:empty{display:none}
-html body #catArea :is(#catMissions>summary,#catBoutiqueTitle,#nanaHeartPanel>summary){display:block;box-sizing:border-box;width:100%;padding:.8rem 1rem!important;background:linear-gradient(#48766b,#2d594e)!important;color:#fff!important;border:1px solid #274c42!important;border-radius:14px!important;box-shadow:0 4px 0 #1e4037!important;font-weight:bold;text-align:start}
-html body #catArea #mouseChaseResult:not([hidden]){display:grid!important;grid-template-columns:auto 1fr auto;align-items:center;gap:.7rem;padding:.75rem;border-radius:14px;background:#f8efdc;color:#3a3124;border:1px solid #aa906a}
-#mouseChaseResult .patrol-mark{background:#e1d5b8;border-radius:50%;padding:.5em}#mouseChaseResult #catMouseReport{margin:.25rem 0;color:#3a3124!important}#mouseReportTitle{color:#3f593d!important}
+
 #jamalSheet [hidden]{display:none!important}
 </style><style>
 #yasminRequestCard{margin:.75rem 0}html body #staffArea #deskRequest{display:flex;align-items:center;gap:.45rem;width:100%;direction:rtl;margin:0}
@@ -572,7 +570,7 @@ html body #catArea #mouseChaseResult:not([hidden]){display:grid!important;grid-t
 <button type="button" style="grid-column:1/-1;grid-row:4" id="catGiveTreat"></button><div id="catMotionControls" hidden><button type="button" id="catWalkButton">مشّيها</button><button type="button" id="catNapButton" hidden>خلّيها تنام</button></div>
 </div>
 <section id="catEmergencyBill" class="panel" hidden style="margin:12px 0;padding:14px;border:2px solid #d2a35a;background:#fff4dc;color:#61482c;border-radius:16px"><strong id="catEmergencyBillText">🧾 فاتورة نانا</strong><button id="catEmergencyPay" type="button" style="display:block;width:100%;margin-top:10px">💰 وافق على دفع الفاتورة · 20 عملة</button></section><article id="caseCard" hidden><div class="casePhoto"><img src="yasmine/images/cat-care/detective.webp" width="360" height="360" alt="MiMi"></div><div><strong id="caseTitle"></strong><p id="caseNote"></p></div><button type="button" id="caseClose" aria-label="إغلاق">×</button></article><div id="mishmishNotices" aria-live="polite"></div><p id="catMessage" class="message" aria-live="polite"></p>
-<button id="catToy" type="button">🪶 اشتري لعبة ريشة · 💰 20</button>
+
 <div id="catExtras" style="display:grid;gap:12px;margin-top:18px">
 <button id="catTreatBuy" type="button" hidden></button>
 <div id="catTreatCount" class="info"></div>
@@ -586,7 +584,7 @@ html body #catArea #mouseChaseResult:not([hidden]){display:grid!important;grid-t
 <summary><span id="catMissionsLabel">مهمّات القطة</span> <small id="catMissionTime" dir="auto"></small></summary>
 <div class="mission-row"><button id="catSpy" type="button"></button><span id="catSpyTimer" class="mission-timer" hidden></span></div>
 <div class="mission-row"><button id="catMouseHunt" type="button">🐭 جولة صيد الفأرة</button><span id="catHuntTimer" class="mission-timer" hidden></span></div>
-</details><div id="catBoutique" class="panel" style="padding:12px;margin:8px 0"><div id="catBoutiqueItems" hidden style="grid-template-columns:repeat(2,minmax(0,1fr));gap:8px"></div></div><div id="mouseChaseResult" hidden><div class="patrol-mark" aria-hidden="true">🐾</div><div><strong id="mouseReportTitle"></strong><p id="catMouseReport" aria-live="polite"></p></div><button id="closeMouseResult" type="button" aria-label="إغلاق نتيجة الصيد">×</button></div>
+</details><div id="catBoutique" class="panel" style="padding:12px;margin:8px 0"><div id="catBoutiqueItems" hidden style="grid-template-columns:repeat(2,minmax(0,1fr));gap:8px"></div></div><article id="mouseChaseResult" hidden aria-labelledby="mouseReportTitle"><header><img class="patrol-stamp" src="yasmine/images/cat-care/detective.webp" alt="" width="76" height="76"><strong id="mouseReportTitle"></strong><button id="closeMouseResult" type="button" aria-label="إغلاق نتيجة الصيد">×</button></header><div class="patrol-letter"><p id="mouseReportGreeting"></p><p id="catMouseReport" aria-live="polite"></p><p id="mouseReportSignature"></p></div></article>
 <p id="catSpyReport" class="message" aria-live="polite"></p>
 
 <div id="catShopMount"></div><details id="nanaHeartPanel" hidden><summary><img id="heartPortrait" alt=""><span id="heartTitle">نانا · كلمة من القلب</span></summary><p id="nanaHeartText" class="staff-dialogue" aria-live="polite"></p><button id="nanaHeartStart" type="button">💗 كلمة من القلب</button><div id="nanaHeartActions" hidden><button id="nanaHeartThanks" type="button"></button><button id="nanaHeartMore" type="button"></button><button id="nanaHeartClose" type="button"></button></div></details>
@@ -597,9 +595,9 @@ html body #catArea #mouseChaseResult:not([hidden]){display:grid!important;grid-t
 <script src="yasmine/js/cat.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/staff.js?v=20261122-mishmish10"></script>
 <script src="yasmine/js/garden.js?v=plots1"></script>
-<script src="yasmine/js/cat-scene.js?v=garden-walk2"></script>
+<script src="yasmine/js/cat-scene.js?v=mishmish-patrol-2"></script>
 <script src="yasmine/js/mouse-chase.js?v=yasmin-chase-1"></script>
-<script src="yasmine/js/field-guide.js?v=nursery-shops-1"></script><script src="yasmine/js/medals.js?v=apiary-enamel-1"></script><script src="yasmine/js/compost.js?v=garden-scene-1"></script><script src="yasmine/js/statements.js?v=warda-wage-1"></script><script src="yasmine/js/defense-arena.js?v=spirit-care-1"></script><script src="yasmine/js/game.js?v=nursery-shops-1"></script><script id="mishmishRefinementScript">
+<script src="yasmine/js/field-guide.js?v=nursery-shops-1"></script><script src="yasmine/js/medals.js?v=apiary-enamel-1"></script><script src="yasmine/js/compost.js?v=garden-scene-1"></script><script src="yasmine/js/statements.js?v=warda-wage-1"></script><script src="yasmine/js/defense-arena.js?v=spirit-care-1"></script><script src="yasmine/js/game.js?v=mishmish-patrol-2"></script><script id="mishmishRefinementScript">
 (function(){
 function init(){
 const $=id=>document.getElementById(id), notices=$('mishmishNotices');

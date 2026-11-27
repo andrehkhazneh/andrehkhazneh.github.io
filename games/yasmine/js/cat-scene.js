@@ -251,7 +251,8 @@
     bed = { x: 12, y: 138, w: 224, h: 110 },
     pillow = 129,
     doorstep = 221;
-  const stride = [0, 6, 2, 7, 3, 5, 1, 4];
+  // Paw baselines measured in the two rows of the walking sprite sheet.
+  const pawBaseline = [351,352,352,351,353,354,352,353];
   let phase = "rest",
     phaseAt = 0,
     walkStart = 374,
@@ -311,7 +312,7 @@
   }
   function walkFrame(cx, foot, dir, distance, scale = 1) {
     const im = art.walk,
-      i = stride[Math.floor((Math.abs(distance) / 62) * 8) % 8],
+      i = Math.floor(Math.abs(distance) / (10 * scale)) % 8,
       w = im.width / 4,
       h = im.height / 2;
     g.save();
@@ -324,7 +325,7 @@
       w,
       h,
       -80,
-      -177,
+      -pawBaseline[i] * .5,
       160,
       213,
     );
@@ -347,13 +348,14 @@
   }
   function beginNap(manual, now) {
     manualNap = manual;
-    move(doorstep, "enter", now);
+    if (hasBed) move(doorstep, "enter", now);
+    else setPhase("sleep", now);
   }
   function beginWake(then, now) {
     manualNap = false;
     autoMuted = autoWindow;
     afterWalk = then;
-    setPhase("rise", now);
+    setPhase(hasBed ? "rise" : "rest", now);
   }
   function redraw() {
     stopFrames();
@@ -362,10 +364,7 @@
   walkButton.onclick = () => {
     if (!window.YasmineCatActions?.walk()) return;
     scene.scrollIntoView({behavior:motion.matches?"instant":"smooth",block:"center"});
-    const now = performance.now();
-    autoMuted = autoWindow;
-    if (phase === "sleep") beginWake("walk", now);
-    else move(home > 310 ? doorstep + 18 : 405, "rest", now);
+    setPhase("rest", performance.now());
     redraw();
   };
   napButton.onclick = () => { window.YasmineCatActions?.nap(); sync(); };
@@ -375,30 +374,48 @@
     }, delay);
   }
   const garden = new Image();
-  garden.src = new URL("../potting-bench.webp",assetRoot).href;
+  garden.src = new URL("nursery-path.webp",assetRoot).href;
+  let backdropMode="";
+  function sceneBackdrop(outdoors){
+    const mode=outdoors?(garden.complete&&garden.naturalWidth?"garden":"path"):"room";
+    if(backdropMode===mode)return;
+    backdropMode=mode;
+    const bg=backdrop.getContext("2d");
+    bg.setTransform(2,0,0,2,0,0);
+    if(mode==="room")room(bg);
+    else if(mode==="garden")bg.drawImage(garden,0,0,520,290);
+    else {
+      bg.fillStyle="#b8d6ae";bg.fillRect(0,0,520,181);
+      bg.fillStyle="#dbb584";bg.fillRect(0,181,520,109);
+    }
+  }
+  function outdoorWalk(remaining) {
+    // The kitten crosses the level foreground, pauses to sniff, then walks back.
+    const elapsed=clamp(1-remaining/7000)*7, outward=elapsed<2.85;
+    const pause=!outward && elapsed<4.15;
+    const progress=outward?elapsed/2.85:pause?1:(7-elapsed)/2.85;
+    const ramp=.12;
+    const t=clamp(progress);
+    const advance=(t<ramp?t*t/(2*ramp):t>1-ramp?1-ramp-(1-t)*(1-t)/(2*ramp):t-ramp/2)/(1-ramp);
+    const distance=motion.matches?142:278*advance;
+    const x=96+distance,foot=251,scale=.78;
+    paintEllipse(x,foot+1,49,4,"rgba(88,59,32,.20)");
+    if(pause||motion.matches){
+      g.save();g.translate(x,foot);g.scale(.43,.43);
+      character("sniff",-180,-259,0,false,0);g.restore();
+    }else walkFrame(x,foot,outward?1:-1,outward?distance:278-distance,scale);
+    if(motion.matches)schedule(200);
+    else frame=requestAnimationFrame(draw);
+  }
   function ambience(now) {
     const remaining=Number(scene.dataset.walkUntil)-Date.now();
-    if(remaining>0){
-      if(garden.complete && garden.naturalWidth) g.drawImage(garden,0,0,520,290);
-      else {g.fillStyle="#b8d6ae";g.fillRect(0,0,520,290);}
-      const t=1-remaining/7000;
-      const fraction=t<.4?t/.4:t<.63?1:(1-t)/.37;
-      const x=90+300*ease(fraction);
-      if(t>=.4 && t<.63){
-        g.save();g.translate(x,255);g.scale(.55,.55);character("sniff",-180,-248,0,false,0);g.restore();
-        g.font="32px sans-serif";g.fillText("🌿",x+64,254);
-      } else walkFrame(x,255,t<.4?1:-1,300*fraction);
-      schedule(motion.matches?180:45);return;
-    }
+    if(remaining>0){outdoorWalk(remaining);return}
     const reduced = motion.matches,
       age = now - phaseAt;
     if (["rest", "walk"].includes(phase) && autoWindow && !autoMuted && afterWalk !== "enter") beginNap(false, now);
     else if (phase === "rest" && !reduced && age >= 5500)
       move(home > 310 ? (hasBed ? doorstep + 18 : 133) : 405, "rest", now);
     const elapsed = now - phaseAt;
-    if (Number(scene.dataset.walkUntil)>Date.now()) {
-      g.font="30px sans-serif";g.fillText("🌿",445,248);g.font="20px sans-serif";g.fillText("🐾",home-40,273);
-    }
     if (phase === "walk") {
       const delta = goal - walkStart,
         distance = Math.min(Math.abs(delta), elapsed * 0.085);
@@ -418,7 +435,15 @@
       else setPhase("rest", now);
     }
     if (phase === "settle" || phase === "sleep" || phase === "rise") {
-      occupiedBed(phase === "sleep" ? "asleep" : "settle");
+      if(hasBed)occupiedBed(phase === "sleep" ? "asleep" : "settle");
+      else {
+        const width=154,height=width*art["floor-nap"].height/art["floor-nap"].width;
+        paintEllipse(home,floorY,65,5,"rgba(115,76,40,.15)");
+        g.save();g.translate(home-width/2,floorY-height);
+        g.drawImage(art["floor-nap"],0,0,width,height);
+        smallOutfit([width*.76,height*.22,.082,.32],[width*.79,height*.59,.07,.32]);
+        g.restore();
+      }
     } else {
       if (hasBed) bedPicture("empty");
       if (phase === "enter" || phase === "exit") {
@@ -459,6 +484,7 @@
     if (!ready || !visible) return;
     g.setTransform(2, 0, 0, 2, 0, 0);
     g.clearRect(0, 0, 520, 290);
+    sceneBackdrop(!active && Number(scene.dataset.walkUntil)>Date.now());
     if (!active) {
       ambience(now);
       return;
@@ -599,6 +625,7 @@
           "empty",
           "settle",
           "asleep",
+          "floor-nap",
         ].map(
           (name) =>
             new Promise((ok, fail) => {
@@ -612,9 +639,7 @@
             }),
         ),
       );
-      const bg = backdrop.getContext("2d");
-      bg.scale(2, 2);
-      room(bg);
+      sceneBackdrop(false);
       ready = true;
       controls.hidden = false;
       scene.classList.add("cat-art-ready");
@@ -633,12 +658,12 @@
       : scene.dataset.action || "";
     const now = performance.now();
     const owns = scene.dataset.bed === "true";
-    const period = owns && scene.classList.contains("is-napping");
+    const period = scene.classList.contains("is-napping");
     if (period !== autoWindow) {
       autoMuted = false;
       autoWindow = period;
     }
-    if (hasBed && !owns) {
+    if (hasBed !== owns) {
       home = 374;
       manualNap = false;
       setPhase("rest", now);
@@ -684,6 +709,7 @@
       scene.dataset.toy,
       motion.matches,
       scene.dataset.tired,
+      scene.dataset.walkUntil,
     ].join("|");
     if (view === lastView) return;
     lastView = view;
@@ -704,6 +730,7 @@
       "data-outfit",
       "data-bed",
       "data-tired",
+      "data-walk-until",
     ],
   });
   observer.observe(area, {

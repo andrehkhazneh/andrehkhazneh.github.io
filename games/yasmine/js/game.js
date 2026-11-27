@@ -214,9 +214,6 @@ function renderCat(){
   $('catFeed').textContent=words.feed;
   $('catPlay').textContent=cat.toy?words.feather:words.play;
   $('catBrush').textContent=words.brush;
-  $('catToy').textContent=words.buy;
-  $('catToy').hidden=cat.toy;
-  $('catToy').disabled=state.money<20;
   ['Feed','Play','Brush'].forEach(function(action){
     $('cat'+action).disabled=Date.now()<catBusyUntil||Date.now()<(catLast[action]||0)||(action==='Feed'&&state.stock.catfood<=0);
   });
@@ -257,13 +254,6 @@ $('catTab').onclick=function(){activeArea='cat';renderCat();renderNurseryNotice(
 ['Feed','Play','Brush'].forEach(function(action){
   $('cat'+action).onclick=function(){visitCat(action)};
 });
-$('catToy').onclick=function(){
-  if(state.cat.away||state.cat.toy||state.money<20)return;
-  financeMove(-20,'catshop',{itemId:'feather'});sound('purchase');
-  state.cat.toy=true;
-  catMessage='bought';
-  render();
-};
 function giveCatWater(source){
   if(state.cat.away||state.cat.sleeping||Date.now()<catBusyUntil||catDrinking||state.cat.hydration>=100)return false;
   catBusyUntil=Date.now()+4100;
@@ -1363,7 +1353,7 @@ function renderStaff(){
  $('workersYasminName').textContent=english?'Yasmin':'ياسمين';
  $('workersYasminRole').textContent=english?'Nursery manager':'مديرة المشتل';
  $('workersYasminInfo').textContent=english?'Prepares ads, orders and supplier deals. Earns 20 coins per 10 plant sales.':'بتحضّر إعلانات وطلبيات وعروض شراء. راتبها 20 عملة كل 10 مبيعات.';
-var w=staffWords(),st=state.staff;var buyDirect=$('buyFertilizerDirect');buyDirect.hidden=!!st.hired;buyDirect.textContent=state.lang==='ar'?'🌱 شراء 5 سماد · 💰 10':'🌱 Buy 5 fertilizer · 💰 10';buyDirect.disabled=state.money<10;if(st.hired&&st.request&&st.request!=='bonus'&&state.stock[st.request]>=5){st.request=null;save()}renderYasminExpression();renderAbu();renderNana();$('settingsNamesPanel').hidden=!settingsOpen||!editingNames;$('identityPanel').hidden=!settingsOpen||!editingNames;$('gardenNameLabel').textContent=state.lang==='ar'?'اسم الحديقة':'Garden name';if(document.activeElement!==$('gardenNameInput'))$('gardenNameInput').value=state.gardenName;$('jokeRating').hidden=!jokeAwaitingRating;$('jokeGood').textContent=state.lang==='ar'?'😂 حلوة!':'😂 Funny!';$('jokeBad').textContent=state.lang==='ar'?'😐 مش كتير':'😐 Not really';$('nurseryAlert').hidden=true;$('nurseryAlertTitle').textContent=state.lang==='ar'?'🌱 تجمال المشتل':'🌱 Nursery alert';$('nurseryAlertText').textContent=state.lang==='ar'?'المشتل فاضي! حان وقت زراعة بذرة جديدة.':'Your garden is empty! Time to plant a new seed.';$('nurseryAlertAction').textContent=state.lang==='ar'?'🌱 سأزرع':'🌱 I’ll plant';$('nurseryAlertDismiss').textContent=state.lang==='ar'?'تجاهل':'Dismiss';var n=notificationCount();$('staffBadge').hidden=!n;$('staffBadge').textContent=n;$('settingsPanel').hidden=!settingsOpen;$('settingsAudioPanel').hidden=!audioPanelOpen;$('settingsAudio').setAttribute('aria-expanded',String(audioPanelOpen));$('settingsNames').setAttribute('aria-expanded',String(editingNames));$('topEditNames').setAttribute('aria-expanded',String(settingsOpen));$('identityPanel').hidden=!settingsOpen||!editingNames;$('editNames').textContent=state.lang==='ar'?(editingNames?'✕ إغلاق التعديل':'✏️ تعديل الأسماء'):(editingNames?'✕ Close editing':'✏️ Edit names');$('staffRole').textContent=state.lang==='ar'?'مديرة المشتل':'Nursery manager';$('nurseryNameLabel').textContent=w.nursery;$('catNameLabel').textContent=w.cat;$('nurseryEdit').hidden=state.namesSet&&!editingNames;$('catEdit').hidden=state.namesSet&&!editingNames;$('nurseryNameDone').hidden=!state.namesSet||editingNames;$('catNameDone').hidden=!state.namesSet||editingNames;$('nurseryNameDone').textContent=displayName("nurseryName");$('catNameDone').textContent=displayName("catName");if(document.activeElement!==$('nurseryNameInput'))$('nurseryNameInput').value=state.nurseryName;if(document.activeElement!==$('catNameInput'))$('catNameInput').value=state.catName;$('fertilizerStockLabel').textContent=state.lang==='ar'?'🌱 مخزون السماد':'🌱 Fertilizer stock';$('catFoodStockLabel').textContent=state.lang==='ar'?'🍲 مخزون أكل القطة':'🍲 Cat food stock';$('fertilizerStock').textContent=state.stock.fertilizer;$('catFoodStock').textContent=state.stock.catfood;$('stockHint').hidden=true;$('staffTitle').textContent=state.lang==='ar'?'ياسمين':'Yasmin';$('staffMood').textContent=w.mood+': '+st.mood+'%';$('staffDialogue').textContent=jokeAwaitingRating?localizeDialogue(st,w):(nurseryPots().every(p=>!p.active)&&!state.dismissedEmpty?(state.lang==='ar'?'يا مدير، المشتل فاضي! ازرع بذرة جديدة من دكّان البذور.':'Boss, the nursery is empty! Plant a new seed from the seed shop.'):st.request?w.request[st.request]:(state.stock.fertilizer<=1?(state.lang==='ar'?'يا مدير، السماد قرب يخلص! ضل '+state.stock.fertilizer+' بس.':'Boss, fertilizer is running low!') :state.stock.catfood<=1?(state.lang==='ar'?'يا مدير، أكل '+displayName("catName")+' قرب يخلص!':'Boss, cat food is running low!'):state.cat.fullness<35&&(!state.nana.hired||state.nana.paused)?w.needCat:nurseryPots().some(p=>p.active&&p.quality<55)?w.needWater:(jokeAwaitingRating?localizeDialogue(st,w):localizeDialogue(st,w))));$('hireStaff').textContent=st.hired?(state.lang==='ar'?'✓ تم توظيف ياسمين':'✓ Yasmin hired'):w.hire;$('hireStaff').hidden=st.hired;$('hireStaff').disabled=st.hired||state.money<50;$('staffJoke').textContent=w.joke;$('staffJoke').disabled=!st.hired;$('staffRequest').hidden=!st.hired||!st.request;if(st.request){var req=requests.find(function(x){return x.type===st.request});if(req){$('requestTitle').textContent=state.lang==='ar'?'طلب من ياسمين':'Yasmin’s request';$('requestText').textContent=w.request[req.type];$('acceptRequest').textContent=w.yes+' 💰 '+req.cost;$('acceptRequest').disabled=state.money<req.cost;$('rejectRequest').textContent=w.no}}}
+var w=staffWords(),st=state.staff;var buyDirect=$('buyFertilizerDirect');buyDirect.hidden=!!st.hired;buyDirect.textContent=state.lang==='ar'?'🌱 شراء 5 سماد · 💰 10':'🌱 Buy 5 fertilizer · 💰 10';buyDirect.disabled=state.money<10;if(st.hired&&st.request&&st.request!=='bonus'&&state.stock[st.request]>=5){st.request=null;save()}renderYasminExpression();renderAbu();renderNana();$('settingsNamesPanel').hidden=!settingsOpen||!editingNames;$('identityPanel').hidden=!settingsOpen||!editingNames;$('gardenNameLabel').textContent=state.lang==='ar'?'اسم الحديقة':'Garden name';if(document.activeElement!==$('gardenNameInput'))$('gardenNameInput').value=state.gardenName;$('jokeRating').hidden=!jokeAwaitingRating;$('jokeGood').textContent=state.lang==='ar'?'😂 حلوة!':'😂 Funny!';$('jokeBad').textContent=state.lang==='ar'?'😐 مش كتير':'😐 Not really';$('nurseryAlert').hidden=true;$('nurseryAlertTitle').textContent=state.lang==='ar'?'🌱 تنبيه المشتل':'🌱 Nursery alert';$('nurseryAlertText').textContent=state.lang==='ar'?'المشتل فاضي! حان وقت زراعة بذرة جديدة.':'Your garden is empty! Time to plant a new seed.';$('nurseryAlertAction').textContent=state.lang==='ar'?'🌱 سأزرع':'🌱 I’ll plant';$('nurseryAlertDismiss').textContent=state.lang==='ar'?'تجاهل':'Dismiss';var n=notificationCount();$('staffBadge').hidden=!n;$('staffBadge').textContent=n;$('settingsPanel').hidden=!settingsOpen;$('settingsAudioPanel').hidden=!audioPanelOpen;$('settingsAudio').setAttribute('aria-expanded',String(audioPanelOpen));$('settingsNames').setAttribute('aria-expanded',String(editingNames));$('topEditNames').setAttribute('aria-expanded',String(settingsOpen));$('identityPanel').hidden=!settingsOpen||!editingNames;$('editNames').textContent=state.lang==='ar'?(editingNames?'✕ إغلاق التعديل':'✏️ تعديل الأسماء'):(editingNames?'✕ Close editing':'✏️ Edit names');$('staffRole').textContent=state.lang==='ar'?'مديرة المشتل':'Nursery manager';$('nurseryNameLabel').textContent=w.nursery;$('catNameLabel').textContent=w.cat;$('nurseryEdit').hidden=state.namesSet&&!editingNames;$('catEdit').hidden=state.namesSet&&!editingNames;$('nurseryNameDone').hidden=!state.namesSet||editingNames;$('catNameDone').hidden=!state.namesSet||editingNames;$('nurseryNameDone').textContent=displayName("nurseryName");$('catNameDone').textContent=displayName("catName");if(document.activeElement!==$('nurseryNameInput'))$('nurseryNameInput').value=state.nurseryName;if(document.activeElement!==$('catNameInput'))$('catNameInput').value=state.catName;$('fertilizerStockLabel').textContent=state.lang==='ar'?'🌱 مخزون السماد':'🌱 Fertilizer stock';$('catFoodStockLabel').textContent=state.lang==='ar'?'🍲 مخزون أكل القطة':'🍲 Cat food stock';$('fertilizerStock').textContent=state.stock.fertilizer;$('catFoodStock').textContent=state.stock.catfood;$('stockHint').hidden=true;$('staffTitle').textContent=state.lang==='ar'?'ياسمين':'Yasmin';$('staffMood').textContent=w.mood+': '+st.mood+'%';$('staffDialogue').textContent=jokeAwaitingRating?localizeDialogue(st,w):(nurseryPots().every(p=>!p.active)&&!state.dismissedEmpty?(state.lang==='ar'?'يا مدير، المشتل فاضي! ازرع بذرة جديدة من دكّان البذور.':'Boss, the nursery is empty! Plant a new seed from the seed shop.'):st.request?w.request[st.request]:(state.stock.fertilizer<=1?(state.lang==='ar'?'يا مدير، السماد قرب يخلص! ضل '+state.stock.fertilizer+' بس.':'Boss, fertilizer is running low!') :state.stock.catfood<=1?(state.lang==='ar'?'يا مدير، أكل '+displayName("catName")+' قرب يخلص!':'Boss, cat food is running low!'):state.cat.fullness<35&&(!state.nana.hired||state.nana.paused)?w.needCat:nurseryPots().some(p=>p.active&&p.quality<55)?w.needWater:(jokeAwaitingRating?localizeDialogue(st,w):localizeDialogue(st,w))));$('hireStaff').textContent=st.hired?(state.lang==='ar'?'✓ تم توظيف ياسمين':'✓ Yasmin hired'):w.hire;$('hireStaff').hidden=st.hired;$('hireStaff').disabled=st.hired||state.money<50;$('staffJoke').textContent=w.joke;$('staffJoke').disabled=!st.hired;$('staffRequest').hidden=!st.hired||!st.request;if(st.request){var req=requests.find(function(x){return x.type===st.request});if(req){$('requestTitle').textContent=state.lang==='ar'?'طلب من ياسمين':'Yasmin’s request';$('requestText').textContent=w.request[req.type];$('acceptRequest').textContent=w.yes+' 💰 '+req.cost;$('acceptRequest').disabled=state.money<req.cost;$('rejectRequest').textContent=w.no}}}
 /* Names are confirmed with Enter or the check button, not on every keystroke. */
 $('nurseryAlertDismiss').onclick=function(){state.dismissedEmpty=true;render()};$('nurseryAlertAction').onclick=function(){state.dismissedEmpty=true;activeArea='nursery';render();$('shop').scrollIntoView({behavior:'smooth',block:'center'})};$('staffTab').onclick=function(){
   if(activeArea!=='staff')yasminFace='neutral';
@@ -1461,7 +1451,7 @@ function renderWelfare(){
   }
   panel.hidden=!words.length;
   panel.dataset.level=urgent?'danger':cat.away||water||food||mood?'warn':'news';
-  var heading=cat.away?(en?name+' is at the shelter':name+' عند الجمعية'):urgent?(en?'🚨 Emergency · ':'🚨 طوارئ ')+name:(water||food||mood)?(en?'Care alert · ':'تجمال عناية · ')+name:(en?'Cat care news':'أخبار العناية');
+  var heading=cat.away?(en?name+' is at the shelter':name+' عند الجمعية'):urgent?(en?'🚨 Emergency · ':'🚨 طوارئ ')+name:(water||food||mood)?(en?'Care alert · ':'تنبيه عناية · ')+name:(en?'Cat care news':'أخبار العناية');
   if($('welfareTitle').textContent!==heading)$('welfareTitle').textContent=heading;
   if(!cat.away&&(water||food||mood||buy))words[0]=(en?'Yasmin: ':'ياسمين: ')+words[0];
   var text=words.join(' ');
@@ -2933,7 +2923,7 @@ setInterval(function(){
 
 /* Mimi boutique and occasional naps */
 if(!state.catItems)state.catItems={};
-var catBoutiqueCatalog=[{id:'bed',ar:'🛏️ تخت {cat}',en:'🛏️ {cat} bed',cost:25},{id:'glasses',ar:'🕶️ نظارات شمسية',en:'🕶️ Sunglasses',cost:15},{id:'hat',ar:'👒 طاقية',en:'👒 Hat',cost:15}];
+var catBoutiqueCatalog=[{id:'feather',ar:'🪶 لعبة ريشة',en:'🪶 Feather toy',cost:20},{id:'bed',ar:'🛏️ تخت {cat}',en:'🛏️ {cat} bed',cost:25},{id:'glasses',ar:'🕶️ نظارات شمسية',en:'🕶️ Sunglasses',cost:15},{id:'hat',ar:'👒 طاقية',en:'👒 Hat',cost:15}];
 var shopOpen=false;var shopButton=document.createElement('button');shopButton.id='catBoutiqueTitle';shopButton.type='button';shopButton.setAttribute('aria-expanded','false');$('catShopMount').appendChild(shopButton);
 var sheetOverlay=document.createElement('div');sheetOverlay.id='catSheetOverlay';sheetOverlay.hidden=true;sheetOverlay.innerHTML='<div id="catSheet" role="dialog" aria-modal="true" aria-labelledby="catSheetHeading"><div class="sheet-grip"></div><div class="sheet-head"><b id="catSheetHeading"></b><button type="button" id="catSheetClose" aria-label="Close">✕</button></div><p id="catSheetBalance"></p></div>';document.body.appendChild(sheetOverlay);$('catSheet').appendChild($('catBoutique'));function setShopOpen(open){shopOpen=open;sheetOverlay.hidden=!open;$('catBoutiqueItems').hidden=!open;$('catBoutiqueItems').style.display=open?'grid':'none';$('catBoutiqueTitle').setAttribute('aria-expanded',String(open));document.body.classList.toggle('cat-shop-open',open);if(open){$('catSheetClose').focus();renderBoutique()}}$('catBoutiqueTitle').onclick=function(){setShopOpen(!shopOpen)};$('catSheetClose').onclick=function(){setShopOpen(false);$('catBoutiqueTitle').focus()};sheetOverlay.addEventListener('click',function(e){if(e.target===sheetOverlay)setShopOpen(false)});document.addEventListener('keydown',function(e){if(e.key==='Escape'&&shopOpen)setShopOpen(false)});
 var boutiqueStyle=document.createElement('style');boutiqueStyle.textContent='.cat-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.cat-heading{margin-bottom:16px!important}.cat-heading h2{margin:0!important}.cat-heading button{width:auto!important;flex-shrink:0;padding:10px 13px;font-size:clamp(13px,3vw,18px)}#catBoutique{padding:0!important;margin:0!important;border:0!important;background:transparent!important;box-shadow:none!important}#catBoutiqueItems:not([hidden]){margin:12px 0;padding:12px;border:1px solid #8295a4;border-radius:18px}#catScene{position:relative}#catAccessories{position:absolute;inset:0;pointer-events:none;z-index:4}#catAccessories svg{width:100%;height:100%}#catBed{position:absolute;inset:0;pointer-events:none;z-index:2;opacity:.95}#catScene:not(.is-napping) #catBed{transform:none;opacity:1}#catScene:not(.is-napping) .mimi-sleeping-cat{display:none}#catScene.is-napping #catBed{z-index:3}#catBed svg{width:100%;height:100%}#catSleep{position:absolute;left:58%;top:16%;font-size:28px;pointer-events:none;z-index:5;animation:cat-snooze 2s ease-in-out infinite alternate}@keyframes cat-snooze{to{transform:translateY(-12px);opacity:.3}}#catScene.is-napping>svg{visibility:hidden}#catScene.is-napping #catBed{z-index:3}#catScene.is-napping #catAccessories{display:none}#catBoutiqueItems[hidden]{display:none!important} #catBed .mimi-sleeping-cat{transform-box:fill-box;transform-origin:center 65%;animation:mimi-breathe 3.8s ease-in-out infinite alternate}@keyframes mimi-breathe{from{transform:scale(1)}to{transform:scale(1.03)}}@media(prefers-reduced-motion:reduce){#catBed .mimi-sleeping-cat,#catSleep{animation:none!important}}';document.head.appendChild(boutiqueStyle);
@@ -2944,19 +2934,20 @@ function renderBoutique(){
  var ar=state.lang==='ar';$('catSheetHeading').textContent=ar?'متجر '+displayName("catName"):displayName("catName")+' shop';$('catSheetBalance').textContent=(ar?'رصيدك: ':'Balance: ')+state.money+' 💰';$('catBoutiqueTitle').textContent=(ar?'🛍️ متجر '+displayName("catName"):'🛍️ '+displayName("catName")+' shop')+(shopOpen?' ▴':' ▾');
  var root=$('catBoutiqueItems');root.replaceChildren();
  catBoutiqueCatalog.concat([{id:'treat',ar:'🍬 3 حبات مكافأة',en:'🍬 3 reward treats',cost:10}]).forEach(function(item){
-  var owned=item.id!=='treat'&&!!state.catItems[item.id],b=document.createElement('button');
-  b.textContent=(ar?item.ar:item.en).replace('{cat}',displayName("catName"))+(owned?(item.id==='bed'?(ar?' ✓ موجود':' ✓ Owned'):((!state.catEquipped||state.catEquipped[item.id]!==false)?(ar?' ✓ لابستها — اضغط لتشيلها':' ✓ Wearing — tap to remove'):(ar?' — اضغط لتلبسها':' — Tap to wear'))):' · 💰 '+item.cost);
+  var wearable=item.id==='hat'||item.id==='glasses';
+  var owned=item.id==='feather'?state.cat.toy:item.id!=='treat'&&!!state.catItems[item.id],b=document.createElement('button');
+  b.textContent=(ar?item.ar:item.en).replace('{cat}',displayName("catName"))+(owned?(!wearable?(ar?' ✓ موجود':' ✓ Owned'):((!state.catEquipped||state.catEquipped[item.id]!==false)?(ar?' ✓ لابستها — اضغط لتشيلها':' ✓ Wearing — tap to remove'):(ar?' — اضغط لتلبسها':' — Tap to wear'))):' · 💰 '+item.cost);
   b.dataset.item=item.id;
   if(item.id==='treat')b.textContent+=(ar?' · عندك ':' · Stock: ')+state.catTreats;
   if(catPurchase&&catPurchase.until>Date.now()&&catPurchase.id===item.id)b.textContent=ar?'✓ تم الشراء':'✓ Purchased';
-  b.disabled=false;
-  b.onclick=function(){if(owned){if(item.id!=='bed'){state.catEquipped=state.catEquipped||{};state.catEquipped[item.id]=state.catEquipped[item.id]===false;save();render()}return}buyCatItem(item)};
+  b.disabled=owned&&!wearable;
+  b.onclick=function(){if(owned){if(wearable){state.catEquipped=state.catEquipped||{};state.catEquipped[item.id]=state.catEquipped[item.id]===false;save();render()}return}buyCatItem(item)};
   root.appendChild(b);
  });
 
  var napping=!!state.cat.sleeping;
  var scene=$('catScene');
- var ownsBed=String(!!state.catItems.bed||napping);
+ var ownsBed=String(!!state.catItems.bed);
  if(scene.dataset.bed!==ownsBed)scene.dataset.bed=ownsBed;
  var equipped=state.catEquipped||{};
  var outfit=['hat','glasses'].filter(function(id){return state.catItems[id]&&equipped[id]!==false}).join(' ');
@@ -3037,9 +3028,10 @@ renderCatExtras=function(){
  $('catMouseHunt').disabled=hunt.status==='running'||mouseCooldown>0;
  $('catMouseHunt').style.opacity=$('catMouseHunt').disabled?'0.55':'';
  $('catMouseHunt').style.filter=$('catMouseHunt').disabled?'grayscale(1)':'';
- const report=hunt.status==='escaped'?(ar?'الفارة هربت هالمرة!':'The mouse escaped this time!'):hunt.status==='running'?'':(hunt.status==='done'||hunt.status==='rewarded')?(ar?'🐱 '+displayName("catName")+' كمشت الفأرة وطردتها من المشتل!':'🐱 '+displayName("catName")+' caught the mouse and chased it away!'):'';
+ const report=hunt.status==='escaped'?(ar?'فتشت بين الأصص ولحقت الفارة، بس هربت مني هالمرة.':'I searched between the pots and spotted the mouse, but it got away this time.'):hunt.status==='running'?'':(hunt.status==='done'||hunt.status==='rewarded')?(ar?'لمحت الفارة بين الأصص. لحقتها لحد باب المشتل وطردتها لبرا!':'I spotted a mouse between the pots. I chased it all the way out of the nursery!'):'';
  $('mouseReportTitle').textContent=ar?'تقرير دورية المشتل':'Nursery patrol report';
- $('mouseChaseResult').querySelector('.patrol-mark').textContent=hunt.status==='escaped'?'🐭':'🐾';
+ $('mouseReportGreeting').textContent=ar?'لصاحب المشتل،':'Dear nursery keeper,';
+ $('mouseReportSignature').textContent=(ar?'بصمة ':'Signed, ')+displayName('catName')+' 🐾';
  const reportText=report+(hunt.coins?(ar?' · عملات: ':' · Coins: ')+hunt.coins:'');
  $('mouseChaseResult').hidden=!reportText||!!hunt.dismissed||state.cat.away;
  $('closeMouseResult').setAttribute('aria-label',ar?'إغلاق نتيجة الصيد':'Dismiss hunt result');
@@ -3076,7 +3068,7 @@ function renderCatEnergy(){
    $('cat'+label).style.color=value<20?'#dc4c47':'';
  }
  $('catScene').dataset.tired=String(c.energy<20&&!c.sleeping);
- $('catRestStatus').textContent=c.sleeping?(ar?'💤 عم ترتاح — الطاقة ':'💤 Resting — energy ')+Math.floor(c.energy)+'%':catFeedbackUntil>Date.now()?catFeedback:c.energy<20?(ar?'🥱 نعسانة وبدها ترتاح':'🥱 Sleepy — needs rest'):'';
+ $('catRestStatus').textContent=c.sleeping?(state.catItems?.bed?(ar?'💤 نايمة بتختها · الطاقة ':'💤 Asleep in bed · Energy '):(ar?'💤 نايمة عالأرض · الطاقة ':'💤 Asleep on the floor · Energy '))+Math.floor(c.energy)+'%':catFeedbackUntil>Date.now()?catFeedback:c.energy<20?(ar?'🥱 نعسانة وبدها ترتاح':'🥱 Sleepy — needs rest'):'';
  ['Feed','Water','Play','Brush','Spy','MouseHunt'].forEach(function(id){var b=$('cat'+id);if(b&&(c.sleeping||busy))b.disabled=true;});
  if(c.energy<8)$('catPlay').disabled=true;
  $('catGiveTreat').textContent=state.catTreats>0?(ar?'🍬 أعطيها مكافأة · عندك ':'🍬 Give a treat · Stock: ')+state.catTreats:(ar?'🍬 خلصت المكافآت — افتح المتجر':'🍬 No treats — open shop');
@@ -3128,10 +3120,11 @@ window.YasmineCatActions={
  nap:function(){if(state.cat.away||state.cat.sleeping||Date.now()<catBusyUntil||state.cat.energy>=100)return false;state.cat.sleeping=true;state.cat.sleepUpdated=Date.now();save();render();return true;}
 };
 function buyCatItem(item){
+ if((item.id==='feather'&&(state.cat.away||state.cat.toy))||(item.id!=='treat'&&state.catItems[item.id]))return;
  var ar=state.lang==='ar',before=state.catTreats;
  var notice=$('catPurchaseNotice');if(!notice){notice=document.createElement('p');notice.id='catPurchaseNotice';notice.setAttribute('role','status');notice.style.cssText='padding:12px;border-radius:12px;background:#e4efd5;color:#24452e;font-weight:bold';$('catSheetBalance').after(notice);}
  if(state.money<item.cost){notice.textContent=ar?'ما معك عملات كفاية':'Not enough coins';return;}
- financeMove(-item.cost,'catshop',{itemId:item.id});if(item.id==='treat')state.catTreats+=3;else state.catItems[item.id]=true;
+ financeMove(-item.cost,'catshop',{itemId:item.id});if(item.id==='treat')state.catTreats+=3;else if(item.id==='feather'){state.cat.toy=true;catMessage='bought'}else state.catItems[item.id]=true;
  catPurchase={id:item.id,until:Date.now()+2200};
  notice.textContent=(ar?'✓ اشتريت ':'✓ Purchased ')+(ar?item.ar:item.en).replace('{cat}',displayName("catName"))+(item.id==='treat'?(ar?' · المخزون: ':' · Stock: ')+before+' → '+state.catTreats:'')+' · −'+item.cost+' 🪙';
  notice.animate([{opacity:.35,transform:'scale(.97)'},{opacity:1,transform:'scale(1)'}],{duration:350});
