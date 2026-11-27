@@ -14,11 +14,20 @@ button.crowned:disabled{background:#fbf2d7;color:#755213;border:1px solid #e4cd8
 @media(max-width:350px){#clock{gap:.2em;padding-inline:.35em;font-size:15px}main{padding-inline:12px}}
 .views{display:flex;gap:5px;margin:12px 0;padding:5px;background:#dce7df;border:1px solid #c5d7cb;border-radius:15px}.views button{flex:1;min-height:44px;font-weight:700;background:transparent;color:#365c50;box-shadow:none}.views button[aria-pressed=true]{background:#226d59;color:white;box-shadow:0 2px 0 #154b3e}
 #serviceCity{grid-template-columns:repeat(3,1fr)}#serviceSummary{line-height:1.55}.service-cost{color:#795333}#serviceCards small{line-height:1.4}
+body{background:linear-gradient(155deg,color-mix(in srgb,var(--sky,#c9e2eb) 38%,var(--tint,#eef4ee)),var(--tint,#eef4ee) 68%) fixed}
+.city{background:linear-gradient(to bottom,var(--sky,#b5deee),var(--horizon,#e6f3e9) 68%,var(--ground,#c2d9bb) 100%)}
+.balance{background:linear-gradient(120deg,#153e36,color-mix(in srgb,var(--sky,#b5deee) 18%,#173f36))}
+.views,#clock{background:color-mix(in srgb,var(--tint,#e2ece5) 75%,white)}
+article,.coverage-list{background:color-mix(in srgb,var(--tint,#edf4ec) 24%,white)}
+.balance-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.population{border:1px solid #ffffff50;border-radius:30px;padding:5px 10px;font-size:.95rem;color:#fff;background:#ffffff12}.population bdi{font-weight:bold;font-variant-numeric:tabular-nums}
+.coverage-list{border-radius:16px;padding:14px;margin:12px 0;display:grid;gap:12px}
+.metric{display:grid;grid-template-columns:1fr auto;align-items:center;gap:5px;font-weight:600}.metric bdi{font-variant-numeric:tabular-nums}.metric progress{width:100%;height:9px;grid-column:1/-1;accent-color:var(--meter)}.health{--meter:#23745d}.fire{--meter:#ba5e2d}.security{--meter:#426ab0}
 </style><main><header><h1 id="title">عقاراتي</h1><button id="settings" aria-haspopup="dialog">⚙ الإعدادات</button></header>
 <time id="clock"><span class="date-part"><span aria-hidden="true">📅</span> <span id="weekday"></span><span id="shortDay"></span> <bdi id="numericDate" dir="ltr"></bdi></span><span class="time-part"><span aria-hidden="true">🕒</span> <bdi id="numericTime" dir="ltr"></bdi> <span id="sunMoon" aria-hidden="true"></span></span></time>
-<dialog id="panel" aria-labelledby="panelTitle"><h2 id="panelTitle"></h2><label id="languageLabel" for="lang"></label><select id="lang"><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select><form method="dialog"><button id="done"></button></form></dialog><section class="balance"><span id="cashLabel"></span><div class="money-row"><strong id="money"></strong><span id="gain" class="gain" dir="ltr" aria-hidden="true"></span></div><span id="income"></span></section><nav class="views" aria-label="أقسام الحي"><button id="propertiesButton" aria-controls="propertiesView" aria-pressed="true">العقارات</button><button id="servicesButton" aria-controls="servicesView" aria-pressed="false">الخدمات</button></nav>
+<dialog id="panel" aria-labelledby="panelTitle"><h2 id="panelTitle"></h2><label id="languageLabel" for="lang"></label><select id="lang"><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select><form method="dialog"><button id="done"></button></form></dialog><section class="balance"><div class="balance-heading"><span id="cashLabel"></span><span class="population"><span aria-hidden="true">👥</span> <span id="populationLabel"></span> <bdi id="populationNumber"></bdi></span></div><div class="money-row"><strong id="money"></strong><span id="gain" class="gain" dir="ltr" aria-hidden="true"></span></div><span id="income"></span></section><nav class="views" aria-label="أقسام الحي"><button id="propertiesButton" aria-controls="propertiesView" aria-pressed="true">العقارات</button><button id="servicesButton" aria-controls="servicesView" aria-pressed="false">الخدمات</button></nav>
 <section id="propertiesView" aria-labelledby="propertiesButton"><div class="city" id="city"></div><p id="offline"></p><div id="cards"></div></section>
-<section id="servicesView" aria-labelledby="servicesButton" hidden><div class="city" id="serviceCity"></div><p id="serviceSummary"></p><div id="serviceCards"></div></section><footer><button id="reset"></button><small>V1.4</small></footer></main><script>
+<section id="servicesView" aria-labelledby="servicesButton" hidden><div class="city" id="serviceCity"></div><div class="coverage-list"><div class="metric health"><label for="healthMeter"><span aria-hidden="true">🏥</span> <span id="healthLabel"></span></label><bdi id="healthPercent" dir="ltr"></bdi><progress id="healthMeter" max="100"></progress></div><div class="metric fire"><label for="fireMeter"><span aria-hidden="true">🔥</span> <span id="fireLabel"></span></label><bdi id="firePercent" dir="ltr"></bdi><progress id="fireMeter" max="100"></progress></div><div class="metric security"><label for="securityMeter"><span aria-hidden="true">🛡️</span> <span id="securityLabel"></span></label><bdi id="securityPercent" dir="ltr"></bdi><progress id="securityMeter" max="100"></progress></div></div><p id="serviceSummary"></p><div id="serviceCards"></div></section><footer><button id="reset"></button><small>V1.5</small></footer></main><script>
 const P=[['house','بيت إيجار','Rental house',0,1,5,60],['flat','عمارة سكنية','Apartments',500,5,3,750],['shop','محل تجاري','Shop',2000,15,3,3000],['hotel','فندق','Hotel',10000,60,3,15000]], key='ak-real-estate-v1';const fresh=()=>({money:0,serviceLevels:[0,0,0],levels:[1,0,0,0],time:Date.now(),clockStart:Date.now(),lang:'ar'});let s=fresh();try{let v=JSON.parse(localStorage.getItem(key));if(v&&Number.isFinite(v.money)&&v.money>=0&&Array.isArray(v.levels)&&v.levels.length===4&&v.levels.every((x,i)=>Number.isInteger(x)&&x>=0&&x<=P[i][5])&&v.levels[0]>=1&&Number.isFinite(v.time))s=v}catch(e){}if (!Number.isFinite(s.clockStart)) s.clockStart = Date.now();
 const $=id=>document.getElementById(id),ar=()=>s.lang!=='en',t=(a,b)=>ar()?a:b,fmt=n=>Math.floor(n).toLocaleString('en-US')+' $',income=()=>P.reduce((a,p,i)=>a+p[4]*s.levels[i],0),cost=i=>s.levels[i]===0?P[i][3]:Math.round(P[i][6]*1.8**(s.levels[i]-1));const services = [
   {id:'police', names:['مخفر الشرطة','Police station'], prices:[2500,7500,18000], fees:[250,650,1400], capacity:[60,150,300]},
@@ -47,6 +56,30 @@ function save(){try{localStorage.setItem(key,JSON.stringify(s))}catch(e){}}const
   ar: new Intl.DateTimeFormat('ar-SY', {weekday:'long', timeZone:'UTC'}),
   en: new Intl.DateTimeFormat('en-CA', {weekday:'long', timeZone:'UTC'})
 };
+// Local game hours, followed by sky, horizon, ground and interface tint.
+const lightStops = [
+  [0,'#182641','#464364','#364b53','#cbd4e0'],
+  [4,'#202e4d','#4b476a','#405459','#cfd8e4'],
+  [5.5,'#66658c','#e2a295','#849788','#e0dce8'],
+  [7,'#a5c8db','#f7dbac','#b8ceac','#f1eadc'],
+  [11,'#b5deee','#e6f3e9','#c2d9bb','#edf4ec'],
+  [15,'#acd5e8','#f5efda','#bcd3a8','#eaf0e6'],
+  [17.5,'#d9ab99','#ffcd98','#b9ba90','#f4e7d9'],
+  [19,'#937a99','#e59d91','#8d9584','#e9dde4'],
+  [20.5,'#414b72','#88738a','#546a69','#d8dce7'],
+  [22,'#223250','#504e70','#3d515a','#cfd7e2'],
+  [24,'#182641','#464364','#364b53','#cbd4e0']
+];
+function updateLighting(hour) {
+  const end = lightStops.findIndex(stop => stop[0] > hour);
+  const a = lightStops[end-1], b = lightStops[end];
+  const fraction = (hour-a[0])/(b[0]-a[0]);
+  ['--sky','--horizon','--ground','--tint'].forEach((key,i) => {
+    const start = parseInt(a[i+1].slice(1),16), finish = parseInt(b[i+1].slice(1),16);
+    const rgb = [16,8,0].map(shift => Math.round(((start>>shift)&255)*(1-fraction) + ((finish>>shift)&255)*fraction));
+    document.documentElement.style.setProperty(key,'rgb('+rgb.join(',')+')');
+  });
+}
 function updateClock() {
   const locale = ar() ? 'ar' : 'en';
   const minutes = Math.max(0, Math.floor((Date.now() - s.clockStart) / 1000));
@@ -56,6 +89,7 @@ function updateClock() {
   if (clock.dateTime === stamp && clock.lang === locale) return;
   clock.dateTime = stamp;
   clock.lang = locale;
+  updateLighting(instant.getUTCHours() + instant.getUTCMinutes()/60);
   $('weekday').textContent = weekdays[locale].format(instant);
   $('shortDay').textContent = weekdays.en.format(instant).slice(0,3);
   $('numericDate').textContent = [instant.getUTCDate(), instant.getUTCMonth() + 1, instant.getUTCFullYear()].join('/');
@@ -77,7 +111,7 @@ function renderServices() {
   const cards = $('serviceCards');
   city.replaceChildren();
   cards.replaceChildren();
-  $('serviceSummary').textContent = t('السكان: ', 'Residents: ') + residents() + ' · ' +
+  $('serviceSummary').textContent = 
     t('التشغيل اليومي: ', 'Daily upkeep: ') + fmt(dailyFee()) + t(' عند 8:00 A.M.', ' at 8:00 A.M.');
   services.forEach((service, i) => {
     const level = s.serviceLevels[i];
@@ -129,6 +163,19 @@ function render(){
   $('propertiesButton').textContent = t('العقارات', 'Properties');
   $('servicesButton').textContent = t('الخدمات', 'Services');
   document.querySelector('.views').setAttribute('aria-label', t('أقسام الحي', 'Neighborhood sections'));
+  $('populationLabel').textContent = t('السكان','Residents');
+  $('populationNumber').textContent = residents().toLocaleString('en-US');
+  for (const [id,index,arabic,english] of [
+    ['health',2,'مؤشر الصحة','Health coverage'],
+    ['fire',1,'السيطرة على النيران','Fire control'],
+    ['security',0,'الأمن','Public safety']
+  ]) {
+    const capacity = services[index].capacity[s.serviceLevels[index]-1] || 0;
+    const percent = Math.min(100, Math.round(capacity / residents() * 100));
+    $(id+'Label').textContent = t(arabic,english);
+    $(id+'Percent').textContent = percent + '%';
+    $(id+'Meter').value = percent;
+  }
   renderServices();
   document.documentElement.lang=ar()?'ar':'en';document.documentElement.dir=ar()?'rtl':'ltr';$('title').textContent=t('عقاراتي','My Properties');$('settings').textContent='⚙ '+t('الإعدادات','Settings');
 $('panelTitle').textContent=t('الإعدادات','Settings');
