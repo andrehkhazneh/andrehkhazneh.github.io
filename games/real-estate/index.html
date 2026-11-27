@@ -13,14 +13,37 @@ button.crowned:disabled{background:#fbf2d7;color:#755213;border:1px solid #e4cd8
 @media(max-width:410px){html[lang=en] #weekday{display:none}html[lang=en] #shortDay{display:inline}}
 @media(max-width:350px){#clock{gap:.2em;padding-inline:.35em;font-size:15px}main{padding-inline:12px}}
 .views{display:flex;gap:5px;margin:12px 0;padding:5px;background:#dce7df;border:1px solid #c5d7cb;border-radius:15px}.views button{flex:1;min-height:44px;font-weight:700;background:transparent;color:#365c50;box-shadow:none}.views button[aria-pressed=true]{background:#226d59;color:white;box-shadow:0 2px 0 #154b3e}
-#servicesView figure{margin:12px 0;padding:16px;background:#fff;border-radius:16px;box-shadow:0 3px #d2ded6}#servicesView figcaption{font-size:1.1rem;font-weight:700}#servicesView img{display:block;width:100%;margin:10px 0 6px}.stages{display:grid;grid-template-columns:24fr 33fr 43fr;text-align:center;color:#486353;font-size:.86rem}
+#serviceCity{grid-template-columns:repeat(3,1fr)}#serviceSummary{line-height:1.55}.service-cost{color:#795333}#serviceCards small{line-height:1.4}
 </style><main><header><h1 id="title">عقاراتي</h1><button id="settings" aria-haspopup="dialog">⚙ الإعدادات</button></header>
 <time id="clock"><span class="date-part"><span aria-hidden="true">📅</span> <span id="weekday"></span><span id="shortDay"></span> <bdi id="numericDate" dir="ltr"></bdi></span><span class="time-part"><span aria-hidden="true">🕒</span> <bdi id="numericTime" dir="ltr"></bdi> <span id="sunMoon" aria-hidden="true"></span></span></time>
 <dialog id="panel" aria-labelledby="panelTitle"><h2 id="panelTitle"></h2><label id="languageLabel" for="lang"></label><select id="lang"><option value="ar" lang="ar">العربية</option><option value="en" lang="en">English</option></select><form method="dialog"><button id="done"></button></form></dialog><section class="balance"><span id="cashLabel"></span><div class="money-row"><strong id="money"></strong><span id="gain" class="gain" dir="ltr" aria-hidden="true"></span></div><span id="income"></span></section><nav class="views" aria-label="أقسام الحي"><button id="propertiesButton" aria-controls="propertiesView" aria-pressed="true">العقارات</button><button id="servicesButton" aria-controls="servicesView" aria-pressed="false">الخدمات</button></nav>
 <section id="propertiesView" aria-labelledby="propertiesButton"><div class="city" id="city"></div><p id="offline"></p><div id="cards"></div></section>
-<section id="servicesView" aria-labelledby="servicesButton" hidden><figure><figcaption id="policeTitle"></figcaption><img src="services/police.webp" alt="" loading="lazy"><div class="stages" dir="ltr"><span></span><span></span><span></span></div></figure><figure><figcaption id="fireTitle"></figcaption><img src="services/fire.webp" alt="" loading="lazy"><div class="stages" dir="ltr"><span></span><span></span><span></span></div></figure><figure><figcaption id="hospitalTitle"></figcaption><img src="services/hospital.webp" alt="" loading="lazy"><div class="stages" dir="ltr"><span></span><span></span><span></span></div></figure></section><footer><button id="reset"></button><small>V1.3</small></footer></main><script>
-const P=[['house','بيت إيجار','Rental house',0,1,5,60],['flat','عمارة سكنية','Apartments',500,5,3,750],['shop','محل تجاري','Shop',2000,15,3,3000],['hotel','فندق','Hotel',10000,60,3,15000]], key='ak-real-estate-v1';const fresh=()=>({money:0,levels:[1,0,0,0],time:Date.now(),clockStart:Date.now(),lang:'ar'});let s=fresh();try{let v=JSON.parse(localStorage.getItem(key));if(v&&Number.isFinite(v.money)&&v.money>=0&&Array.isArray(v.levels)&&v.levels.length===4&&v.levels.every((x,i)=>Number.isInteger(x)&&x>=0&&x<=P[i][5])&&v.levels[0]>=1&&Number.isFinite(v.time))s=v}catch(e){}if (!Number.isFinite(s.clockStart)) s.clockStart = Date.now();
-const $=id=>document.getElementById(id),ar=()=>s.lang!=='en',t=(a,b)=>ar()?a:b,fmt=n=>Math.floor(n).toLocaleString('en-US')+' $',income=()=>P.reduce((a,p,i)=>a+p[4]*s.levels[i],0),cost=i=>s.levels[i]===0?P[i][3]:Math.round(P[i][6]*1.8**(s.levels[i]-1));let offline=Math.max(0,Math.min(28800,(Date.now()-s.time)/1000))*income();s.money+=offline;s.time=Date.now();function save(){try{localStorage.setItem(key,JSON.stringify(s))}catch(e){}}function tick(){let now=Date.now();s.money+=Math.max(0,Math.min(28800,(now-s.time)/1000))*income();s.time=now}const weekdays = {
+<section id="servicesView" aria-labelledby="servicesButton" hidden><div class="city" id="serviceCity"></div><p id="serviceSummary"></p><div id="serviceCards"></div></section><footer><button id="reset"></button><small>V1.4</small></footer></main><script>
+const P=[['house','بيت إيجار','Rental house',0,1,5,60],['flat','عمارة سكنية','Apartments',500,5,3,750],['shop','محل تجاري','Shop',2000,15,3,3000],['hotel','فندق','Hotel',10000,60,3,15000]], key='ak-real-estate-v1';const fresh=()=>({money:0,serviceLevels:[0,0,0],levels:[1,0,0,0],time:Date.now(),clockStart:Date.now(),lang:'ar'});let s=fresh();try{let v=JSON.parse(localStorage.getItem(key));if(v&&Number.isFinite(v.money)&&v.money>=0&&Array.isArray(v.levels)&&v.levels.length===4&&v.levels.every((x,i)=>Number.isInteger(x)&&x>=0&&x<=P[i][5])&&v.levels[0]>=1&&Number.isFinite(v.time))s=v}catch(e){}if (!Number.isFinite(s.clockStart)) s.clockStart = Date.now();
+const $=id=>document.getElementById(id),ar=()=>s.lang!=='en',t=(a,b)=>ar()?a:b,fmt=n=>Math.floor(n).toLocaleString('en-US')+' $',income=()=>P.reduce((a,p,i)=>a+p[4]*s.levels[i],0),cost=i=>s.levels[i]===0?P[i][3]:Math.round(P[i][6]*1.8**(s.levels[i]-1));const services = [
+  {id:'police', names:['مخفر الشرطة','Police station'], prices:[2500,7500,18000], fees:[250,650,1400], capacity:[60,150,300]},
+  {id:'fire', names:['مركز الإطفاء','Fire station'], prices:[3000,8000,20000], fees:[500,1200,2200], capacity:[100,250,400]},
+  {id:'hospital', names:['المستشفى','Hospital'], prices:[5000,12000,30000], fees:[600,1500,3000], capacity:[80,180,350]}
+];
+if (!Array.isArray(s.serviceLevels) || s.serviceLevels.length !== 3 ||
+    !s.serviceLevels.every(n => Number.isInteger(n) && n >= 0 && n <= 3)) s.serviceLevels = [0,0,0];
+const dailyFee = () => services.reduce((total, service, i) => total + (service.fees[s.serviceLevels[i]-1] || 0), 0);
+const residents = () => 8 * s.levels[0] + 80 * s.levels[1];
+const dayLength = 24 * 60 * 1000;
+function tick() {
+  const end = Math.max(s.time, Date.now());
+  const start = Math.max(s.time, end - 8 * 3600000);
+  const day = time => Math.floor((time - s.clockStart) / dayLength);
+  const bills = Math.max(0, day(end) - Math.max(0, day(start)));
+  const rent = (end - start) / 1000 * income();
+  const fees = bills * dailyFee();
+  const before = s.money;
+  s.money = Math.max(0, before + rent - fees);
+  s.time = end;
+  return s.money - before;
+}
+let offline = tick();
+function save(){try{localStorage.setItem(key,JSON.stringify(s))}catch(e){}}const weekdays = {
   ar: new Intl.DateTimeFormat('ar-SY', {weekday:'long', timeZone:'UTC'}),
   en: new Intl.DateTimeFormat('en-CA', {weekday:'long', timeZone:'UTC'})
 };
@@ -49,19 +72,65 @@ function selectView(services) {
 }
 $('propertiesButton').onclick = () => selectView(false);
 $('servicesButton').onclick = () => selectView(true);
+function renderServices() {
+  const city = $('serviceCity');
+  const cards = $('serviceCards');
+  city.replaceChildren();
+  cards.replaceChildren();
+  $('serviceSummary').textContent = t('السكان: ', 'Residents: ') + residents() + ' · ' +
+    t('التشغيل اليومي: ', 'Daily upkeep: ') + fmt(dailyFee()) + t(' عند 8:00 A.M.', ' at 8:00 A.M.');
+  services.forEach((service, i) => {
+    const level = s.serviceLevels[i];
+    const name = service.names[ar() ? 0 : 1];
+    const image = new Image();
+    image.src = 'services/' + service.id + '-' + Math.max(1,level) + '.webp';
+    image.alt = name;
+    const skyline = image.cloneNode();
+    if (!level) skyline.className = 'locked';
+    city.append(skyline);
+    const card = document.createElement('article');
+    const info = document.createElement('div');
+    const badge = document.createElement('span');
+    badge.className = 'level';
+    badge.textContent = level ? t('المستوى ', 'Level ') + level : t('غير مبني', 'Unbuilt');
+    const title = document.createElement('b');
+    title.textContent = name;
+    const details = document.createElement('small');
+    const capacity = level ? service.capacity[level-1] : 0;
+    details.textContent = t('التغطية: ', 'Coverage: ') + Math.min(residents(), capacity) + ' / ' + residents();
+    const costLine = document.createElement('small');
+    costLine.className = 'service-cost';
+    costLine.textContent = t('التشغيل اليومي: ', 'Daily upkeep: ') + fmt(service.fees[level-1] || 0);
+    info.append(badge,title,details,costLine);
+    if (level < 3) {
+      const next = document.createElement('small');
+      next.textContent = t('بعد ', 'After ') + (level ? t('التطوير: ', 'upgrade: ') : t('البناء: ', 'construction: ')) +
+        service.capacity[level] + t(' ساكن · ', ' residents · ') + fmt(service.fees[level]) + t(' / يوم',' / day');
+      info.append(next);
+    }
+    const button = document.createElement('button');
+    button.id = 'serviceBuy' + i;
+    button.textContent = level === 3 ? '👑 ' + t('أقصى مستوى','Max level') :
+      (level ? t('تطوير','Upgrade') : t('بناء','Build')) + ' · ' + fmt(service.prices[level]);
+    if (level === 3) button.className = 'crowned';
+    button.onclick = () => {
+      tick();
+      if (s.serviceLevels[i] !== level || level >= 3 || s.money < service.prices[level]) return;
+      s.money -= service.prices[level];
+      s.serviceLevels[i]++;
+      save();
+      render();
+    };
+    card.append(image,info,button);
+    cards.append(card);
+  });
+}
 function render(){
   $('propertiesButton').textContent = t('العقارات', 'Properties');
   $('servicesButton').textContent = t('الخدمات', 'Services');
   document.querySelector('.views').setAttribute('aria-label', t('أقسام الحي', 'Neighborhood sections'));
-  $('policeTitle').textContent = t('مخفر الشرطة', 'Police station');
-  $('fireTitle').textContent = t('مركز الإطفاء', 'Fire station');
-  $('hospitalTitle').textContent = t('المستشفى', 'Hospital');
-  document.querySelectorAll('.stages').forEach(row => {
-    Array.from(row.children).forEach((label, i) => {
-      label.textContent = t('المستوى ', 'Level ') + (i + 1);
-      label.dir = ar() ? 'rtl' : 'ltr';
-    });
-  });document.documentElement.lang=ar()?'ar':'en';document.documentElement.dir=ar()?'rtl':'ltr';$('title').textContent=t('عقاراتي','My Properties');$('settings').textContent='⚙ '+t('الإعدادات','Settings');
+  renderServices();
+  document.documentElement.lang=ar()?'ar':'en';document.documentElement.dir=ar()?'rtl':'ltr';$('title').textContent=t('عقاراتي','My Properties');$('settings').textContent='⚙ '+t('الإعدادات','Settings');
 $('panelTitle').textContent=t('الإعدادات','Settings');
 $('languageLabel').textContent=t('اللغة','Language');
 $('done').textContent=t('تم','Done');
@@ -78,7 +147,11 @@ $('lang').value=ar()?'ar':'en';$('cashLabel').textContent=t('الرصيد الم
 } else {
   sub.textContent = t('غير مملوك','Not owned');
 }
-info.append(title,sub);let btn=document.createElement('button');btn.id='buy'+i;if(l===p[5])btn.className='crowned';btn.onclick=()=>{tick();let c=cost(i);if(s.levels[i]<p[5]&&s.money>=c){s.money-=c;s.levels[i]++;save();render()}};card.append(pic,info,btn);$('cards').append(card)});refresh()}function refresh(){updateClock();$('money').textContent=fmt(s.money);$('income').textContent=t('الدخل: ','Income: ')+fmt(income())+t(' / ثانية',' / sec');P.forEach((p,i)=>{let b=$('buy'+i),l=s.levels[i];b.disabled=l>=p[5]||s.money<cost(i);b.textContent=l>=p[5]?'👑 '+t('أقصى مستوى','Max level'):t(l?'تطوير':'شراء',l?'Upgrade':'Buy')+' · '+fmt(cost(i))})}$('settings').onclick=()=>$('panel').showModal();
+info.append(title,sub);let btn=document.createElement('button');btn.id='buy'+i;if(l===p[5])btn.className='crowned';btn.onclick=()=>{tick();let c=cost(i);if(s.levels[i]<p[5]&&s.money>=c){s.money-=c;s.levels[i]++;save();render()}};card.append(pic,info,btn);$('cards').append(card)});refresh()}function refresh(){updateClock();
+services.forEach((service,i) => {
+  const level = s.serviceLevels[i];
+  $('serviceBuy'+i).disabled = level === 3 || s.money < service.prices[level];
+});$('money').textContent=fmt(s.money);$('income').textContent=t('الدخل: ','Income: ')+fmt(income())+t(' / ثانية',' / sec');P.forEach((p,i)=>{let b=$('buy'+i),l=s.levels[i];b.disabled=l>=p[5]||s.money<cost(i);b.textContent=l>=p[5]?'👑 '+t('أقصى مستوى','Max level'):t(l?'تطوير':'شراء',l?'Upgrade':'Buy')+' · '+fmt(cost(i))})}$('settings').onclick=()=>$('panel').showModal();
 $('lang').onchange=()=>{s.lang=$('lang').value;save();render()};$('reset').onclick=()=>{if(confirm(t('حذف كل التقدم؟','Delete all progress?'))){let lang=s.lang;s=fresh();s.lang=lang;offline=0;save();render()}};render();save();setInterval(()=>{tick();refresh()},250);setInterval(save,3000);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 setInterval(() => {
