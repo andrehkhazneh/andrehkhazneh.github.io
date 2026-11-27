@@ -2314,6 +2314,7 @@ function marketAlerts(){
    const o=lane?.order;if(!o)continue;
    if(o.stage==='waiting'&&Date.now()>=o.arrivesAt)o.stage='offer';
    if(o.stage==='offer'){countYasminOffer(o);n++}
+   if(o.stage==='packing'&&o.packed===2)n++;
    if(lane.receiptUnread)n++;
  }
  apiaryTick();return n+wardaData().ads.filter(ad=>ad?.stage==='offer').length;
@@ -2330,7 +2331,7 @@ function packOrders(){
  const book=state.staff.trade;if(!book)return;
  for(const [lane,tag] of [[book,true],[book.secondPlant,2]]){
  const o=lane?.order;
- if(o?.stage!=='packing')continue;
+ if(o?.stage!=='packing'||o.packed>=2)continue;
  for(const [index,p] of nurseryPots().entries()){
    if(p.forYasmin!==tag||!isReady(p)||p.kind!==o.kind)continue;
    recordCollections();
@@ -2338,15 +2339,48 @@ function packOrders(){
    delete p.seedPaid;delete p.forYasmin;
    p.active=false;p.progress=0;p.collectionRecorded=false;p.eventEarned=0;
    if(ev&&eventPot===index){clearTimeout(evTimeout);ev=null;$('event').hidden=true}
-   if(o.packed===2){
-     o.stage='paid';lane.receiptUnread=true;book.shipments++;book.bonusAvailable=true;
-     financeMove(o.price,'sales',{person:'yasmin',crop:o.kind,quantity:2,seedCost:o.cost});
-     for(let i=0;i<2;i++)countPlantSale();
-     sound('sell');
-     break;
-   }
+   if(o.packed>=2)break;
+ }
  }
 }
+function readyOrderPots(){
+ const o=plantLane().order;
+ if(o?.stage!=='packing')return [];
+ return nurseryPots().filter(p=>!p.forYasmin&&isReady(p)&&p.kind===o.kind).slice(0,Math.max(0,orderSlots()));
+}
+function deliverOrder(){
+ const lane=plantLane(),o=lane.order,book=tradeBook();
+ if(!state.staff.hired||o?.stage!=='packing')return;
+ const pots=readyOrderPots();
+ if(o.packed+pots.length!==2)return;
+ for(const p of pots)p.forYasmin=book.activePlant===2?2:true;
+ packOrders();
+ if(o.packed!==2)return;
+ o.stage='paid';lane.receiptUnread=true;book.shipments++;book.bonusAvailable=true;
+ financeMove(o.price,'sales',{person:'yasmin',crop:o.kind,quantity:2,seedCost:o.cost});
+ for(let i=0;i<2;i++)countPlantSale();
+ sound('sell');render();
+ const host=activeArea==='staff'?$('orderArt'):$('gardenReceipt');
+ const strip=document.createElement('div');
+ strip.className='yasmin-sale-scene';
+ strip.setAttribute('aria-hidden','true');
+ strip.style.cssText='display:flex;direction:ltr;align-items:center;justify-content:center;gap:8px;width:100%;padding:8px 0';
+ const yasmin=document.createElement('img');
+ yasmin.src='yasmine/images/yasmin-neutral.webp';
+ yasmin.alt='';yasmin.style.cssText='width:44px;height:52px;object-fit:cover;object-position:top;border-radius:12px';
+ const goods=document.createElement('div');
+ goods.style.cssText='display:flex;width:52px;height:44px';
+ for(let i=0;i<2;i++){
+   const item=document.createElement('div');
+   item.style.cssText='width:26px;background:center/contain no-repeat';
+   item.style.backgroundImage='url("yasmine/images/plants/'+o.kind+'.webp")';goods.append(item);
+ }
+ const buyer=document.createElement('div');buyer.textContent='🧑';buyer.style.fontSize='36px';
+ strip.append(yasmin,goods,buyer);
+ if(host.id==='orderArt')host.replaceChildren(strip);
+ else {host.querySelector('.yasmin-sale-scene')?.remove();host.prepend(strip)}
+ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+   goods.animate?.([{transform:'translateX(-18px)'},{transform:'translateX(18px)'}],{duration:850,fill:'forwards'});
 }
 function supplierDeal(){
  const b=tradeBook();
@@ -2375,6 +2409,8 @@ function matchingOrderPot(){
  return matches.sort((a,b)=>b.progress-a.progress)[0];
 }
 function handoffPlant(){
+ const o=plantLane().order;
+ if(o?.stage==='packing'&&o.packed+readyOrderPots().length===2){deliverOrder();return}
  const pot=matchingOrderPot();
  if(!pot)return;
  pot.forYasmin=tradeBook().activePlant===2?2:true;
@@ -2509,15 +2545,17 @@ function renderYasminDesk(){
 function renderTrade(){
  const panel=$('tradePanel'),plant=$('orderPlant');
  panel.hidden=$('supplierPanel').hidden=!state.staff.hired;plant.hidden=true;
- const match=matchingOrderPot();
+ const match=matchingOrderPot(),order=plantLane().order;
+ const ready=order?.stage==='packing'?order.packed+readyOrderPots().length:0;
  for(const button of [$('crateHandoff'),$('gardenHandoff')]){
-   button.hidden=!match;
-   if(match)button.textContent=(isReady(match)?finText('سلّم لياسمين','Give to Yasmin'):finText('احجز لياسمين','Reserve for Yasmin'))+' · '+crops[match.kind][state.lang]+' · '+finText('أصيص ','Pot ')+(nurseryPots().indexOf(match)+1);
+   button.hidden=!match&&ready!==2;
+   if(ready===2)button.textContent=(order.kind==='rose'?finText('سلّم الوردتين لياسمين','Give both roses to Yasmin'):finText('سلّم النبتتين لياسمين','Give both plants to Yasmin'))+' · '+crops[order.kind][state.lang];
+   else if(match)button.textContent=(isReady(match)?finText('سلّم لياسمين','Give to Yasmin'):finText('احجز لياسمين','Reserve for Yasmin'))+' · '+crops[match.kind][state.lang]+' · '+finText('أصيص ','Pot ')+(nurseryPots().indexOf(match)+1);
  }
  $('gardenReceipt').hidden=true;
  if(!state.staff.hired)return;
  const b=tradeBook(),lane=plantLane(),o=campaign(),t=finText,c=crops[o.kind],name=c[state.lang];
- const receiptText=name+' × 2 · '+t('قبضت ','Received ')+o.price+t(' عملة',' coins');
+ const receiptText=t('استلم الزبون ','Customer received ')+name+' × 2 · '+t('قبضت ','Received ')+o.price+t(' عملة',' coins');
  if(lane.receiptUnread&&o.stage==='paid'){
    const receipt=$('gardenReceipt');receipt.hidden=false;
    receipt.querySelector('strong').textContent=t('تم البيع لزبون ياسمين','Sold to Yasmin’s customer');
@@ -2540,7 +2578,7 @@ function renderTrade(){
  }
  const deal=supplierDeal(),edition=lane.edition%3;
  const format=[t('بروشور','Flyer'),t('بوست فيسبوك','Facebook post'),t('ستوري إنستا','Instagram story')][edition];
- const stamp=[state.lang,displayName('nurseryName'),laneNum,lane.edition,o.stage,o.packed,orderSlots(),b.shipments,b.nextDealSale,state.sales,b.due,b.receiptUnread,state.money>=deal.price,state.money>=20].join('|');
+ const stamp=[state.lang,displayName('nurseryName'),laneNum,lane.edition,o.stage,o.packed,ready,orderSlots(),b.shipments,b.nextDealSale,state.sales,b.due,b.receiptUnread,state.money>=deal.price,state.money>=20].join('|');
  if(panel.dataset.stamp===stamp)return;
  panel.dataset.stamp=stamp;
  const poster=$('tradePoster');
@@ -2553,6 +2591,12 @@ function renderTrade(){
  let heading,info='';
  const illustrated=['offer','packing','paid'].includes(o.stage);
  tradeArtwork('orderArt',o.kind,illustrated?2:0,false);
+ if(o.stage==='packing'){
+   Array.from($('orderArt').children).forEach((icon,index)=>{
+     icon.style.opacity=index<ready?'1':'.32';
+     if(index>=ready)icon.style.filter='grayscale(1)';
+   });
+ }
  $('orderName').textContent=illustrated?name+' × 2':'';
 
  let rows=[];
@@ -2570,11 +2614,12 @@ function renderTrade(){
    rows=[[t('سعر البيع المعتاد','Usual selling price'),coins(o.normal)],[t('عرض الزبون','Customer offer'),coins(o.price)],[t('الربح فوق البيع المعتاد','Gain over usual sale'),coins(o.price-o.normal)],[t('رأي ياسمين','Yasmin’s verdict'),rating]];
    action(t('اقبل الطلبية','Accept order'),()=>{o.stage='packing'});action(t('ارفض العرض','Decline offer'),next);
  }else if(o.stage==='packing'){
-   heading=t('صندوق الطلبية','Order crate')+' · '+o.packed+t(' من 2',' of 2');
+   heading=t('طلبية ياسمين · جاهز ','Yasmin’s order · ready ')+ready+t(' من 2',' of 2');
+   info=ready===2?t('النبتتين جاهزتين. سلّمهن لياسمين لتقبض ثمن الطلبية.','Both plants are ready. Give them to Yasmin to collect payment.'):t('جهّز نبتتين من هالنوع للزبون.','Prepare two of these plants for the customer.');
    rows=[[t('عند التسليم','On delivery'),coins(o.price)]];
-   action(t('روح للمشتل','Go to nursery'),()=>{activeArea='nursery';nurseryOpenPanel='seeds';requestAnimationFrame(()=>(matchingOrderPot()?$('gardenHandoff'):plant.hidden?$('scene'):plant).scrollIntoView({block:'center'}))});
+   if(ready<2)action(t('روح للمشتل','Go to nursery'),()=>{activeArea='nursery';nurseryOpenPanel='seeds';requestAnimationFrame(()=>(matchingOrderPot()?$('gardenHandoff'):plant.hidden?$('scene'):plant).scrollIntoView({block:'center'}))});
  }else{
-   heading=t('إيصال بيع · تم التسليم','Sale receipt · Delivered');
+   heading=t('ياسمين سلّمت الطلبية للزبون','Yasmin delivered the plants');
    rows=[[t('المبلغ المقبوض','Payment received'),coins(o.price)]];
    action(t('حضّري إعلان جديد','Prepare next ad'),next);
  }
