@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>مفكرتي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F4F1;--panel:#FFFFFF;--ink:#18222B;--muted:#6B7780;--line:#D9DFDB;
+  --accent:#2F6B5E;--accent-ink:#FFFFFF;--sel:#E3EEEA;--danger:#B3402F;--chip:#ECEFEA;--hit:#FFE08A;
+  color-scheme:light;box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#12181C;--panel:#1A2228;--ink:#E6ECEF;--muted:#8C9AA3;--line:#2B363D;
+    --accent:#6FC1AE;--accent-ink:#0E1A17;--sel:#22313A;--danger:#E27B6A;--chip:#25313A;--hit:#B58A1B;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12181C;--panel:#1A2228;--ink:#E6ECEF;--muted:#8C9AA3;--line:#2B363D;
+  --accent:#6FC1AE;--accent-ink:#0E1A17;--sel:#22313A;--danger:#E27B6A;--chip:#25313A;--hit:#B58A1B;
+  color-scheme:dark;
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{height:100%;margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Readex Pro","Segoe UI",Tahoma,"Noto Naskh Arabic",sans-serif;font-weight:300;line-height:1.7}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{display:grid;grid-template-columns:330px 1fr;height:100%}
+.side{background:var(--panel);border-inline-end:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.side-head{padding:16px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+.brand{font-weight:600;font-size:1.25rem;margin:0}
+.search{width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.new{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:10px 14px;font-weight:600}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filters:empty{display:none}
+.chip{background:var(--chip);border:1px solid transparent;border-radius:999px;padding:2px 12px;font-size:.85rem}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.list{overflow-y:auto;flex:1;margin:0;padding:6px;list-style:none}
+.item{display:block;width:100%;text-align:start;background:none;border:0;border-radius:8px;padding:10px 12px}
+.item[aria-current="true"]{background:var(--sel)}
+.item .t{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .p{display:block;color:var(--muted);font-size:.85rem;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.item .d{display:block;color:var(--muted);font-size:.75rem}
+mark{background:var(--hit);color:inherit;border-radius:3px;padding:0 1px}
+.empty{color:var(--muted);padding:20px 16px}
+.main{display:flex;flex-direction:column;min-height:0;min-width:0}
+.bar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);color:var(--muted);font-size:.85rem}
+.bar .sp{flex:1}
+.ghost{background:none;border:1px solid var(--line);border-radius:8px;padding:6px 12px}
+.ghost.danger{color:var(--danger);border-color:var(--danger)}
+.back{display:none}
+.title{border:0;background:none;font-size:1.6rem;font-weight:600;padding:16px 24px 2px;width:100%}
+.title:focus{outline:none}
+.labels{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:4px 24px 8px}
+.lab{background:var(--chip);border-radius:999px;padding:2px 6px 2px 12px;font-size:.85rem;display:inline-flex;gap:4px;align-items:center}
+.lab button{background:none;border:0;padding:0 4px;color:var(--muted);line-height:1}
+.labin{border:0;background:none;font-size:.85rem;min-width:110px;padding:4px 0}
+.labin:focus{outline:none}
+.tools{display:flex;flex-wrap:wrap;gap:8px;padding:8px 24px 10px;border-block:1px solid var(--line);align-items:center}
+.tb{width:44px;height:44px;border:0;border-radius:14px;background:var(--chip);font-size:1.2rem;font-weight:600;display:grid;place-items:center}
+.tb.on{background:var(--accent);color:var(--accent-ink)}
+.tb i{font-style:italic;font-family:Georgia,serif;font-size:1.35rem}
+.tb u{text-underline-offset:4px;text-decoration-thickness:2px}
+.sep{width:1px;height:28px;background:var(--line);margin:0 4px}
+.sw{width:30px;height:30px;border-radius:50%;border:2px solid var(--panel);box-shadow:0 0 0 1px var(--line)}
+.sw.rs{background:var(--chip);font-size:.8rem;display:grid;place-items:center;color:var(--muted)}
+.editor{flex:1;min-height:0;overflow-y:auto;padding:14px 24px 28px;font-size:17px;line-height:1.9;outline:none;word-break:break-word}
+.editor:empty::before{content:attr(data-ph);color:var(--muted)}
+::highlight(hit){background-color:var(--hit);color:inherit}
+.idle .labels,.idle .tools,.idle .editor{opacity:.4;pointer-events:none}
+@media (max-width:700px){
+  .app{grid-template-columns:1fr}
+  .app .main{display:none}
+  .app.editing .side{display:none}
+  .app.editing .main{display:flex}
+  .back{display:inline-block}
+  .title,.labels,.tools,.editor{padding-inline:16px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="side">
+    <div class="side-head">
+      <h1 class="brand">مفكرتي</h1>
+      <input class="search" id="q" type="search" placeholder="دوّر بالعناوين والنصوص والتصنيفات" aria-label="بحث">
+      <div class="filters" id="filters"></div>
+      <button class="new" id="new">ملاحظة جديدة</button>
+    </div>
+    <ul class="list" id="list"></ul>
+  </aside>
+  <section class="main idle" id="main">
+    <div class="bar">
+      <button class="ghost back" id="back">رجوع</button>
+      <span id="meta"></span>
+      <span class="sp"></span>
+      <button class="ghost" id="copy">نسخ</button>
+      <button class="ghost danger" id="del">احذف</button>
+    </div>
+    <input class="title" id="title" placeholder="العنوان" aria-label="العنوان">
+    <div class="labels" id="labels">
+      <span id="chips"></span>
+      <input class="labin" id="labin" placeholder="أضف تصنيف" aria-label="أضف تصنيف">
+    </div>
+    <div class="tools" id="tools">
+      <button class="tb" data-cmd="bold" aria-label="عريض"><b>B</b></button>
+      <button class="tb" data-cmd="italic" aria-label="مائل"><i>I</i></button>
+      <button class="tb" data-cmd="underline" aria-label="خط تحت النص"><u>U</u></button>
+      <span class="sep"></span>
+      <button class="tb" data-size="-1" aria-label="صغّر الخط" style="font-size:.9rem">A−</button>
+      <button class="tb" data-size="1" aria-label="كبّر الخط" style="font-size:1.35rem">A+</button>
+      <span class="sep"></span>
+      <button class="sw" data-color="#D64545" style="background:#D64545" aria-label="أحمر"></button>
+      <button class="sw" data-color="#E08A1E" style="background:#E08A1E" aria-label="برتقالي"></button>
+      <button class="sw" data-color="#2E9E6B" style="background:#2E9E6B" aria-label="أخضر"></button>
+      <button class="sw" data-color="#3B7DD8" style="background:#3B7DD8" aria-label="أزرق"></button>
+      <button class="sw" data-color="#8A5CD0" style="background:#8A5CD0" aria-label="بنفسجي"></button>
+      <button class="sw rs" data-color="reset" aria-label="اللون الافتراضي">A</button>
+    </div>
+    <div class="editor" id="ed" contenteditable="true" data-ph="اكتب هون…" aria-label="نص الملاحظة"></div>
+  </section>
+</div>
+<script>
+(function(){
+  var KEY="notes-app:v1",SIZES=[14,16,18,22,28,36];
+  var notes=[],activeId=null,mem=null,timer=null,delTimer=null,filterLabel=null,pendingSize=18;
+  var $=function(i){return document.getElementById(i)};
+  var app=$("app"),main=$("main"),list=$("list"),q=$("q"),title=$("title"),ed=$("ed"),meta=$("meta"),del=$("del"),
+      chips=$("chips"),labin=$("labin"),filters=$("filters");
+
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+  function load(){
+    var a=[];
+    try{var r=localStorage.getItem(KEY);if(r)a=JSON.parse(r)}catch(e){a=mem||[]}
+    return a.map(function(n){
+      n.labels=n.labels||[];
+      if(n.html==null)n.html=esc(n.body||"").replace(/\n/g,"<br>");
+      if(n.text==null)n.text=n.body||"";
+      n.title=n.title||"";return n;
+    });
+  }
+  function save(){mem=notes;try{localStorage.setItem(KEY,JSON.stringify(notes))}catch(e){}}
+  function fmt(ts){
+    var o={day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"};
+    try{return new Intl.DateTimeFormat("ar-LB-u-nu-latn",o).format(ts)}catch(e){return new Date(ts).toLocaleString()}
+  }
+  function find(id){for(var i=0;i<notes.length;i++)if(notes[i].id===id)return notes[i]}
+  function words(s){var m=s.trim().match(/\S+/g);return m?m.length:0}
+  function term(){return q.value.trim().toLowerCase()}
+  function count(hay,t){var c=0,i=0;while((i=hay.indexOf(t,i))>-1){c++;i+=t.length}return c}
+
+  function renderFilters(){
+    var set={};notes.forEach(function(n){n.labels.forEach(function(l){set[l]=1})});
+    var all=Object.keys(set).sort();
+    if(filterLabel&&!set[filterLabel])filterLabel=null;
+    filters.innerHTML="";
+    if(!all.length)return;
+    [null].concat(all).forEach(function(l){
+      var b=document.createElement("button");b.className="chip";
+      b.textContent=l===null?"الكل":l;
+      b.setAttribute("aria-pressed",String(l===filterLabel));
+      b.onclick=function(){filterLabel=l;renderFilters();renderList()};
+      filters.appendChild(b);
+    });
+  }
+  function snippet(n,t){
+    var p=document.createElement("span");p.className="p";
+    var txt=n.text.replace(/\s/g," ");
+    var i=t?txt.toLowerCase().indexOf(t):-1;
+    if(i<0){p.textContent=txt.slice(0,90)||"فاضية";return p}
+    var s=Math.max(0,i-28);
+    p.appendChild(document.createTextNode((s>0?"…":"")+txt.slice(s,i)));
+    var m=document.createElement("mark");m.textContent=txt.slice(i,i+t.length);p.appendChild(m);
+    p.appendChild(document.createTextNode(txt.slice(i+t.length,i+t.length+60)+"…"));
+    return p;
+  }
+  function renderList(){
+    var t=term();
+    var items=notes.filter(function(n){
+      if(filterLabel&&n.labels.indexOf(filterLabel)<0)return false;
+      if(!t)return true;
+      return (n.title+" "+n.text+" "+n.labels.join(" ")).toLowerCase().indexOf(t)>-1;
+    }).sort(function(a,b){return b.updated-a.updated});
+    list.innerHTML="";
+    if(!items.length){
+      var e=document.createElement("li");e.className="empty";
+      e.textContent=(t||filterLabel)?"ما في ملاحظة بتطابق بحثك.":"ما في ملاحظات بعد. اضغط «ملاحظة جديدة» لتبدأ.";
+      list.appendChild(e);return;
+    }
+    items.forEach(function(n){
+      var li=document.createElement("li"),b=document.createElement("button");
+      b.className="item";b.setAttribute("aria-current",n.id===activeId?"true":"false");
+      var tt=document.createElement("span");tt.className="t";tt.textContent=n.title||"بلا عنوان";
+      var d=document.createElement("span");d.className="d";
+      var hits=t?count((n.title+" "+n.text).toLowerCase(),t):0;
+      d.textContent=fmt(n.updated)+(n.labels.length?" · "+n.labels.map(function(l){return "#"+l}).join(" "):"")+(hits>1?" · "+hits+" مرات":"");
+      b.appendChild(tt);b.appendChild(snippet(n,t));b.appendChild(d);
+      b.onclick=function(){open(n.id,true,true)};
+      li.appendChild(b);list.appendChild(li);
+    });
+  }
+  function renderChips(n){
+    chips.innerHTML="";
+    (n?n.labels:[]).forEach(function(l){
+      var s=document.createElement("span");s.className="lab";
+      s.appendChild(document.createTextNode("#"+l));
+      var x=document.createElement("button");x.textContent="×";x.setAttribute("aria-label","شيل التصنيف "+l);
+      x.onclick=function(){n.labels=n.labels.filter(function(v){return v!==l});n.updated=Date.now();save();renderChips(n);renderFilters();renderList()};
+      s.appendChild(x);chips.appendChild(s);
+    });
+  }
+  function renderMeta(n){meta.textContent=n?words(n.text)+" كلمة · "+fmt(n.updated):""}
+
+  function highlight(scroll){
+    if(!window.CSS||!CSS.highlights||typeof Highlight==="undefined")return;
+    CSS.highlights.delete("hit");
+    var t=term();if(!t)return;
+    var ranges=[],w=document.createTreeWalker(ed,NodeFilter.SHOW_TEXT),node;
+    while((node=w.nextNode())){
+      var s=node.nodeValue.toLowerCase(),i=0;
+      while((i=s.indexOf(t,i))>-1){
+        var r=document.createRange();r.setStart(node,i);r.setEnd(node,i+t.length);ranges.push(r);i+=t.length;
+      }
+    }
+    if(ranges.length){
+      CSS.highlights.set("hit",new Highlight(...ranges));
+      if(scroll){var el=ranges[0].startContainer.parentElement;if(el)el.scrollIntoView({block:"center"})}
+    }
+  }
+  function open(id,focusMobile,fromList){
+    activeId=id;var n=find(id);
+    title.value=n?n.title:"";ed.innerHTML=n?n.html:"";
+    title.disabled=!n;ed.contentEditable=n?"true":"false";
+    main.classList.toggle("idle",!n);
+    renderMeta(n);renderChips(n);renderList();
+    if(focusMobile)app.classList.add("editing");
+    highlight(!!fromList);
+  }
+  function create(){
+    var n={id:String(Date.now()),title:"",text:"",html:"",labels:filterLabel?[filterLabel]:[],updated:Date.now()};
+    notes.unshift(n);save();q.value="";open(n.id,true);renderFilters();title.focus();
+  }
+
+  function fixFonts(){
+    var fs=ed.querySelectorAll("font");
+    for(var i=0;i<fs.length;i++){
+      var f=fs[i],s=document.createElement("span");
+      if(f.getAttribute("size"))s.style.fontSize=pendingSize+"px";
+      if(f.getAttribute("color"))s.style.color=f.getAttribute("color");
+      while(f.firstChild)s.appendChild(f.firstChild);
+      f.parentNode.replaceChild(s,f);
+    }
+    var sp=ed.querySelectorAll("span");
+    for(var j=0;j<sp.length;j++){
+      var c=sp[j].style.color.replace(/\s/g,"");
+      if(c==="rgb(1,2,3)"||c==="#010203"){
+        sp[j].style.removeProperty("color");
+        if(!sp[j].getAttribute("style")){
+          var p=sp[j].parentNode;while(sp[j].firstChild)p.insertBefore(sp[j].firstChild,sp[j]);p.removeChild(sp[j]);
+        }
+      }
+    }
+  }
+  function edit(){
+    var n=find(activeId);if(!n)return;
+    if(!ed.textContent.trim()&&!ed.querySelector("img"))ed.innerHTML="";
+    fixFonts();
+    n.title=title.value;n.html=ed.innerHTML;n.text=ed.innerText;n.updated=Date.now();
+    renderMeta(n);renderList();highlight(false);
+    clearTimeout(timer);timer=setTimeout(save,300);
+  }
+  function exec(cmd,val){ed.focus();document.execCommand(cmd,false,val);edit();tools()}
+  function curSize(){
+    var s=window.getSelection(),nd=s&&s.anchorNode;if(!nd||!ed.contains(nd))return 17;
+    var el=nd.nodeType===3?nd.parentElement:nd;return parseFloat(getComputedStyle(el).fontSize)||17;
+  }
+  function tools(){
+    ["bold","italic","underline"].forEach(function(c){
+      var b=document.querySelector('[data-cmd="'+c+'"]'),on=false;
+      try{on=document.queryCommandState(c)}catch(e){}
+      b.classList.toggle("on",on);
+    });
+  }
+  document.querySelectorAll(".tools button").forEach(function(b){
+    b.addEventListener("mousedown",function(e){e.preventDefault()});
+    b.addEventListener("click",function(){
+      if(b.dataset.cmd)return exec(b.dataset.cmd);
+      if(b.dataset.size){
+        var cur=curSize(),dir=+b.dataset.size,next;
+        if(dir>0){next=SIZES.filter(function(s){return s>cur+.5})[0]||SIZES[SIZES.length-1]}
+        else{var sm=SIZES.filter(function(s){return s<cur-.5});next=sm.length?sm[sm.length-1]:SIZES[0]}
+        pendingSize=next;return exec("fontSize","7");
+      }
+      if(b.dataset.color){
+        try{document.execCommand("styleWithCSS",false,true)}catch(e){}
+        exec("foreColor",b.dataset.color==="reset"?"#010203":b.dataset.color);
+        try{document.execCommand("styleWithCSS",false,false)}catch(e){}
+      }
+    });
+  });
+  document.addEventListener("selectionchange",function(){
+    var s=window.getSelection();if(s&&s.anchorNode&&ed.contains(s.anchorNode))tools();
+  });
+  ed.addEventListener("paste",function(e){
+    e.preventDefault();
+    var t=(e.clipboardData||window.clipboardData).getData("text");
+    document.execCommand("insertText",false,t);
+  });
+
+  function addLabel(){
+    var n=find(activeId),v=labin.value.replace(/[,،#]/g,"").trim();
+    if(!n||!v){labin.value="";return}
+    if(n.labels.indexOf(v)<0)n.labels.push(v);
+    labin.value="";n.updated=Date.now();save();renderChips(n);renderFilters();renderList();
+  }
+  labin.addEventListener("keydown",function(e){
+    if(e.key==="Enter"||e.key===","||e.key==="،"){e.preventDefault();addLabel()}
+  });
+  labin.addEventListener("blur",addLabel);
+
+  function disarm(){del.dataset.arm="0";del.textContent="احذف"}
+  del.onclick=function(){
+    if(!find(activeId))return;
+    if(del.dataset.arm!=="1"){
+      del.dataset.arm="1";del.textContent="تأكيد الحذف";
+      clearTimeout(delTimer);delTimer=setTimeout(disarm,3000);return;
+    }
+    notes=notes.filter(function(n){return n.id!==activeId});save();disarm();
+    var next=notes.slice().sort(function(a,b){return b.updated-a.updated})[0];
+    app.classList.remove("editing");renderFilters();open(next?next.id:null,false);
+  };
+  $("copy").onclick=function(){
+    var txt=(title.value?title.value+"\n\n":"")+ed.innerText,btn=$("copy");
+    function done(){btn.textContent="اتنسخت";setTimeout(function(){btn.textContent="نسخ"},1500)}
+    function fb(){var r=document.createRange();r.selectNodeContents(ed);var s=getSelection();s.removeAllRanges();s.addRange(r);try{document.execCommand("copy");done()}catch(e){}}
+    try{navigator.clipboard.writeText(txt).then(done,fb)}catch(e){fb()}
+  };
+  $("new").onclick=create;
+  $("back").onclick=function(){app.classList.remove("editing")};
+  title.oninput=edit;ed.oninput=edit;
+  q.oninput=function(){renderList();highlight(true)};
+
+  notes=load();renderFilters();
+  var first=notes.slice().sort(function(a,b){return b.updated-a.updated})[0];
+  open(first?first.id:null,false);
+})();
+</script>
+</body>
+</html>
