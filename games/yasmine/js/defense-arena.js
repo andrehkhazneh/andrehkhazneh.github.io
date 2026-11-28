@@ -205,17 +205,17 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
    replays.value=replay;replays.disabled=!!w;replays.setAttribute('aria-label',t('اختيار الموجة','Select wave'));
    get('arenaTip').textContent=t('الموجة ','Wave ')+n+(boss!=null?' · '+t(bosses[boss][0],bosses[boss][1]):'')+' — '+(w?t('احمِ شجرة روح المشتل!','Protect the Spirit Tree!'):t('اختَر الجهاز وبعدين اضغط على موقع تركيبه.','Choose a device, then tap a site to place it.'));
    const prize=s.newPrize==null?null:bosses[s.newPrize];
-   get('arenaStatus').textContent=w?t('تم صدّ ','Stopped ')+w.stopped+' / '+w.total:prize?t('🏅 ربحت وسام ','🏅 Earned the medal for ')+t(prize[0],prize[1])+t(' وفتحت زراعة ',' and unlocked ')+t(prize[2],prize[3]):s.retry?t('جرّب الموجة من جديد','Try the wave again'):s.last!=null?t('آخر موجة · ','Last wave · ')+s.last+' / '+(s.lastTotal||12):t('الدفاعات المركبة ','Devices placed ')+s.pads.length+' / 3';
+   get('arenaStatus').textContent=w?t('تم صدّ ','Stopped ')+w.stopped+' / '+w.total:prize?t('🏅 ربحت وسام ','🏅 Earned the medal for ')+t(prize[0],prize[1])+t(' وفتحت زراعة ',' and unlocked ')+t(prize[2],prize[3]):s.retry?t('جرّب الموجة من جديد','Try the wave again'):s.last!=null?t('آخر موجة · ','Last wave · ')+s.last+' / '+(s.lastTotal||12):t('الدفاعات المركبة ','Devices placed ')+s.pads.length+' / '+pads.length;
    if(!w&&s.lastReward)get('arenaStatus').textContent+=' · +'+s.lastReward+' 🪙';
    const start=get('arenaStart');start.hidden=!!w;start.disabled=!s.hp||!!s.regrowUntil||!s.pads.length;start.textContent=t('ابدأ الموجة','Start wave');
    buttons.forEach((b,i)=>{const on=s.pads.includes(i),type=s.devices[i]??1;
      if(b.dataset.icon!==String(on?type:-1)){b.replaceChildren();if(on)b.append(art('device',type));else b.textContent='+';b.dataset.icon=on?type:-1}
-     b.disabled=!!w||(!on&&(s.pads.length>=3||selected<0));b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',(on?t(...devices[type]):t('موقع فارغ','Empty site'))+' '+(i+1))});
+     b.disabled=!!w||(!on&&selected<0);b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',(on?t(...devices[type]):t('موقع فارغ','Empty site'))+' '+(i+1))});
  }
  pads.forEach(([x,y],i)=>{const b=document.createElement('button');b.type='button';b.className='arena-pad';b.style.left=x/6+'%';b.style.top=y/6+'%';b.onclick=()=>{
    const s=setup();if(level()<10||s.wave)return;
    if(selected<0){s.pads=s.pads.filter(n=>n!==i);delete s.devices[i]}
-   else if(s.pads.includes(i)||s.pads.length<3){if(!s.pads.includes(i))s.pads.push(i);s.devices[i]=selected}
+   else {if(!s.pads.includes(i))s.pads.push(i);s.devices[i]=selected}
    save();labels()
  };buttons.push(b);map.append(b)});
  get('arenaStart').onclick=()=>{const s=setup();if(level()<10||s.wave||!s.hp||s.regrowUntil)return;
