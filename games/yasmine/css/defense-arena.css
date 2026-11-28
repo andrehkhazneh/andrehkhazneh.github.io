@@ -28,3 +28,11 @@
 .spirit-care>img{object-fit:contain}.spirit-care .arena-health{display:grid;gap:4px;margin:0}.spirit-care progress{width:100%}
 .spirit-options,.spirit-care>p{grid-column:1/-1}.spirit-options{display:flex;flex-wrap:wrap;gap:6px}.spirit-options button{flex:1;min-height:44px}
 #arenaArea .spirit-care>p{margin:0}.spirit-care>p:empty{display:none}
+
+#arenaArea .arena-palette button{touch-action:none;user-select:none;cursor:grab}
+#arenaArea .arena-palette img{height:clamp(40px,12vw,70px);pointer-events:none}
+#arenaArea #arenaMap .arena-pad[aria-pressed=true]{background:transparent!important;border-color:transparent!important;box-shadow:none!important;overflow:visible}
+#arenaArea #arenaMap .arena-pad img{width:155%;height:155%;left:-27.5%;bottom:-8%;filter:drop-shadow(0 1px 1px #263a2a)}
+#arenaMap.arena-dragging .arena-pad[aria-pressed=false]{outline:2px dashed #fff1bd;outline-offset:2px}
+#arenaArea #arenaMap .arena-drop{outline:4px solid #fff0a4;box-shadow:0 0 16px 6px #ffe09a!important}
+.arena-ghost{position:fixed;width:58px;height:58px;transform:translate(-50%,-86%);pointer-events:none;z-index:2147483647;filter:drop-shadow(0 3px 3px #253e2c99)}
