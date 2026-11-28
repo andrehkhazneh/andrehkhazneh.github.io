@@ -107,40 +107,58 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
    const b=el('button',palette);b.type='button';const img=el('img',b);img.src=artURL('device',i);img.alt='';el('span',b);
    img.draggable=false;b.onclick=()=>{selected=i;labels()};bindDrag(b,i);deviceBtns.push(b);
  });
- function bindDrag(button,type){
+ function bindDrag(button,type,source=null){
+   let suppressClick=false;
+   button.addEventListener("click",event=>{if(suppressClick){event.stopImmediatePropagation();suppressClick=false}},true);
    let origin=null,ghost=null,target=null;
    function highlight(next){
      target?.classList.remove('arena-drop');target=next;target?.classList.add('arena-drop')
    }
    function site(event){
      const hit=document.elementFromPoint(event.clientX,event.clientY)?.closest('.arena-pad');
-     return hit&&map.contains(hit)&&!hit.disabled&&!data().pads.includes(buttons.indexOf(hit))?hit:null
+     return hit&&map.contains(hit)&&!hit.disabled?hit:null
    }
    function clear(){
      ghost?.remove();ghost=null;highlight(null);origin=null;map.classList.remove('arena-dragging')
    }
    button.onpointerdown=event=>{
-     if(!event.isPrimary||event.button!==0||data().wave)return;
+     suppressClick=false;
+     if(!event.isPrimary||event.button!==0||data().wave||(source!==null&&(!data().pads.includes(source)||selected<0)))return;
      origin={x:event.clientX,y:event.clientY};button.setPointerCapture(event.pointerId)
    };
    button.onpointermove=event=>{
      if(!origin||!event.isPrimary)return;
      if(!ghost){
        if(Math.hypot(event.clientX-origin.x,event.clientY-origin.y)<5)return;
-       selected=type;labels();ghost=art('device',type,'arena-ghost');
+       if(source===null)selected=type;
+       labels();ghost=art('device',source===null?type:(data().devices[source]??1),'arena-ghost');
        document.body.append(ghost);map.classList.add('arena-dragging')
      }
      ghost.style.left=event.clientX+'px';ghost.style.top=event.clientY+'px';highlight(site(event))
    };
    button.onpointerup=event=>{
      if(!origin||!event.isPrimary)return;
-     const drop=ghost&&site(event);clear();
-     if(drop){selected=type;drop.click()}
+     const drop=ghost&&site(event);suppressClick=!!ghost;clear();
+     if(drop)placeTower(buttons.indexOf(drop),type,source)
    };
    button.onlostpointercapture=button.onpointercancel=clear
  }
+ const hud=el('div',map,'arena-vitals'),hudTitle=el('span',hud),hudValue=el('b',hud),hudBar=el('progress',hud);
+ hudValue.dir='ltr';hudBar.max=1000;
+ function showHealth(){
+   const hp=data().hp;
+   if(hud.dataset.hp===String(hp))return;
+   hud.dataset.hp=hp;hudValue.textContent=hp+' / 1000';hudBar.value=hp;
+   hud.classList.toggle('low',hp<=300);
+   get('arenaHealth').value=hp;get('arenaHP').textContent=hudValue.textContent
+ }
  const deviceInfo=el('p',controls),upgrade=el('button',controls),remove=el('button',controls),replays=el('select',controls);
- remove.type=upgrade.type='button';remove.onclick=()=>{selected=-1;labels()};
+ const toolsRow=el('div',controls,'arena-tower-tools');toolsRow.append(upgrade,remove);
+ const actions=get('arenaStart').parentElement;actions.prepend(replays);actions.after(get('arenaStatus'));
+ let previousType=1;
+ remove.type=upgrade.type='button';remove.onclick=()=>{
+   if(selected<0)selected=previousType;else {previousType=selected;selected=-1}labels()
+ };
  upgrade.onclick=()=>{const s=setup(),tier=s.tiers[selected]||1,price=tier*100;
    if(s.wave||selected<0||tier>=3||state.money<price||level()<10)return;
    financeMove(-price,'arenaUpgrade',{device:selected,tier:tier+1});s.tiers[selected]=tier+1;save();labels()
@@ -301,7 +319,7 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
    get('arenaIntro').textContent=t('كبر مشتلك ولفت نظر الأعداء. رح يبعثوا حشرات من بين الشجيرات لتهاجم شجرة روح المشتل. بس لا تشيل هم، فيك تحميها!','Your nursery has grown and drawn the attention of rivals. They’re sending insects through the hedges to attack the Nursery Spirit Tree. You can protect it!');
    get('arenaBack').textContent=t('رجوع','Back');
    get('arenaTree').textContent=t('شجرة روح المشتل','Nursery Spirit Tree');
-   get('arenaHealth').value=s.hp;get('arenaHP').textContent=s.hp+' / 1000';
+   hudTitle.textContent=t('حياة الشجرة','Tree health');hudBar.setAttribute('aria-label',hudTitle.textContent);showHealth();
    get('arenaHeal').textContent=t('علاج +١٠٠ · ٥٠ عملة','Heal +100 · 50 coins');
    get('arenaRevive').textContent=t('إعادة الإحياء · ٥٠٠ عملة','Revive · 500 coins');
    get('arenaHeal').disabled=!!w||s.hp<=0||s.hp>=1000||state.money<50;
@@ -312,13 +330,13 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
    const n=w?.number||replay||s.round+1, boss=bossAt(n);
    const tier=s.tiers[selected]||1;
    deviceBtns.forEach((b,i)=>{b.lastChild.textContent=t(...devices[i]);b.setAttribute('aria-pressed',String(selected===i));b.disabled=!!w});
-   remove.textContent=t('فكّ جهاز','Remove device');remove.disabled=!!w;remove.setAttribute('aria-pressed',String(selected===-1));
-   deviceInfo.textContent=selected<0?t('اختَر الجهاز على الخريطة لفكّه.','Tap a device on the map to remove it.'):t(...descriptions[selected])+t(' · المستوى ',' · Level ')+tier;
+   remove.textContent=selected<0?t('إلغاء الإزالة','Cancel removal'):t('إزالة برج','Remove tower');remove.disabled=!!w;remove.setAttribute('aria-pressed',String(selected===-1));
+   deviceInfo.textContent=selected<0?t('اضغط على البرج اللي بدك تشيله.','Tap a device on the map to remove it.'):t(...descriptions[selected])+t(' · المستوى ',' · Level ')+tier;
    upgrade.hidden=selected<0||tier===3;upgrade.disabled=!!w||state.money<tier*100;upgrade.textContent=t('ترقية · ','Upgrade · ')+tier*100+' 🪙';
    const options=[[0,t('الموجة التالية ','Next wave ')+(s.round+1)],...bosses.map((d,i)=>[(i+1)*5,t('إعادة · ','Replay · ')+t(d[0],d[1])]).filter(([num])=>num<=s.round)];
    const optionsKey=JSON.stringify(options);if(replays.dataset.key!==optionsKey){replays.replaceChildren();for(const [num,label] of options)replays.add(new Option(label,num));replays.dataset.key=optionsKey}
    replays.value=replay;replays.disabled=!!w;replays.setAttribute('aria-label',t('اختيار الموجة','Select wave'));
-   get('arenaTip').textContent=t('الموجة ','Wave ')+n+(boss!=null?' · '+t(bosses[boss][0],bosses[boss][1]):'')+' — '+(w?t('احمِ شجرة روح المشتل!','Protect the Spirit Tree!'):t('اسحب البرج من تحت الخريطة وفلته فوق إشارة +.','Drag a tower from the tray onto a + site.'));
+   get('arenaTip').textContent=w?t('الموجة ','Wave ')+n+(boss!=null?' · '+t(bosses[boss][0],bosses[boss][1]):''):selected<0?'':t('اسحب البرج إلى + أو فوق برج لتستبدله.','Drag to a + or onto a tower to replace it.');
    const prize=s.newPrize==null?null:bosses[s.newPrize];
    get('arenaStatus').textContent=w?t('تم صدّ ','Stopped ')+w.stopped+' / '+w.total:prize?t('🏅 ربحت وسام ','🏅 Earned the medal for ')+t(prize[0],prize[1])+t(' وفتحت زراعة ',' and unlocked ')+t(prize[2],prize[3]):s.retry?t('جرّب الموجة من جديد','Try the wave again'):s.last!=null?t('آخر موجة · ','Last wave · ')+s.last+' / '+(s.lastTotal||12):t('الدفاعات المركبة ','Devices placed ')+s.pads.length+' / '+pads.length;
    if(!w&&s.lastReward)get('arenaStatus').textContent+=' · +'+s.lastReward+' 🪙';
@@ -327,12 +345,27 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
      if(b.dataset.icon!==String(on?type:-1)){b.replaceChildren();if(on)b.append(art('device',type));else b.textContent='+';b.dataset.icon=on?type:-1}
      b.disabled=!!w||(!on&&selected<0);b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',(on?t(...devices[type]):t('موقع فارغ','Empty site'))+' '+(i+1))});
  }
- pads.forEach(([x,y],i)=>{const b=document.createElement('button');b.type='button';b.className='arena-pad';b.style.left=x/6+'%';b.style.top=y/6+'%';b.onclick=()=>{
-   const s=setup();if(level()<10||s.wave)return;
-   if(selected<0){s.pads=s.pads.filter(n=>n!==i);delete s.devices[i]}
-   else {if(!s.pads.includes(i))s.pads.push(i);s.devices[i]=selected}
+ function placeTower(dest,type,source=null){
+   const s=setup();
+   if(level()<10||s.wave||dest===source)return;
+   if(source!==null){
+     if(!s.pads.includes(source))return;
+     type=s.devices[source]??1;
+     if(s.pads.includes(dest))s.devices[source]=s.devices[dest]??1;
+     else {s.pads.splice(s.pads.indexOf(source),1);delete s.devices[source]}
+   }
+   if(type<0){
+     s.pads=s.pads.filter(i=>i!==dest);delete s.devices[dest];selected=previousType
+   }else{
+     if(!s.pads.includes(dest))s.pads.push(dest);
+     s.devices[dest]=type
+   }
    save();labels()
- };buttons.push(b);map.append(b)});
+ }
+ pads.forEach(([x,y],i)=>{
+   const b=el('button',map,'arena-pad');b.type='button';b.style.left=x/6+'%';b.style.top=y/6+'%';
+   b.onclick=()=>placeTower(i,selected);bindDrag(b,null,i);buttons.push(b)
+ });
  get('arenaStart').onclick=()=>{const s=setup();if(level()<10||s.wave||!s.hp||s.regrowUntil)return;
    if(s.pads.length){const number=replay||s.round+1;s.newPrize=null;s.wave={number,total:12+Math.min(12,number-1),replay:!!replay,clock:0,sent:0,stopped:0,bugs:[],cool:{}}}
    save();labels()};
@@ -342,7 +375,7 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
  let frame=0,previous=0;
  function animate(now){
    frame=0;if(area.hidden||document.hidden){previous=0;return}
-   const dt=previous?Math.min(.12,(now-previous)/1000):0;previous=now;step(dt);
+   const dt=previous?Math.min(.12,(now-previous)/1000):0;previous=now;step(dt);showHealth();
    for(let i=shots.length-1;i>=0;i--){shots[i].life-=dt;if(shots[i].life<=0)shots.splice(i,1)}
    draw(now);if(data().wave||shots.length)frame=requestAnimationFrame(animate);else previous=0;
  }
