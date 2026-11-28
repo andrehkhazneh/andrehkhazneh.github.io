@@ -54,7 +54,45 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
    ['المصيدة البنفسجية','Violet Trap'],['مدفع قطرات الماء','Water Cannon'],['رشاش المبيد','Mist Sprayer'],['برج الصعق','Lightning Spire'],['محطة العلاج','Healing Shrine']
  ];
  const descriptions=[['تصعق الحشرات الطائرة','Zaps flying insects'],['يبطئ الحشرات','Slows insects'],['يرش مجموعة قريبة','Hits nearby groups'],['ضرر قوي ضد الزعماء','Heavy damage against bosses'],['ترمّم الشجرة خلال الهجمة','Heals the tree during a wave']];
- const artURL=(group,i)=>'yasmine/images/arena/'+group+'-'+i+'.webp';
+ // Paint compact tower portraits with the same silhouettes on the map and in the tray.
+ const portraits=devices.map((_,type)=>{
+   const tile=document.createElement('canvas');tile.width=tile.height=160;
+   const pen=tile.getContext('2d');pen.scale(2,2);pen.lineJoin=pen.lineCap='round';
+   function shape(path,fill,edge='#213631'){
+     const figure=new Path2D(path);pen.fillStyle=fill;pen.fill(figure);
+     pen.strokeStyle=edge;pen.lineWidth=2.5;pen.stroke(figure)
+   }
+   oval(pen,40,68,28,6,'#18342260');
+   shape('M17 59 Q40 47 63 59 L61 65 Q40 75 19 65 Z','#9d7950');
+   shape('M17 59 Q39 45 63 59 Q41 68 17 59Z','#e5bd78');
+   if(type===0){
+     shape('M37 61 Q32 46 39 32 L47 33 Q39 48 45 61Z','#469258');
+     shape('M41 44 Q15 43 12 16 L23 26 L24 16 L32 27 L35 21 L42 32 L50 18 L51 26 L61 12 Q67 35 41 44Z','#ad4dd2');
+     oval(pen,41,34,7,5,'#ffd39b')
+   }else if(type===1){
+     shape('M25 58 L30 36 L46 34 L54 59Z','#bb8844');
+     shape('M20 40 L53 19 L62 32 L29 51Z','#258dc4');
+     shape('M49 18 L57 13 L68 30 L60 35Z','#83e9f5');
+     oval(pen,36,44,6,6,'#ffd17e')
+   }else if(type===2){
+     shape('M22 54 Q14 38 29 32 L44 32 Q56 43 49 55 Q36 65 22 54Z','#6eb743');
+     shape('M26 31 L24 25 L42 23 L46 31Z','#e6b563');
+     shape('M39 29 L45 19 L61 19 L61 28 L48 26 L45 34Z','#4b7653');
+     shape('M57 15 L68 13 L68 30 L57 28Z','#bade77');
+     oval(pen,28,42,4,6,'#cef483')
+   }else if(type===3){
+     shape('M29 59 L35 28 L45 28 L52 59Z','#34517e');
+     for(const y of [37,46,55])shape('M29 '+y+' l20 -5 l2 4 l-21 6Z','#8eeeff');
+     shape('M43 5 L29 25 L39 24 L35 36 L55 15 L44 17Z','#ffe477')
+   }else{
+     shape('M28 59 L32 43 L48 43 L54 59Z','#d9ac61');
+     shape('M40 47 Q17 47 16 27 Q31 28 39 36 Q42 23 63 24 Q60 43 40 47Z','#78b65e');
+     shape('M40 38 Q24 28 40 10 Q56 26 40 38Z','#fff0a5');
+     oval(pen,40,27,4,6,'#67d9b2')
+   }
+   return tile.toDataURL()
+ });
+ const artURL=(group,i)=>group==='device'?portraits[i]:'yasmine/images/arena/'+group+'-'+i+'.webp';
  const bossImages=bosses.map((_,i)=>{const img=new Image();img.src=artURL('boss',i);return img});
  function setup(){
    const s=data();s.devices||={};s.tiers||={};s.wins||={};
@@ -67,8 +105,40 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
  let selected=1,replay=0;
  devices.forEach((d,i)=>{
    const b=el('button',palette);b.type='button';const img=el('img',b);img.src=artURL('device',i);img.alt='';el('span',b);
-   b.onclick=()=>{selected=i;labels()};deviceBtns.push(b);
+   img.draggable=false;b.onclick=()=>{selected=i;labels()};bindDrag(b,i);deviceBtns.push(b);
  });
+ function bindDrag(button,type){
+   let origin=null,ghost=null,target=null;
+   function highlight(next){
+     target?.classList.remove('arena-drop');target=next;target?.classList.add('arena-drop')
+   }
+   function site(event){
+     const hit=document.elementFromPoint(event.clientX,event.clientY)?.closest('.arena-pad');
+     return hit&&map.contains(hit)&&!hit.disabled&&!data().pads.includes(buttons.indexOf(hit))?hit:null
+   }
+   function clear(){
+     ghost?.remove();ghost=null;highlight(null);origin=null;map.classList.remove('arena-dragging')
+   }
+   button.onpointerdown=event=>{
+     if(!event.isPrimary||event.button!==0||data().wave)return;
+     origin={x:event.clientX,y:event.clientY};button.setPointerCapture(event.pointerId)
+   };
+   button.onpointermove=event=>{
+     if(!origin||!event.isPrimary)return;
+     if(!ghost){
+       if(Math.hypot(event.clientX-origin.x,event.clientY-origin.y)<5)return;
+       selected=type;labels();ghost=art('device',type,'arena-ghost');
+       document.body.append(ghost);map.classList.add('arena-dragging')
+     }
+     ghost.style.left=event.clientX+'px';ghost.style.top=event.clientY+'px';highlight(site(event))
+   };
+   button.onpointerup=event=>{
+     if(!origin||!event.isPrimary)return;
+     const drop=ghost&&site(event);clear();
+     if(drop){selected=type;drop.click()}
+   };
+   button.onlostpointercapture=button.onpointercancel=clear
+ }
  const deviceInfo=el('p',controls),upgrade=el('button',controls),remove=el('button',controls),replays=el('select',controls);
  remove.type=upgrade.type='button';remove.onclick=()=>{selected=-1;labels()};
  upgrade.onclick=()=>{const s=setup(),tier=s.tiers[selected]||1,price=tier*100;
@@ -129,17 +199,62 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
      c.fillStyle='#392c30';c.fillRect(p.x-20,p.y-29,40,4);
      c.fillStyle='#f8ce59';c.fillRect(p.x-20,p.y-29,40*bug.hp/bug.max,4);return;
    }
-   if(bug.flying){oval(c,p.x-4,p.y-7,7,3,'#e1efff');oval(c,p.x+4,p.y+7,7,3,'#c6dcf2')}
-   c.save();c.translate(p.x,p.y);c.rotate(Math.atan2(p.y-before.y,p.x-before.x));const gait=Math.sin(time*.017+bug.id)*2;
-   c.strokeStyle='#30293a';c.lineWidth=2.2;
-   for(const s of [-1,1])for(const x of [-5,0,5]){c.beginPath();c.moveTo(x,s*3);c.lineTo(x-2,s*8);c.lineTo(x+gait,s*11);c.stroke()}
-   oval(c,6,0,4,5,'#2b3931');oval(c,-1,0,8,6.5,bug.lane===1?'#9d5239':'#653f65');oval(c,-3,-2,4,2,'#dfac83');c.restore();
+   const beat=time*.018+bug.id, lift=bug.flying?6+2*Math.sin(beat*.4):0;
+   oval(c,p.x,p.y+3,11,4,'#30291d48');
+   c.save();c.translate(p.x,p.y-lift);c.rotate(Math.atan2(p.y-before.y,p.x-before.x));
+   c.lineCap='round';c.strokeStyle='#332c29';c.lineWidth=2;
+   for(const side of [-1,1])for(const x of [-6,0,6]){
+     const stride=3*Math.sin(beat+x+side);
+     c.beginPath();c.moveTo(x,side*4);c.lineTo(x-3,side*8);c.lineTo(x+stride,side*11);c.stroke()
+   }
+   oval(c,7,0,6,5,'#342c36');
+   if(bug.flying){
+     oval(c,-3,0,11,6,'#ffc248');
+     for(const x of [-7,-1])oval(c,x,0,2,5.5,'#423327');
+     for(const side of [-1,1]){
+       c.save();c.rotate(side*(.45+.3*Math.sin(beat*2)));oval(c,-6,side*6,8,4,'#e2faffde');c.restore()
+     }
+   }else{
+     oval(c,-3,0,11,8,'#442b34');oval(c,-3,0,9.5,7,bug.lane===1?'#ed793f':'#c54d5e');
+     c.fillStyle='#552c38';c.fillRect(-12,-.8,17,1.6);
+     for(const side of [-1,1])for(const x of [-7,0])oval(c,x,side*3.5,1.8,1.8,'#492c39')
+   }
+   oval(c,10,-2,1.6,1.6,'#fff3ae');c.restore()
+ }
+ function effect(shot){
+   const [sx,sy]=pads[shot.from]||[shot.x,shot.y],dx=shot.x-sx,dy=shot.y-sy;
+   const age=1-shot.life/shot.duration,travel=Math.min(1,age*2);
+   const colors=['#df97ff','#86efff','#b9ed72','#9fe8ff','#8ef0ac','#ff984f'];
+   const color=colors[shot.type];c.save();c.globalAlpha=Math.min(1,shot.life*7);c.lineCap='round';
+   if(shot.type===3||shot.type===0){
+     c.beginPath();c.moveTo(sx,sy);
+     for(let n=1;n<8;n++){
+       const bend=Math.sin(n*9+Math.floor(age*6))*9,len=Math.hypot(dx,dy)||1;
+       c.lineTo(sx+dx*n/8-dy/len*bend,sy+dy*n/8+dx/len*bend)
+     }
+     c.lineTo(shot.x,shot.y);c.strokeStyle=shot.type===3?'#4278d9':'#8b45b7';c.lineWidth=6;c.stroke();
+     c.strokeStyle=color;c.lineWidth=2.5;c.stroke()
+   }else if(shot.type<5){
+     for(let k=0;k<7;k++){
+       const f=Math.max(0,travel-k*.055),spread=shot.type===2?Math.sin(k*7)*f*13:0;
+       oval(c,sx+dx*f+spread,sy+dy*f-Math.sin(f*Math.PI)*12+spread*.45,5-k*.45,4-k*.32,color)
+     }
+   }
+   if(age>.45||shot.type===5){
+     const radius=4+age*(shot.type===2?34:19);
+     c.beginPath();c.arc(shot.x,shot.y,radius,0,Math.PI*2);c.strokeStyle=color;c.lineWidth=3*(1-age)+1;c.stroke();
+     for(let i=0;i<6;i++)oval(c,shot.x+Math.cos(i*1.047)*radius,shot.y+Math.sin(i*1.047)*radius,2,2,color)
+   }
+   c.restore()
+ }
+ function burst(from,x,y,type){
+   shots.push({from,x,y,type,life:.45,duration:.45})
  }
  function draw(time){
    c.setTransform(4/3,0,0,4/3,0,0);c.drawImage(land,0,0,600,600);
    const s=data();for(const bug of s.wave?.bugs||[])bugArt(bug,time);
    if(tree.complete&&tree.naturalWidth){const h=s.regrowUntil?60+160*Math.max(0,1-(s.regrowUntil-Date.now())/regrowthMs):s.hp?220:80,w=h*tree.naturalWidth/tree.naturalHeight;c.drawImage(tree,300-w/2,311-h,w,h)}
-   for(const shot of shots){c.strokeStyle='rgba(255,240,143,'+Math.min(1,shot.life*5)+')';c.lineWidth=3;c.beginPath();c.moveTo(...pads[shot.from]);c.lineTo(shot.x,shot.y);c.stroke();oval(c,shot.x,shot.y,4,4,'#fff6b4')}
+   for(const shot of shots)effect(shot);
  }
  function step(dt){
    const s=data(),w=s.wave;if(!w)return;
@@ -154,18 +269,18 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
    for(const index of s.pads){
      if((w.cool[index]||0)>w.clock)continue;
      const type=s.devices[index]??1,tier=s.tiers[type]||1,[x,y]=pads[index];
-     if(type===4){s.hp=Math.min(1000,s.hp+10*tier);w.cool[index]=w.clock+3;continue}
+     if(type===4){if(s.hp<1000)burst(index,300,280,4);s.hp=Math.min(1000,s.hp+10*tier);w.cool[index]=w.clock+3;continue}
      const within=w.bugs.filter(b=>b.hp>0&&(type!==0||b.flying)&&Math.hypot(locate(b).x-x,locate(b).y-y)<(type===3?155:122)+10*tier);
      within.sort((a,b)=>(type===3?Number(b.boss!=null)-Number(a.boss!=null):0)||b.distance-a.distance);
      const target=within[0];if(!target)continue;
      const point=locate(target),damage=type===3?(target.boss!=null?5:2):type===0?4:2;
      const hits=type===2?w.bugs.filter(b=>Math.hypot(locate(b).x-point.x,locate(b).y-point.y)<50):[target];
      for(const b of hits){b.hp-=damage+tier-1;if(type===1)b.slow=w.clock+2}
-     w.cool[index]=w.clock+(type===3?1.25:.85);shots.push({from:index,x:point.x,y:point.y,life:.22})
+     w.cool[index]=w.clock+(type===3?1.25:.85);burst(index,point.x,point.y,type)
    }
    w.bugs=w.bugs.filter(b=>{
      if(b.hp<=0){w.stopped++;if(b.boss!=null){w.defeated=true;if(!s.wins[b.boss]){s.wins[b.boss]=true;s.newPrize=b.boss;w.savePrize=true}}return false}
-     if(b.distance>=paths[b.lane].at(-1).dist){s.hp=Math.max(0,s.hp-(b.boss!=null?230:80));return false}return true
+     if(b.distance>=paths[b.lane].at(-1).dist){burst(-1,300,306,5);s.hp=Math.max(0,s.hp-(b.boss!=null?230:80));return false}return true
    });
    if(w.savePrize){delete w.savePrize;save()}
    if(s.hp===0||(w.sent===total&&!w.bugs.length)){
@@ -203,7 +318,7 @@ window.createNurseryArena=function({state,save,financeMove,level,visit}){
    const options=[[0,t('الموجة التالية ','Next wave ')+(s.round+1)],...bosses.map((d,i)=>[(i+1)*5,t('إعادة · ','Replay · ')+t(d[0],d[1])]).filter(([num])=>num<=s.round)];
    const optionsKey=JSON.stringify(options);if(replays.dataset.key!==optionsKey){replays.replaceChildren();for(const [num,label] of options)replays.add(new Option(label,num));replays.dataset.key=optionsKey}
    replays.value=replay;replays.disabled=!!w;replays.setAttribute('aria-label',t('اختيار الموجة','Select wave'));
-   get('arenaTip').textContent=t('الموجة ','Wave ')+n+(boss!=null?' · '+t(bosses[boss][0],bosses[boss][1]):'')+' — '+(w?t('احمِ شجرة روح المشتل!','Protect the Spirit Tree!'):t('اختَر الجهاز وبعدين اضغط على موقع تركيبه.','Choose a device, then tap a site to place it.'));
+   get('arenaTip').textContent=t('الموجة ','Wave ')+n+(boss!=null?' · '+t(bosses[boss][0],bosses[boss][1]):'')+' — '+(w?t('احمِ شجرة روح المشتل!','Protect the Spirit Tree!'):t('اسحب البرج من تحت الخريطة وفلته فوق إشارة +.','Drag a tower from the tray onto a + site.'));
    const prize=s.newPrize==null?null:bosses[s.newPrize];
    get('arenaStatus').textContent=w?t('تم صدّ ','Stopped ')+w.stopped+' / '+w.total:prize?t('🏅 ربحت وسام ','🏅 Earned the medal for ')+t(prize[0],prize[1])+t(' وفتحت زراعة ',' and unlocked ')+t(prize[2],prize[3]):s.retry?t('جرّب الموجة من جديد','Try the wave again'):s.last!=null?t('آخر موجة · ','Last wave · ')+s.last+' / '+(s.lastTotal||12):t('الدفاعات المركبة ','Devices placed ')+s.pads.length+' / '+pads.length;
    if(!w&&s.lastReward)get('arenaStatus').textContent+=' · +'+s.lastReward+' 🪙';
